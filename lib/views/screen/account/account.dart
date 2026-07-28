@@ -1,10 +1,7 @@
 /*
   ---------------------------------------
-  Project: khelo yaar Mobile Application
-  Date: March 31, 2024
-  Author: Ameer Salman
-  ---------------------------------------
-  Description: Account / profile — Airbnb-style layout  
+  Project: Zeengo Mobile Application
+  Description: Account / More — Guest profile + Trip, Payments, Travel, Support, Settings
 */
 
 import 'package:flutter/material.dart';
@@ -107,12 +104,7 @@ class Account extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () => Get.snackbar(
-                        'Profile',
-                        'Profile editing is coming soon.',
-                        snackPosition: SnackPosition.BOTTOM,
-                        margin: EdgeInsets.all(16.w),
-                      ),
+                      onPressed: () => _toast('Profile'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: MyColors.blackDark,
                         side: const BorderSide(color: MyColors.blackDark, width: 1.2),
@@ -136,152 +128,98 @@ class Account extends StatelessWidget {
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 24.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                'Account settings',
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.blackDark,
-                ),
-              ),
-            ),
+
+          ..._buildSection(
+            title: 'Trip',
+            tiles: const [
+              (Icons.assignment_outlined, 'Booking Details'),
+              (Icons.calendar_today_outlined, 'Daily Program'),
+              (Icons.edit_outlined, 'Request Changes'),
+              (Icons.notifications_outlined, 'Notifications'),
+            ],
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 12.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: _AccountCard(
-                children: [
-                  _AccountTile(
-                    icon: Icons.person_outline_rounded,
-                    label: 'Personal information',
-                    onTap: () => _toast('Personal information'),
-                  ),
-                  _divider(),
-                  _AccountTile(
-                    icon: Icons.lock_outline_rounded,
-                    label: 'Login & security',
-                    onTap: () => _toast('Login & security'),
-                  ),
-                  _divider(),
-                  _AccountTile(
-                    icon: Icons.payment_outlined,
-                    label: 'Payments & payouts',
-                    onTap: () => _toast('Payments & payouts'),
-                  ),
-                  _divider(),
-                  _AccountTile(
-                    icon: Icons.translate_rounded,
-                    label: 'Languages & currency',
-                    onTap: () => _toast('Languages & currency'),
-                  ),
-                ],
-              ),
-            ),
+
+          ..._buildSection(
+            title: 'Payments',
+            tiles: const [
+              (Icons.account_balance_wallet_outlined, 'Outstanding Balance'),
+              (Icons.receipt_long_outlined, 'Payment History'),
+              (Icons.currency_exchange_outlined, 'Currency Calculator'),
+            ],
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 28.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: Text(
-                'Hosting',
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.blackDark,
-                ),
-              ),
-            ),
+
+          ..._buildSection(
+            title: 'Travel',
+            tiles: const [
+              (Icons.mosque_outlined, 'Prayer Times'),
+              (Icons.menu_book_outlined, 'Russia Guide'),
+              (Icons.map_outlined, 'Maps'),
+              (Icons.place_outlined, 'Nearby Places'),
+            ],
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 12.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: _AccountCard(
-                children: [
-                  _AccountTile(
-                    icon: Icons.home_work_outlined,
-                    label: 'List your venue',
-                    onTap: () => _toast('List your venue'),
-                  ),
-                  _divider(),
-                  _AccountTile(
-                    icon: Icons.insights_outlined,
-                    label: 'Hosting resources',
-                    onTap: () => _toast('Hosting resources'),
-                  ),
-                ],
-              ),
-            ),
+
+          ..._buildSection(
+            title: 'Support',
+            tiles: const [
+              (Icons.chat_bubble_outline_rounded, 'Chat'),
+              (Icons.emergency_outlined, 'Emergency Contacts'),
+            ],
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 28.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: Text(
-                'Support',
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.blackDark,
-                ),
-              ),
-            ),
+
+          ..._buildSection(
+            title: 'Settings',
+            tiles: const [
+              (Icons.translate_rounded, 'Language'),
+              (Icons.info_outline_rounded, 'About'),
+              (Icons.logout_rounded, 'Logout'),
+            ],
           ),
-          SliverToBoxAdapter(child: SizedBox(height: 12.h)),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: _AccountCard(
-                children: [
-                  _AccountTile(
-                    icon: Icons.help_outline_rounded,
-                    label: 'Help Center',
-                    onTap: () => _toast('Help Center'),
-                  ),
-                  _divider(),
-                  _AccountTile(
-                    icon: Icons.shield_outlined,
-                    label: 'Get help with a safety issue',
-                    onTap: () => _toast('Safety'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: 32.h)),
-          SliverToBoxAdapter(
-            child: Center(
-              child: TextButton(
-                onPressed: () => Get.snackbar(
-                  'Log out',
-                  'Log out will be available soon.',
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: EdgeInsets.all(16.w),
-                ),
-                child: Text(
-                  'Log out',
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.blackDark,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ),
-          ),
+
           SliverToBoxAdapter(child: SizedBox(height: 12.h + bottomPad)),
         ],
       ),
     );
+  }
+
+  static List<Widget> _buildSection({
+    required String title,
+    required List<(IconData, String)> tiles,
+  }) {
+    return [
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontFamily: MyFonts.plusJakartaSans,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: MyColors.blackDark,
+            ),
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 12.h)),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          child: _AccountCard(
+            children: [
+              for (var i = 0; i < tiles.length; i++) ...[
+                if (i > 0) _divider(),
+                _AccountTile(
+                  icon: tiles[i].$1,
+                  label: tiles[i].$2,
+                  onTap: () => _toast(tiles[i].$2),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: 28.h)),
+    ];
   }
 
   static void _toast(String label) {
