@@ -37,7 +37,6 @@ dependencies:
   get: ^4.7.3
   path_provider: ^2.1.6
   pinput: ^6.0.2
-  app_settings: ^8.0.3
   flutter_screenutil: ^5.9.3
   connectivity_plus: ^7.3.1
   flutter_slidable: ^4.0.3 # for swipe to delete on chat

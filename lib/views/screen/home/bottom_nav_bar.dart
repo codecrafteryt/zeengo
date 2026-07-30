@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controller/map_controller.dart';
 import '../../../utils/values/air_bnb_style.dart';
+import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 import '../../widgets/coming_soon_placeholder.dart';
 import '../account/account.dart';
@@ -23,7 +24,6 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  static const Color _navBackground = Color(0xFF0B1C2C);
   static const Color _activeColor = Color(0xFFE8C547);
   static const Color _inactiveColor = Color(0xFF7BA3C4);
 
@@ -65,14 +65,14 @@ class _NavBarState extends State<NavBar> {
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          color: _navBackground,
+          color: MyColors.scaffoldMuted,
           border: Border(
-            top: BorderSide(color: Color(0xFF1A2F42), width: 0.5),
+            top: BorderSide(color: MyColors.gray100, width: 0.1),
           ),
         ),
         padding: EdgeInsets.only(bottom: bottomPad > 0 ? bottomPad : 8),
         child: BottomNavigationBar(
-          backgroundColor: _navBackground,
+          backgroundColor: MyColors.scaffoldMuted,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           onTap: _onItemTapped,

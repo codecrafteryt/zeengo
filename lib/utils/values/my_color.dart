@@ -2,6 +2,8 @@ import 'dart:ui';
 
 class MyColors {
   // Primary Colors
+  static const Color darkPurple = Color(0xFF6366F1);
+  static const Color purple = Color(0xFF8B2FE0);
   static const Color brandPrimary = Color(0xFF007782);
   static const Color textSecondary = Color(0xFF717171);
   static const Color scaffoldMuted = Color(0xFFF7F7F7);
