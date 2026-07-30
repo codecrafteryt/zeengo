@@ -7,4 +7,10 @@ class MyImages {
   static const String backSvg = "assets/svgs/search_svgs/back.svg";
   static const String currentLocationFlatSvg = "assets/svgs/search_svgs/current_location_flat.svg";
   static const String closeFlatSvg = "assets/svgs/search_svgs/close_flat.svg";
+
+  static const String navExploreSvg = "assets/svgs/nav_bar/buttom_search.svg";
+  static const String navMapSvg = "assets/svgs/nav_bar/map_icon.svg";
+  static const String navInboxSvg = "assets/svgs/nav_bar/buttom_inbox.svg";
+  static const String navPaySvg = "assets/svgs/nav_bar/credit_flat.svg";
+  static const String navProfileSvg = "assets/svgs/nav_bar/buttom_profile.svg";
 }

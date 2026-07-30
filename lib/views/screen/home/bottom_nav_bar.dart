@@ -1,9 +1,10 @@
 /*
   ---------------------------------------
   Project: Zeengo Mobile Application
-  Description: Bottom navigation — Home, Map, Support, Pay, More
+  Description: Bottom navigation — Explore, Map, Inbox, Pay, Profile
 */
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import '../../../controller/map_controller.dart';
 import '../../../utils/values/air_bnb_style.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
+import '../../../utils/values/my_images.dart';
 import '../../widgets/coming_soon_placeholder.dart';
 import '../account/account.dart';
 import '../chat/chats.dart';
@@ -24,16 +26,13 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  static const Color _activeColor = Color(0xFFE8C547);
-  static const Color _inactiveColor = Color(0xFF7BA3C4);
-
   int _selectedIndex = 0;
 
   late final List<Widget> _children = [
     const Scaffold(
       body: ComingSoonPlaceholder(
-        title: 'Home',
-        icon: Icons.home_outlined,
+        title: 'Explore',
+        icon: Icons.search_outlined,
         message:
             'Your home feed and nearby venues will show up here soon.',
       ),
@@ -52,6 +51,21 @@ class _NavBarState extends State<NavBar> {
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
+  }
+
+  Widget _navIcon(String asset, {required bool selected}) {
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: SvgPicture.asset(
+        asset,
+        fit: BoxFit.contain,
+        colorFilter: ColorFilter.mode(
+          selected ? MyColors.darkPurple : MyColors.black,
+          BlendMode.srcIn,
+        ),
+      ),
+    );
   }
 
   @override
@@ -77,8 +91,8 @@ class _NavBarState extends State<NavBar> {
           type: BottomNavigationBarType.fixed,
           onTap: _onItemTapped,
           currentIndex: _selectedIndex,
-          selectedItemColor: _activeColor,
-          unselectedItemColor: _inactiveColor,
+          selectedItemColor: MyColors.darkPurple,
+          unselectedItemColor: MyColors.black,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           selectedLabelStyle: const TextStyle(
@@ -91,31 +105,31 @@ class _NavBarState extends State<NavBar> {
             fontWeight: FontWeight.w500,
             height: 1.4,
           ),
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined, size: 24),
-              activeIcon: Icon(Icons.home_outlined, size: 24),
-              label: 'Home',
+              icon: _navIcon(MyImages.navExploreSvg, selected: false),
+              activeIcon: _navIcon(MyImages.navExploreSvg, selected: true),
+              label: 'Explore',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.map_outlined, size: 24),
-              activeIcon: Icon(Icons.map_outlined, size: 24),
+              icon: _navIcon(MyImages.navMapSvg, selected: false),
+              activeIcon: _navIcon(MyImages.navMapSvg, selected: true),
               label: 'Map',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline, size: 22),
-              activeIcon: Icon(Icons.chat_bubble_outline, size: 22),
-              label: 'Support',
+              icon: _navIcon(MyImages.navInboxSvg, selected: false),
+              activeIcon: _navIcon(MyImages.navInboxSvg, selected: true),
+              label: 'Inbox',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.credit_card_outlined, size: 24),
-              activeIcon: Icon(Icons.credit_card_outlined, size: 24),
+              icon: _navIcon(MyImages.navPaySvg, selected: false),
+              activeIcon: _navIcon(MyImages.navPaySvg, selected: true),
               label: 'Pay',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz, size: 24),
-              activeIcon: Icon(Icons.more_horiz, size: 24),
-              label: 'More',
+              icon: _navIcon(MyImages.navProfileSvg, selected: false),
+              activeIcon: _navIcon(MyImages.navProfileSvg, selected: true),
+              label: 'Profile',
             ),
           ],
         ),

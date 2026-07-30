@@ -83,3 +83,5 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/svgs/
+    - assets/svgs/search_svgs/
+    - assets/svgs/nav_bar/
