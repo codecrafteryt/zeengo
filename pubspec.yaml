@@ -88,3 +88,5 @@ flutter:
     - assets/svgs/search_svgs/
     - assets/svgs/nav_bar/
     - assets/svgs/explore/
+    - assets/svgs/chat/
+    - assets/svgs/payout/

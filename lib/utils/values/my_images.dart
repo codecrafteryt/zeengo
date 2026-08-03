@@ -32,4 +32,10 @@ class MyImages {
   static const String chatSend = "assets/svgs/chat/send.svg";
   static const String chatPhone = "assets/svgs/chat/phone.svg";
   static const String chatEmpty = "assets/svgs/chat/chat_empty.svg";
+
+  static const String payoutApple = "assets/svgs/payout/apple.svg";
+  static const String payoutBank = "assets/svgs/payout/bank.svg";
+  static const String payoutUsdt = "assets/svgs/payout/usdt.svg";
+  static const String payoutCash = "assets/svgs/payout/cash.svg";
+  static const String payoutQr = "assets/svgs/payout/qr.svg";
 }
