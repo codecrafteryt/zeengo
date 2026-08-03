@@ -8,17 +8,8 @@ class MyColors {
   static const Color textSecondary = Color(0xFF717171);
   static const Color scaffoldMuted = Color(0xFFF7F7F7);
   static const Color borderSubtle = Color(0xFFDDDDDD);
-  static const Color primary1 =
-      Color.fromRGBO(238, 158, 3, 1); // rgba(255, 192, 0, 1)
-  static const Color primary2 =
-      Color.fromRGBO(205, 148, 3, 1); // rgba(255, 192, 0, 1)
-  static const Color grey = Color.fromRGBO(117, 120, 141, 1);
-  static const Color fieldGrey = Color.fromRGBO(117, 120, 141, 0.5);
-  static const Color lightGrey = Color.fromRGBO(117, 131, 141, 1);
+
   static const Color darkWhite = Color.fromRGBO(239, 239, 239, 1);
-  static const Color lightRed = Color.fromRGBO(254, 236, 236, 1);
-  static const Color background = Color.fromRGBO(255, 255, 255, 1);
-  static const Color iconbacgr = Color.fromRGBO(246, 247, 250, 1);
 
   static const Color green = Color.fromRGBO(34, 173, 92, 1);
   static const Color red = Color(0xFFD50000); // rgba(213, 0, 0, 1)
