@@ -43,15 +43,15 @@ class _SplashScreenState extends State<SplashScreen> {
               padding: EdgeInsets.all(10.w),
               child: Image.asset(
                 MyImages.appIcon,
-                width: 140.w,
-                height: 140.w,
+                width: 250.w,
+                height: 250.h,
                 fit: BoxFit.contain,
               ),
             ),
             20.sbh,
             LoadingAnimationWidget.waveDots(
               color: MyColors.darkPurple,
-              size: 24,
+              size: 50,
             ),
           ],
         ),
