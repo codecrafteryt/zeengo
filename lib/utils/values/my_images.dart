@@ -1,4 +1,5 @@
 class MyImages {
+  static const String appIcon = 'assets/images/app_icon/app_icon.png';
   static const String braelo_app = "assets/images/braelo_app.png";
   static const String braelo_logo = 'assets/images/braelo_logo.png';
 

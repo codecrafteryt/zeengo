@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(milliseconds: 1800), () {
+    Future<void>.delayed(const Duration(milliseconds: 10800), () {
       if (!mounted) return;
       Get.off(() => const HomePages());
     });
@@ -44,47 +44,16 @@ class _SplashScreenState extends State<SplashScreen> {
                 Padding(
                   padding: EdgeInsets.all(10.w),
                   child: Image.asset(
-                    MyImages.braelo_logo,
-                    width: 220.w,
-                    errorBuilder: (_, __, ___) => Icon(
-                      Icons.sports_soccer_rounded,
-                      size: 120.w,
-                      color: MyColors.brandPrimary,
-                    ),
-                  ),
-                ),
-                20.sbh,
-                const CircularProgressIndicator(
-                  strokeWidth: 5,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.teal,
+                    MyImages.appIcon,
+                    width: 250.w,
+                    height: 250.w,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ],
             ),
           ),
-          const Positioned(
-            bottom: 150,
-            left: 0,
-            right: 0,
-            child: _SplashVersionText(),
-          ),
         ],
-      ),
-    );
-  }
-}
-
-class _SplashVersionText extends StatelessWidget {
-  const _SplashVersionText();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      Enus.version.trParams({'version': '1.0.2'}),
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        color: MyColors.black,
       ),
     );
   }
