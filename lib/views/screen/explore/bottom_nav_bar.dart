@@ -13,7 +13,7 @@ import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../account/account.dart';
-import '../chat/chats.dart';
+import '../chat/chats_screen.dart';
 import 'explore_screen.dart';
 
 class NavBar extends StatefulWidget {
@@ -29,7 +29,7 @@ class _NavBarState extends State<NavBar> {
   static const List<Widget> _children = [
     ExploreScreen(),
     MapScreen(),
-    Chats(),
+    ChatsScreen(),
     Payouts(),
     Account(),
   ];

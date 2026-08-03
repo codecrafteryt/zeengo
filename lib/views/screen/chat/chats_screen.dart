@@ -10,8 +10,8 @@ import 'package:get/get.dart';
 import '../../../data/enus.dart';
 import '../../widgets/coming_soon_placeholder.dart';
 
-class Chats extends StatelessWidget {
-  const Chats({super.key});
+class ChatsScreen extends StatelessWidget {
+  const ChatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

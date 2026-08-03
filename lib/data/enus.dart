@@ -50,4 +50,26 @@ class Enus {
   static const String language = 'language';
   static const String about = 'about';
   static const String logout = 'logout';
+
+  // Explore
+  static const String welcomeUser = 'welcome_user';
+  static const String daysLeft = 'days_left';
+  static const String guests = 'guests';
+  static const String due = 'due';
+  static const String todaysSchedule = 'todays_schedule';
+  static const String noEventsToday = 'no_events_today';
+  static const String mon3Aug = 'mon_3_aug';
+  static const String monday3Aug = 'monday_3_aug';
+  static const String aiAssistant = 'ai_assistant';
+  static const String askMeAnything = 'ask_me_anything';
+  static const String currency = 'currency';
+  static const String suggestions = 'suggestions';
+  static const String whatToDoNow = 'what_to_do_now';
+  static const String payBalance = 'pay_balance';
+  static const String paymentProgress = 'payment_progress';
+  static const String paidAmount = 'paid_amount';
+  static const String totalAmount = 'total_amount';
+  static const String nearbyHalalRestaurants = 'nearby_halal_restaurants';
+  static const String cityWeather = 'city_weather';
+  static const String fullForecast = 'full_forecast';
 }
