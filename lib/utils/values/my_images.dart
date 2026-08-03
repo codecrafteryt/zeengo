@@ -25,4 +25,11 @@ class MyImages {
   static const String exploreLogout = "assets/svgs/explore/logout.svg";
   static const String exploreRestaurant = "assets/svgs/explore/restaurant.svg";
   static const String exploreWeather = "assets/svgs/explore/weather.svg";
+
+  static const String chatHeadset = "assets/svgs/chat/headset.svg";
+  static const String chatCar = "assets/svgs/chat/car.svg";
+  static const String chatBriefcase = "assets/svgs/chat/briefcase.svg";
+  static const String chatSend = "assets/svgs/chat/send.svg";
+  static const String chatPhone = "assets/svgs/chat/phone.svg";
+  static const String chatEmpty = "assets/svgs/chat/chat_empty.svg";
 }

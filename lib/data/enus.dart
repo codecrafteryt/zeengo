@@ -72,4 +72,25 @@ class Enus {
   static const String nearbyHalalRestaurants = 'nearby_halal_restaurants';
   static const String cityWeather = 'city_weather';
   static const String fullForecast = 'full_forecast';
+
+  // Inbox / Chat
+  static const String driver = 'driver';
+  static const String splizer = 'splizer';
+  static const String online = 'online';
+  static const String typeMessage = 'type_message';
+  static const String zeengoSupport = 'zeengo_support';
+  static const String startChatSupport = 'start_chat_support';
+  static const String startChatDriver = 'start_chat_driver';
+  static const String startChatSplizer = 'start_chat_splizer';
+  static const String whatsappZeengo = 'whatsapp_zeengo';
+  static const String whatsappSubtitle = 'whatsapp_subtitle';
+  static const String qrNeedHelp = 'qr_need_help';
+  static const String qrDriverArrive = 'qr_driver_arrive';
+  static const String qrBookRestaurant = 'qr_book_restaurant';
+  static const String qrWhereAreYou = 'qr_where_are_you';
+  static const String qrWhenArrive = 'qr_when_arrive';
+  static const String qrAtEntrance = 'qr_at_entrance';
+  static const String qrCanYouHelp = 'qr_can_you_help';
+  static const String qrItinerary = 'qr_itinerary';
+  static const String qrChangeBooking = 'qr_change_booking';
 }
