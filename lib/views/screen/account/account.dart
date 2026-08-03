@@ -6,12 +6,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/language_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
+import '../../../utils/values/my_images.dart';
 
 class Account extends StatelessWidget {
   const Account({super.key});
@@ -105,15 +107,13 @@ class Account extends StatelessWidget {
                   SizedBox(height: 20.h),
                   SizedBox(
                     width: double.infinity,
+                    height: 50,
                     child: OutlinedButton(
                       onPressed: () => _toast(Enus.profile),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: MyColors.blackDark,
                         side: const BorderSide(color: MyColors.blackDark, width: 1.2),
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
+                        shape: const StadiumBorder(),
                       ),
                       child: Text(
                         Enus.showProfile.tr,
@@ -173,7 +173,7 @@ class Account extends StatelessWidget {
             tiles: const [
               (Icons.translate_rounded, Enus.language),
               (Icons.info_outline_rounded, Enus.about),
-              (Icons.logout_rounded, Enus.logout),
+              (Icons.menu_book_outlined, Enus.privacyPolicy),
             ],
             onTileTap: (key) {
               if (key == Enus.language) {
@@ -184,7 +184,47 @@ class Account extends StatelessWidget {
             },
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 12.h + bottomPad)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 12.h + bottomPad),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: (){},
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            MyImages.logout,
+                            width: 23.w,
+                            height: 23.h,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 16.w),
+                          Text(
+                            Enus.logout.tr,
+                            style: TextStyle(
+                              fontFamily: MyFonts.plusJakartaSans,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w500,
+                              color: MyColors.blackDark,
+                              decoration: TextDecoration.underline,
+                              decorationColor: MyColors.blackDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ),
+          ),
         ],
       ),
     );

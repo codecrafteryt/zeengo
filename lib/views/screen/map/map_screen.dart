@@ -43,11 +43,11 @@ class MapScreen extends StatelessWidget {
 
           return Stack(
             children: [
-              if (showYandexStub)
-                MapYandexPlaceholder(
-                  onUseGoogle: () => ctrl.setProvider(MapProviderType.google),
-                )
-              else
+
+                // MapYandexPlaceholder(
+                //   onUseGoogle: () => ctrl.setProvider(MapProviderType.google),
+                // )
+
                 GoogleMap(
                   initialCameraPosition: const CameraPosition(
                     target: MapController.moscowCenter,

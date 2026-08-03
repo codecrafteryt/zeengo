@@ -22,7 +22,7 @@ class MyImages {
   static const String exploreCurrency = "assets/svgs/explore/currency.svg";
   static const String exploreSuggestion = "assets/svgs/explore/suggestion.svg";
   static const String exploreBell = "assets/svgs/explore/bell.svg";
-  static const String exploreLogout = "assets/svgs/explore/logout.svg";
+  static const String logout = "assets/svgs/profile/logout.svg";
   static const String exploreRestaurant = "assets/svgs/explore/restaurant.svg";
   static const String exploreWeather = "assets/svgs/explore/weather.svg";
 
@@ -45,4 +45,9 @@ class MyImages {
   static const String mapAtm = "assets/svgs/map/atm.svg";
   static const String mapMall = "assets/svgs/map/mall.svg";
   static const String mapNavigate = "assets/svgs/map/navigate.svg";
+
+  static const String notificationFlat =
+      "assets/svgs/notification/notification_flat.svg";
+  static const String noNotifications =
+      "assets/svgs/notification/no_notifications.png";
 }

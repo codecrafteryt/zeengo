@@ -37,6 +37,8 @@ class _PayoutsState extends State<Payouts> {
     if (_selected == PaymentMethodId.card) {
       await CustomBottomSheetWidget.show<bool>(
         context: context,
+        heightFactor: 0.98,
+        radius: 16,
         child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
       );
       return;

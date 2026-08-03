@@ -57,15 +57,18 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // height: 50,
       height: height ?? 50,
       width: width ?? 352.w,
       child: TextButton(
-        onPressed: isLoading ? null : onPressed, // Disable button when loading
+        onPressed: isLoading ? null : onPressed,
         style: TextButton.styleFrom(
           backgroundColor: backgroundColor ?? Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius ?? 18.r),
-          ),
+          shape: borderRadius != null
+              ? RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(borderRadius!),
+                )
+              : const StadiumBorder(),
           side: BorderSide(color: borderColor ?? Colors.white),
         ),
         child: Center(

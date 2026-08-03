@@ -78,47 +78,59 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
           Enus.payAmount.trParams({'amount': widget.amountLabel}),
           style: _sub,
         ),
-        SizedBox(height: 18.h),
-        Text(Enus.cardNumber.tr, style: _label),
+        SizedBox(height: 20.h),
+        Row(
+          children: [
+            Expanded(flex: 5, child: Text(Enus.cardNumber.tr, style: _label)),
+            Expanded(flex: 2, child: Text(Enus.expiration.tr, style: _label)),
+            SizedBox(width: 8.w),
+            Expanded(flex: 2, child: Text(Enus.cvv.tr, style: _label)),
+          ],
+        ),
         SizedBox(height: 8.h),
-        _box(
-          child: SizedBox(
-            height: 48.h,
-            child: CardField(
-              onCardChanged: (d) =>
-                  setState(() => _cardComplete = d?.complete ?? false),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: '1234 1234 1234 1234',
-                hintStyle: _hint,
-                contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-              ),
-              style: TextStyle(
-                fontFamily: MyFonts.plusJakartaSans,
-                fontSize: 15.sp,
-                color: MyColors.blackDark,
-              ),
+        // height: 50 — preferred; not rigidly fixed so CardField can lay out number/exp/cvc
+        Container(
+          width: double.infinity,
+          constraints: BoxConstraints(minHeight: 50.h),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+          decoration: _fieldDecoration,
+          child: CardField(
+            enablePostalCode: false,
+            onCardChanged: (d) =>
+                setState(() => _cardComplete = d?.complete ?? false),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              hintText: '1234 1234 1234 1234',
+              hintStyle: _hint,
+              contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+            ),
+            style: TextStyle(
+              fontFamily: MyFonts.plusJakartaSans,
+              fontSize: 14.sp,
+              color: MyColors.blackDark,
             ),
           ),
         ),
         SizedBox(height: 6.h),
         Text(Enus.cardFieldsHint.tr, style: _tiny),
-        SizedBox(height: 14.h),
+        SizedBox(height: 16.h),
         Text(Enus.zipCode.tr, style: _label),
         SizedBox(height: 8.h),
         TextField(
           controller: _zipController,
-          style: TextStyle(
-            fontFamily: MyFonts.plusJakartaSans,
-            fontSize: 15.sp,
-            color: MyColors.blackDark,
-          ),
+          style: _value,
           decoration: _inputDecoration(Enus.zipCode.tr),
         ),
-        SizedBox(height: 14.h),
+        SizedBox(height: 16.h),
         Text(Enus.countryRegion.tr, style: _label),
         SizedBox(height: 8.h),
-        _box(
+        Container(
+          width: double.infinity,
+          constraints: BoxConstraints(minHeight: 50.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          decoration: _fieldDecoration,
+          alignment: Alignment.center,
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _country,
@@ -126,10 +138,7 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
               items: [
                 for (final c in _countries)
-                  DropdownMenuItem(
-                    value: c.$1,
-                    child: Text(c.$2, style: _value),
-                  ),
+                  DropdownMenuItem(value: c.$1, child: Text(c.$2, style: _value)),
               ],
               onChanged: (v) {
                 if (v != null) setState(() => _country = v);
@@ -137,9 +146,9 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
             ),
           ),
         ),
-        SizedBox(height: 16.h),
-        Text(Enus.poweredByStripe.tr, style: _tiny),
         SizedBox(height: 20.h),
+        Text(Enus.poweredByStripe.tr, style: _powered),
+        SizedBox(height: 24.h),
         Row(
           children: [
             TextButton(
@@ -156,27 +165,28 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
               ),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: _loading ? null : _onDone,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.darkPurple,
-                foregroundColor: MyColors.white,
-                elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 14.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28.r),
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _onDone,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MyColors.darkPurple,
+                  foregroundColor: MyColors.white,
+                  elevation: 0,
+                  padding: EdgeInsets.symmetric(horizontal: 28.w),
+                  shape: const StadiumBorder(),
                 ),
+                child: _loading
+                    ? SizedBox(
+                        width: 18.w,
+                        height: 18.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: MyColors.white,
+                        ),
+                      )
+                    : Text(Enus.done.tr, style: _btn),
               ),
-              child: _loading
-                  ? SizedBox(
-                      width: 18.w,
-                      height: 18.w,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: MyColors.white,
-                      ),
-                    )
-                  : Text(Enus.done.tr, style: _btn),
             ),
           ],
         ),
@@ -184,18 +194,11 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
     );
   }
 
-  Widget _box({required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-      decoration: BoxDecoration(
+  BoxDecoration get _fieldDecoration => BoxDecoration(
         color: MyColors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: MyColors.borderSubtle),
-      ),
-      child: child,
-    );
-  }
+      );
 
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
@@ -203,13 +206,14 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
       hintStyle: _hint,
       filled: true,
       fillColor: MyColors.white,
-      contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+      // height ~50 via padding; not a hard fixed height
+      contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: MyColors.borderSubtle),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: MyColors.darkPurple, width: 1.4),
       ),
     );
@@ -218,7 +222,7 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
   TextStyle get _title => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,
         fontSize: 18.sp,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
         color: MyColors.blackDark,
       );
   TextStyle get _sub => TextStyle(
@@ -228,24 +232,30 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
       );
   TextStyle get _label => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w500,
         color: MyColors.blackDark,
       );
   TextStyle get _hint => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,
-        fontSize: 15.sp,
+        fontSize: 14.sp,
         color: MyColors.textSecondary,
       );
   TextStyle get _value => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,
-        fontSize: 15.sp,
+        fontSize: 14.sp,
         color: MyColors.blackDark,
       );
   TextStyle get _tiny => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,
         fontSize: 11.sp,
         color: MyColors.textSecondary,
+      );
+  TextStyle get _powered => TextStyle(
+        fontFamily: MyFonts.plusJakartaSans,
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w700,
+        color: MyColors.blackDark,
       );
   TextStyle get _btn => TextStyle(
         fontFamily: MyFonts.plusJakartaSans,

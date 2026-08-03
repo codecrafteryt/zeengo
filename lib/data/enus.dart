@@ -177,4 +177,7 @@ class Enus {
   static const String paymentSuccess = 'payment_success';
   static const String paymentFailed = 'payment_failed';
   static const String enterValidCard = 'enter_valid_card';
+  static const String noNotifications = 'no_notifications';
+  static const String noNotificationsMessage = 'no_notifications_message';
+  static const String privacyPolicy = 'privacy_policy';
 }

@@ -180,6 +180,10 @@ class AppTranslations extends Translations {
     Enus.paymentSuccess: 'Payment success',
     Enus.paymentFailed: 'Payment failed',
     Enus.enterValidCard: 'Please enter a valid card',
+    Enus.noNotifications: 'No notifications yet',
+    Enus.noNotificationsMessage:
+        'When you get updates about your trip, they will show up here.',
+    Enus.privacyPolicy: 'Privacy policy',
   };
 
   static const Map<String, String> _ar = {
@@ -353,5 +357,9 @@ class AppTranslations extends Translations {
     Enus.paymentSuccess: 'تم الدفع بنجاح',
     Enus.paymentFailed: 'فشل الدفع',
     Enus.enterValidCard: 'يرجى إدخال بطاقة صالحة',
+    Enus.noNotifications: 'لا توجد إشعارات بعد',
+    Enus.noNotificationsMessage:
+        'عندما تصلك تحديثات عن رحلتك، ستظهر هنا.',
+    Enus.privacyPolicy: 'سياسة الخصوصية',
   };
 }

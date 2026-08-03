@@ -92,3 +92,5 @@ flutter:
     - assets/svgs/chat/
     - assets/svgs/payout/
     - assets/svgs/map/
+    - assets/svgs/notification/
+    - assets/svgs/profile/

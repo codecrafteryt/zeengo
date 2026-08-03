@@ -7,6 +7,7 @@ import '../../../data/enus.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
+import '../../screen/notifications/notifications_screen.dart';
 import '../app_circle_icon_button.dart';
 
 class ExploreHeader extends StatelessWidget {
@@ -15,15 +16,11 @@ class ExploreHeader extends StatelessWidget {
     required this.userName,
     required this.packageLabel,
     required this.bookingId,
-    this.onNotifications,
-    this.onLogout,
   });
 
   final String userName;
   final String packageLabel;
   final String bookingId;
-  final VoidCallback? onNotifications;
-  final VoidCallback? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +90,9 @@ class ExploreHeader extends StatelessWidget {
                 ),
               ),
               AppCircleIconButton(
-                svgAsset: MyImages.exploreBell,
+                svgAsset: MyImages.notificationFlat,
                 foregroundColor: MyColors.darkPurple,
-                onTap: onNotifications,
-              ),
-              SizedBox(width: 8.w),
-              AppCircleIconButton(
-                svgAsset: MyImages.exploreLogout,
-                foregroundColor: MyColors.darkPurple,
-                onTap: onLogout,
+                onTap: () => Get.to(() => const NotificationsScreen()),
               ),
             ],
           ),

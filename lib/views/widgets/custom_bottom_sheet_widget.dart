@@ -23,11 +23,11 @@ class CustomBottomSheetWidget extends StatelessWidget {
   final Color backgroundColor;
   final double? radius;
 
-  /// Opens a modal bottom sheet with Airbnb soft corners + grabber.
   static Future<T?> show<T>({
     required BuildContext context,
     required Widget child,
     double? heightFactor,
+    double? radius,
     EdgeInsetsGeometry? padding,
     bool showHandle = true,
     bool isDismissible = true,
@@ -43,6 +43,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
       barrierColor: MyColors.black.withValues(alpha: 0.45),
       builder: (ctx) => CustomBottomSheetWidget(
         heightFactor: heightFactor,
+        radius: radius,
         padding: padding,
         showHandle: showHandle,
         backgroundColor: backgroundColor,
@@ -54,8 +55,8 @@ class CustomBottomSheetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
-    final maxH = media.size.height * (heightFactor ?? 0.92);
-    final r = radius ?? 24.r;
+    final maxH = media.size.height * (heightFactor ?? 0.98);
+    final r = radius ?? 16.r;
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
@@ -64,40 +65,45 @@ class CustomBottomSheetWidget extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxH),
+          constraints: BoxConstraints(
+            maxHeight: maxH,
+            minHeight: maxH * 0.85,
+          ),
           child: Material(
             color: backgroundColor,
             elevation: 0,
             borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
             clipBehavior: Clip.antiAlias,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (showHandle) ...[
-                  SizedBox(height: 10.h),
-                  Container(
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: MyColors.borderSubtle,
-                      borderRadius: BorderRadius.circular(4.r),
+            child: SizedBox(
+              height: maxH,
+              child: Column(
+                children: [
+                  if (showHandle) ...[
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color: MyColors.borderSubtle,
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                  ],
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: padding ??
+                          EdgeInsets.fromLTRB(
+                            20.w,
+                            8.h,
+                            20.w,
+                            16.h + media.padding.bottom,
+                          ),
+                      child: child,
                     ),
                   ),
-                  SizedBox(height: 8.h),
                 ],
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: padding ??
-                        EdgeInsets.fromLTRB(
-                          20.w,
-                          8.h,
-                          20.w,
-                          16.h + media.padding.bottom,
-                        ),
-                    child: child,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

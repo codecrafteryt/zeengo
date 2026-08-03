@@ -63,7 +63,7 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.hintFontWeight = FontWeight.w400,
     this.isObscureText = false,
-    this.borderRadius = 10.0,
+    this.borderRadius = 8.0,
     this.padding = const EdgeInsets.all(5),
     this.borderColor = Colors.grey,
     this.hintColor = Colors.grey,
