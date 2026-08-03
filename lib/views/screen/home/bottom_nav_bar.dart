@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controller/map_controller.dart';
+import '../../../data/enus.dart';
 import '../../../utils/values/air_bnb_style.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
@@ -28,25 +29,12 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  late final List<Widget> _children = [
-    const Scaffold(
-      body: ComingSoonPlaceholder(
-        title: 'Explore',
-        icon: Icons.search_outlined,
-        message:
-            'Your home feed and nearby venues will show up here soon.',
-      ),
-    ),
-    const _MapTab(),
-    const Chats(),
-    const Scaffold(
-      body: ComingSoonPlaceholder(
-        title: 'Pay',
-        icon: Icons.credit_card_outlined,
-        message: 'Payments and wallet features are coming soon.',
-      ),
-    ),
-    const Account(),
+  static const List<Widget> _children = [
+    _ExploreTab(),
+    _MapTab(),
+    Chats(),
+    _PayTab(),
+    Account(),
   ];
 
   void _onItemTapped(int index) {
@@ -109,30 +97,60 @@ class _NavBarState extends State<NavBar> {
             BottomNavigationBarItem(
               icon: _navIcon(MyImages.navExploreSvg, selected: false),
               activeIcon: _navIcon(MyImages.navExploreSvg, selected: true),
-              label: 'Explore',
+              label: Enus.explore.tr,
             ),
             BottomNavigationBarItem(
               icon: _navIcon(MyImages.navMapSvg, selected: false),
               activeIcon: _navIcon(MyImages.navMapSvg, selected: true),
-              label: 'Map',
+              label: Enus.map.tr,
             ),
             BottomNavigationBarItem(
               icon: _navIcon(MyImages.navInboxSvg, selected: false),
               activeIcon: _navIcon(MyImages.navInboxSvg, selected: true),
-              label: 'Inbox',
+              label: Enus.inbox.tr,
             ),
             BottomNavigationBarItem(
               icon: _navIcon(MyImages.navPaySvg, selected: false),
               activeIcon: _navIcon(MyImages.navPaySvg, selected: true),
-              label: 'Pay',
+              label: Enus.pay.tr,
             ),
             BottomNavigationBarItem(
               icon: _navIcon(MyImages.navProfileSvg, selected: false),
               activeIcon: _navIcon(MyImages.navProfileSvg, selected: true),
-              label: 'Profile',
+              label: Enus.profile.tr,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ExploreTab extends StatelessWidget {
+  const _ExploreTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ComingSoonPlaceholder(
+        title: Enus.explore.tr,
+        icon: Icons.search_outlined,
+        message: Enus.exploreMessage.tr,
+      ),
+    );
+  }
+}
+
+class _PayTab extends StatelessWidget {
+  const _PayTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ComingSoonPlaceholder(
+        title: Enus.pay.tr,
+        icon: Icons.credit_card_outlined,
+        message: Enus.payMessage.tr,
       ),
     );
   }

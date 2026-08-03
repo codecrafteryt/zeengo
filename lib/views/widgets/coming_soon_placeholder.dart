@@ -4,7 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
+import '../../data/enus.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_fonts.dart';
 
@@ -82,7 +84,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    'Coming soon',
+                    Enus.comingSoon.tr,
                     style: TextStyle(
                       fontFamily: MyFonts.plusJakartaSans,
                       fontSize: 13.sp,
@@ -94,8 +96,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 Text(
-                  message ??
-                      'We\'re building something great here. Check back soon for updates.',
+                  message ?? Enus.comingSoonDefaultMessage.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: MyFonts.plusJakartaSans,

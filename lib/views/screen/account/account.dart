@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/language_controller.dart';
+import '../../../data/enus.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 
@@ -42,7 +44,7 @@ class Account extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Profile',
+                    Enus.profile.tr,
                     style: TextStyle(
                       fontFamily: MyFonts.plusJakartaSans,
                       fontSize: 28.sp,
@@ -75,7 +77,7 @@ class Account extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Guest',
+                              Enus.guest.tr,
                               style: TextStyle(
                                 fontFamily: MyFonts.plusJakartaSans,
                                 fontSize: 22.sp,
@@ -85,7 +87,7 @@ class Account extends StatelessWidget {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              'Show profile',
+                              Enus.showProfile.tr,
                               style: TextStyle(
                                 fontFamily: MyFonts.plusJakartaSans,
                                 fontSize: 14.sp,
@@ -104,7 +106,7 @@ class Account extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () => _toast('Profile'),
+                      onPressed: () => _toast(Enus.profile),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: MyColors.blackDark,
                         side: const BorderSide(color: MyColors.blackDark, width: 1.2),
@@ -114,7 +116,7 @@ class Account extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Show profile',
+                        Enus.showProfile.tr,
                         style: TextStyle(
                           fontFamily: MyFonts.plusJakartaSans,
                           fontSize: 15.sp,
@@ -130,49 +132,56 @@ class Account extends StatelessWidget {
           SliverToBoxAdapter(child: SizedBox(height: 24.h)),
 
           ..._buildSection(
-            title: 'Trip',
+            titleKey: Enus.trip,
             tiles: const [
-              (Icons.assignment_outlined, 'Booking Details'),
-              (Icons.calendar_today_outlined, 'Daily Program'),
-              (Icons.edit_outlined, 'Request Changes'),
-              (Icons.notifications_outlined, 'Notifications'),
+              (Icons.assignment_outlined, Enus.bookingDetails),
+              (Icons.calendar_today_outlined, Enus.dailyProgram),
+              (Icons.edit_outlined, Enus.requestChanges),
+              (Icons.notifications_outlined, Enus.notifications),
             ],
           ),
 
           ..._buildSection(
-            title: 'Payments',
+            titleKey: Enus.payments,
             tiles: const [
-              (Icons.account_balance_wallet_outlined, 'Outstanding Balance'),
-              (Icons.receipt_long_outlined, 'Payment History'),
-              (Icons.currency_exchange_outlined, 'Currency Calculator'),
+              (Icons.account_balance_wallet_outlined, Enus.outstandingBalance),
+              (Icons.receipt_long_outlined, Enus.paymentHistory),
+              (Icons.currency_exchange_outlined, Enus.currencyCalculator),
             ],
           ),
 
           ..._buildSection(
-            title: 'Travel',
+            titleKey: Enus.travel,
             tiles: const [
-              (Icons.mosque_outlined, 'Prayer Times'),
-              (Icons.menu_book_outlined, 'Russia Guide'),
-              (Icons.map_outlined, 'Maps'),
-              (Icons.place_outlined, 'Nearby Places'),
+              (Icons.mosque_outlined, Enus.prayerTimes),
+              (Icons.menu_book_outlined, Enus.russiaGuide),
+              (Icons.map_outlined, Enus.maps),
+              (Icons.place_outlined, Enus.nearbyPlaces),
             ],
           ),
 
           ..._buildSection(
-            title: 'Support',
+            titleKey: Enus.support,
             tiles: const [
-              (Icons.chat_bubble_outline_rounded, 'Chat'),
-              (Icons.emergency_outlined, 'Emergency Contacts'),
+              (Icons.chat_bubble_outline_rounded, Enus.chat),
+              (Icons.emergency_outlined, Enus.emergencyContacts),
             ],
           ),
 
           ..._buildSection(
-            title: 'Settings',
+            titleKey: Enus.settings,
             tiles: const [
-              (Icons.translate_rounded, 'Language'),
-              (Icons.info_outline_rounded, 'About'),
-              (Icons.logout_rounded, 'Logout'),
+              (Icons.translate_rounded, Enus.language),
+              (Icons.info_outline_rounded, Enus.about),
+              (Icons.logout_rounded, Enus.logout),
             ],
+            onTileTap: (key) {
+              if (key == Enus.language) {
+                Get.find<LanguageController>().showLanguagePicker();
+                return;
+              }
+              _toast(key);
+            },
           ),
 
           SliverToBoxAdapter(child: SizedBox(height: 12.h + bottomPad)),
@@ -182,15 +191,16 @@ class Account extends StatelessWidget {
   }
 
   static List<Widget> _buildSection({
-    required String title,
+    required String titleKey,
     required List<(IconData, String)> tiles,
+    void Function(String key)? onTileTap,
   }) {
     return [
       SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w),
           child: Text(
-            title,
+            titleKey.tr,
             style: TextStyle(
               fontFamily: MyFonts.plusJakartaSans,
               fontSize: 18.sp,
@@ -210,8 +220,9 @@ class Account extends StatelessWidget {
                 if (i > 0) _divider(),
                 _AccountTile(
                   icon: tiles[i].$1,
-                  label: tiles[i].$2,
-                  onTap: () => _toast(tiles[i].$2),
+                  label: tiles[i].$2.tr,
+                  onTap: () =>
+                      (onTileTap ?? (key) => _toast(key))(tiles[i].$2),
                 ),
               ],
             ],
@@ -222,10 +233,10 @@ class Account extends StatelessWidget {
     ];
   }
 
-  static void _toast(String label) {
+  static void _toast(String key) {
     Get.snackbar(
-      label,
-      'This section is coming soon.',
+      key.tr,
+      Enus.sectionComingSoon.tr,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
       duration: const Duration(seconds: 2),

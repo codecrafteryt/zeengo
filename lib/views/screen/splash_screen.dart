@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import '../../utils/extensions/extentions.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
+import '../../data/enus.dart';
 import 'home/home_pages.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -66,15 +67,24 @@ class _SplashScreenState extends State<SplashScreen> {
             bottom: 150,
             left: 0,
             right: 0,
-            child: Text(
-              'Version: 1.0.2',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: MyColors.black,
-              ),
-            ),
+            child: _SplashVersionText(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SplashVersionText extends StatelessWidget {
+  const _SplashVersionText();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      Enus.version.trParams({'version': '1.0.2'}),
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: MyColors.black,
       ),
     );
   }

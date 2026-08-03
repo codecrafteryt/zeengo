@@ -1,12 +1,14 @@
 /*
   ---------------------------------------
-  Project: khelo yar Mobile Application
-  Date: March 30, 2026
+  Project: Zeengo Mobile Application
   Description: Horizontal "or" separator for auth forms.
 */
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import '../../data/enus.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_fonts.dart';
 
@@ -28,7 +30,7 @@ class AuthOrDivider extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'or',
+            Enus.or.tr,
             style: TextStyle(
               fontFamily: MyFonts.plusJakartaSans,
               fontSize: 13.sp,

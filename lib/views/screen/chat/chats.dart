@@ -1,14 +1,13 @@
 /*
   ---------------------------------------
-  Project: khelo yaar Mobile Application
-  Date: March 31, 2024
-  Author: Ameer Salman
-  ---------------------------------------
+  Project: Zeengo Mobile Application
   Description: chat
 */
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../data/enus.dart';
 import '../../widgets/coming_soon_placeholder.dart';
 
 class Chats extends StatelessWidget {
@@ -16,12 +15,11 @@ class Chats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: ComingSoonPlaceholder(
-        title: 'Messages',
+        title: Enus.messages.tr,
         icon: Icons.chat_bubble_outline_rounded,
-        message:
-            'Chat with hosts and stay on top of your bookings — launching soon.',
+        message: Enus.messagesMessage.tr,
       ),
     );
   }
