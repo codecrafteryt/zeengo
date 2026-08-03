@@ -13,7 +13,7 @@ extension Space on num {
   );
 }
 
-/// System nav bar, home indicator, and IME — use for bottom padding on full-screen UIs.
+/// System nav bar, explore indicator, and IME — use for bottom padding on full-screen UIs.
 class BottomInset {
   BottomInset._();
 

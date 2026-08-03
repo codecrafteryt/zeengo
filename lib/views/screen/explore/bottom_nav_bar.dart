@@ -6,18 +6,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../controller/map_controller.dart';
+import 'package:zeengo/views/payouts/payouts.dart';
+import 'package:zeengo/views/screen/map/map_screen.dart';
 import '../../../data/enus.dart';
-import '../../../utils/values/air_bnb_style.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
-import '../../widgets/coming_soon_placeholder.dart';
 import '../account/account.dart';
 import '../chat/chats.dart';
+import 'explore_screen.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -30,10 +27,10 @@ class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
   static const List<Widget> _children = [
-    _ExploreTab(),
-    _MapTab(),
+    ExploreScreen(),
+    MapScreen(),
     Chats(),
-    _PayTab(),
+    Payouts(),
     Account(),
   ];
 
@@ -126,73 +123,7 @@ class _NavBarState extends State<NavBar> {
   }
 }
 
-class _ExploreTab extends StatelessWidget {
-  const _ExploreTab();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ComingSoonPlaceholder(
-        title: Enus.explore.tr,
-        icon: Icons.search_outlined,
-        message: Enus.exploreMessage.tr,
-      ),
-    );
-  }
-}
 
-class _PayTab extends StatelessWidget {
-  const _PayTab();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ComingSoonPlaceholder(
-        title: Enus.pay.tr,
-        icon: Icons.credit_card_outlined,
-        message: Enus.payMessage.tr,
-      ),
-    );
-  }
-}
 
-class _MapTab extends StatelessWidget {
-  const _MapTab();
-
-  MapController _resolveController() {
-    if (Get.isRegistered<MapController>()) {
-      return Get.find<MapController>();
-    }
-    return Get.put(
-      MapController(sharedPreferences: Get.find<SharedPreferences>()),
-      permanent: true,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final mapController = _resolveController();
-
-    return Scaffold(
-      body: GetBuilder<MapController>(
-        init: mapController,
-        builder: (c) {
-          return GoogleMap(
-            initialCameraPosition: const CameraPosition(
-              target: MapController.pakistanRoughCenter,
-              zoom: MapController.zoomSheetExpanded,
-            ),
-            padding: c.mapPadding,
-            style: kAirbnbLikeMapStyle,
-            markers: c.markers,
-            mapToolbarEnabled: false,
-            zoomControlsEnabled: false,
-            myLocationButtonEnabled: false,
-            compassEnabled: false,
-            onMapCreated: mapController.onMapCreated,
-          );
-        },
-      ),
-    );
-  }
-}

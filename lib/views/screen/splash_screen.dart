@@ -12,7 +12,7 @@ import '../../utils/extensions/extentions.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
 import '../../data/enus.dart';
-import 'home/home_pages.dart';
+import 'explore/home_pages.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

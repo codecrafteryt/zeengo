@@ -26,7 +26,7 @@ class AppTranslations extends Translations {
     Enus.pay: 'Pay',
     Enus.profile: 'Profile',
     Enus.exploreMessage:
-        'Your home feed and nearby venues will show up here soon.',
+        'Your explore feed and nearby venues will show up here soon.',
     Enus.payMessage: 'Payments and wallet features are coming soon.',
     Enus.messages: 'Messages',
     Enus.messagesMessage:
