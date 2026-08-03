@@ -140,4 +140,24 @@ class Enus {
   static const String contactSplizerAgent = 'contact_splizer_agent';
   static const String copied = 'copied';
   static const String whatsappPaymentMsg = 'whatsapp_payment_msg';
+
+  // Map
+  static const String googleMaps = 'google_maps';
+  static const String yandexMaps = 'yandex_maps';
+  static const String openYandexMaps = 'open_yandex_maps';
+  static const String driverActive = 'driver_active';
+  static const String catAll = 'cat_all';
+  static const String catMosques = 'cat_mosques';
+  static const String catMosque = 'cat_mosque';
+  static const String catHalal = 'cat_halal';
+  static const String catAtm = 'cat_atm';
+  static const String catMalls = 'cat_malls';
+  static const String catMall = 'cat_mall';
+  static const String directions = 'directions';
+  static const String startNavigation = 'start_navigation';
+  static const String openInMaps = 'open_in_maps';
+  static const String yandexComingSoon = 'yandex_coming_soon';
+  static const String yandexKeyMissing = 'yandex_key_missing';
+  static const String useGoogleMaps = 'use_google_maps';
+  static const String noPlacesFound = 'no_places_found';
 }

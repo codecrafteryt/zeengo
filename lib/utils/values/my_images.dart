@@ -38,4 +38,11 @@ class MyImages {
   static const String payoutUsdt = "assets/svgs/payout/usdt.svg";
   static const String payoutCash = "assets/svgs/payout/cash.svg";
   static const String payoutQr = "assets/svgs/payout/qr.svg";
+
+  static const String mapPin = "assets/svgs/map/pin.svg";
+  static const String mapMosque = "assets/svgs/map/mosque.svg";
+  static const String mapHalal = "assets/svgs/map/halal.svg";
+  static const String mapAtm = "assets/svgs/map/atm.svg";
+  static const String mapMall = "assets/svgs/map/mall.svg";
+  static const String mapNavigate = "assets/svgs/map/navigate.svg";
 }

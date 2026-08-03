@@ -5,4 +5,7 @@ class Env {
 
   static String get googleMapsApiKey =>
       dotenv.env['GOOGLE_MAPS_API_KEY']?.trim() ?? '';
+
+  static String get yandexMapsApiKey =>
+      dotenv.env['YANDEX_MAPS_API_KEY']?.trim() ?? '';
 }
