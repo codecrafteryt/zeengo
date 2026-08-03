@@ -6,8 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../data/enus.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_fonts.dart';
+import '../widgets/custom_bottom_sheet_widget.dart';
 import '../widgets/payout/payment_method_tile.dart';
 import '../widgets/payout/payout_balance_card.dart';
+import '../widgets/payout/stripe_card_payment_sheet.dart';
 import 'payment_method.dart';
 import 'payout_method_detail.dart';
 
@@ -20,6 +22,7 @@ class Payouts extends StatefulWidget {
 
 class _PayoutsState extends State<Payouts> {
   static const _whatsapp = '+79160000000';
+  static const _dueAmount = '\$100';
   PaymentMethodId? _selected;
 
   Future<void> _openWhatsapp([String? message]) async {
@@ -28,6 +31,17 @@ class _PayoutsState extends State<Payouts> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
+  }
+
+  Future<void> _onPayAction() async {
+    if (_selected == PaymentMethodId.card) {
+      await CustomBottomSheetWidget.show<bool>(
+        context: context,
+        child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
+      );
+      return;
+    }
+    await _openWhatsapp();
   }
 
   void _toggle(PaymentMethodId id) {
@@ -45,7 +59,7 @@ class _PayoutsState extends State<Payouts> {
         padding: EdgeInsets.fromLTRB(16.w, top + 12.h, 16.w, 20.h + bottom),
         children: [
           const PayoutBalanceCard(
-            dueAmount: '\$100',
+            dueAmount: _dueAmount,
             paidAmount: '\$450',
             totalAmount: '\$550',
           ),
@@ -54,7 +68,7 @@ class _PayoutsState extends State<Payouts> {
             PayoutMethodDetail(
               methodId: _selected!,
               onClose: () => setState(() => _selected = null),
-              onAction: () => _openWhatsapp(),
+              onAction: _onPayAction,
             ),
           ],
           SizedBox(height: 8.h),

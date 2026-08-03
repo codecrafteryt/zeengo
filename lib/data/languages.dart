@@ -164,6 +164,22 @@ class AppTranslations extends Translations {
         'Add YANDEX_MAPS_API_KEY in .env to enable Yandex Maps.',
     Enus.useGoogleMaps: 'Use Google Maps',
     Enus.noPlacesFound: 'No places found',
+    Enus.cardDetails: 'Card details',
+    Enus.payAmount: 'Pay @amount',
+    Enus.cardNumber: 'Card number',
+    Enus.expiration: 'Expiration',
+    Enus.cvv: 'CVV',
+    Enus.mmYy: 'MM / YY',
+    Enus.zipCode: 'Zip code',
+    Enus.countryRegion: 'Country/Region',
+    Enus.poweredByStripe: 'Payments are powered by stripe',
+    Enus.cardFieldsHint:
+        'Card number, expiry and CVC are entered securely in the field above.',
+    Enus.cancel: 'Cancel',
+    Enus.done: 'Done',
+    Enus.paymentSuccess: 'Payment success',
+    Enus.paymentFailed: 'Payment failed',
+    Enus.enterValidCard: 'Please enter a valid card',
   };
 
   static const Map<String, String> _ar = {
@@ -321,5 +337,21 @@ class AppTranslations extends Translations {
         'أضف YANDEX_MAPS_API_KEY في ملف .env لتفعيل خرائط ياندكس.',
     Enus.useGoogleMaps: 'استخدم خرائط جوجل',
     Enus.noPlacesFound: 'لا توجد أماكن',
+    Enus.cardDetails: 'بيانات البطاقة',
+    Enus.payAmount: 'ادفع @amount',
+    Enus.cardNumber: 'رقم البطاقة',
+    Enus.expiration: 'الانتهاء',
+    Enus.cvv: 'CVV',
+    Enus.mmYy: 'شهر / سنة',
+    Enus.zipCode: 'الرمز البريدي',
+    Enus.countryRegion: 'البلد / المنطقة',
+    Enus.poweredByStripe: 'المدفوعات مدعومة من stripe',
+    Enus.cardFieldsHint:
+        'رقم البطاقة وتاريخ الانتهاء وCVC تُدخل بأمان في الحقل أعلاه.',
+    Enus.cancel: 'إلغاء',
+    Enus.done: 'تم',
+    Enus.paymentSuccess: 'تم الدفع بنجاح',
+    Enus.paymentFailed: 'فشل الدفع',
+    Enus.enterValidCard: 'يرجى إدخال بطاقة صالحة',
   };
 }

@@ -7,12 +7,14 @@ import 'package:get/get.dart';
 import 'controller/language_controller.dart';
 import 'data/helper/get_di.dart';
 import 'data/languages.dart';
+import 'services/stripe_payment_service.dart';
 import 'views/screen/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await DependencyInjection.init();
+  await StripePaymentService.instance.init();
   runApp(const MyApp());
 }
 

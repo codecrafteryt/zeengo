@@ -160,4 +160,21 @@ class Enus {
   static const String yandexKeyMissing = 'yandex_key_missing';
   static const String useGoogleMaps = 'use_google_maps';
   static const String noPlacesFound = 'no_places_found';
+
+  // Stripe sheet
+  static const String cardDetails = 'card_details';
+  static const String payAmount = 'pay_amount';
+  static const String cardNumber = 'card_number';
+  static const String expiration = 'expiration';
+  static const String cvv = 'cvv';
+  static const String mmYy = 'mm_yy';
+  static const String zipCode = 'zip_code';
+  static const String countryRegion = 'country_region';
+  static const String poweredByStripe = 'powered_by_stripe';
+  static const String cardFieldsHint = 'card_fields_hint';
+  static const String cancel = 'cancel';
+  static const String done = 'done';
+  static const String paymentSuccess = 'payment_success';
+  static const String paymentFailed = 'payment_failed';
+  static const String enterValidCard = 'enter_valid_card';
 }
