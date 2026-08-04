@@ -20,13 +20,13 @@ class AiAssistantSheet extends StatefulWidget {
     final palette = AppPalette.of(context);
     return CustomBottomSheetWidget.show(
       context: context,
-      heightFactor: 0.92,
-      radius: 28.r,
+      heightFactor: 0.98,
+      radius: 16.r,
       showHandle: false,
       scrollable: false,
       padding: EdgeInsets.fromLTRB(
         18.w,
-        4.h,
+        8.h,
         18.w,
         12.h + MediaQuery.paddingOf(context).bottom,
       ),

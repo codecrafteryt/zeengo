@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth_controller.dart';
+import '../../controller/currency_converter_controller.dart';
 import '../../controller/language_controller.dart';
 import '../../controller/map_controller.dart';
 import '../../controller/theme_controller.dart';
@@ -31,6 +32,8 @@ class DependencyInjection {
       ),
       fenix: true,
     );
+
+    Get.lazyPut(() => CurrencyConverterController(), fenix: true);
 
     Get.put(
       MapController(sharedPreferences: sharedPreferences),

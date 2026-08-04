@@ -6,6 +6,8 @@ import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
+import '../../widgets/ai/ai_assistant_sheet.dart';
+import '../../widgets/currency/currency_calculator_sheet.dart';
 import '../../widgets/explore/explore_actions_grid.dart';
 import '../../widgets/explore/explore_header.dart';
 import '../../widgets/explore/explore_payment_card.dart';
@@ -13,7 +15,6 @@ import '../../widgets/explore/explore_restaurants_card.dart';
 import '../../widgets/explore/explore_schedule_card.dart';
 import '../../widgets/explore/explore_stats_row.dart';
 import '../../widgets/explore/explore_weather_card.dart';
-import '../../widgets/ai/ai_assistant_sheet.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -80,6 +81,7 @@ class ExploreScreen extends StatelessWidget {
                       title: Enus.currency.tr,
                       subtitle: 'USD · SAR · RUB',
                       accent: MyColors.green,
+                      onTap: () => CurrencyCalculatorSheet.show(context),
                     ),
                     ExploreActionItem(
                       svgAsset: MyImages.exploreSuggestion,

@@ -77,6 +77,14 @@ class Enus {
   static const String aiSuggestionHotel = 'ai_suggestion_hotel';
   static const String aiLocalReply = 'ai_local_reply';
   static const String currency = 'currency';
+  static const String amount = 'amount';
+  static const String approxRatesFooter = 'approx_rates_footer';
+  static const String moneyTipsTitle = 'money_tips_title';
+  static const String moneyTip1 = 'money_tip_1';
+  static const String moneyTip2 = 'money_tip_2';
+  static const String moneyTip3 = 'money_tip_3';
+  static const String moneyTip4 = 'money_tip_4';
+  static const String moneyTip5 = 'money_tip_5';
   static const String suggestions = 'suggestions';
   static const String whatToDoNow = 'what_to_do_now';
   static const String payBalance = 'pay_balance';
