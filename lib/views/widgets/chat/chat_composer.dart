@@ -19,50 +19,54 @@ class ChatComposer extends StatelessWidget {
   final VoidCallback onSend;
 
   static const double _height = 50;
+  static const double _radius = 8;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    // One solid fill — avoid theme InputDecorationTheme dark fill showing through.
     final fieldColor = palette.cardMuted;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(_radius),
+      borderSide: BorderSide.none,
+    );
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Container(
-            height: _height,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(_radius),
+            child: Container(
+              height: _height,
+              alignment: Alignment.center,
               color: fieldColor,
-              borderRadius: BorderRadius.circular(_height / 2),
-            ),
-            child: TextField(
-              controller: controller,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => onSend(),
-              cursorColor: MyColors.darkPurple,
-              style: TextStyle(
-                fontSize: 14.sp,
-                height: 1.2,
-                color: palette.textPrimary,
-              ),
-              decoration: InputDecoration(
-                isCollapsed: true,
-                filled: true,
-                fillColor: fieldColor,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 18.w,
-                  vertical: 14.h,
-                ),
-                hintText: hint,
-                hintStyle: TextStyle(
+              child: TextField(
+                controller: controller,
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) => onSend(),
+                cursorColor: MyColors.darkPurple,
+                style: TextStyle(
                   fontSize: 14.sp,
                   height: 1.2,
-                  color: palette.textSecondary,
+                  color: palette.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  isCollapsed: true,
+                  filled: true,
+                  fillColor: fieldColor,
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: border,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 18.w,
+                    vertical: 14.h,
+                  ),
+                  hintText: hint,
+                  hintStyle: TextStyle(
+                    fontSize: 14.sp,
+                    height: 1.2,
+                    color: palette.textSecondary,
+                  ),
                 ),
               ),
             ),

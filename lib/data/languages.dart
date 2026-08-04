@@ -90,6 +90,23 @@ class AppTranslations extends Translations {
     Enus.moneyTip5: 'Daily ATM limit: 50,000–100,000 RUB/card',
     Enus.suggestions: 'Suggestions',
     Enus.whatToDoNow: 'What to do now',
+    Enus.basedOnTime: 'Based on @time',
+    Enus.suggestionAfternoonTitle: 'Afternoon Activity',
+    Enus.suggestionAfternoonDesc:
+        'Bolshoi Theatre evening shows tonight — we can book a ticket.',
+    Enus.suggestionContactSplizer: 'Contact Splizer',
+    Enus.suggestionCurrencyTitle: 'Currency Tip',
+    Enus.suggestionCurrencyDesc:
+        'Alfa-Bank usually has better rates than airport kiosks today.',
+    Enus.suggestionAlfaBank: 'Alfa-Bank Location',
+    Enus.suggestionTransportTitle: 'Transport Tip',
+    Enus.suggestionTransportDesc:
+        'Metro is fastest after 5 PM — grab a Troika card nearby.',
+    Enus.suggestionNearestMetro: 'Nearest Metro',
+    Enus.suggestionPhotoTitle: 'Photo Spot',
+    Enus.suggestionPhotoDesc:
+        'Sparrow Hills viewpoint is clear this afternoon — great skyline shots.',
+    Enus.suggestionSparrowHills: 'Sparrow Hills',
     Enus.payBalance: 'Pay Balance',
     Enus.paymentProgress: 'Payment Progress',
     Enus.paidAmount: 'Paid: @amount',
@@ -290,6 +307,23 @@ class AppTranslations extends Translations {
     Enus.moneyTip5: 'حد السحب اليومي: 50,000–100,000 روبل / بطاقة',
     Enus.suggestions: 'اقتراحات',
     Enus.whatToDoNow: 'ماذا تفعل الآن',
+    Enus.basedOnTime: 'بناءً على @time',
+    Enus.suggestionAfternoonTitle: 'نشاط بعد الظهر',
+    Enus.suggestionAfternoonDesc:
+        'عروض مساء بولشوي ثياتر الليلة — يمكننا حجز تذكرة.',
+    Enus.suggestionContactSplizer: 'تواصل مع Splizer',
+    Enus.suggestionCurrencyTitle: 'نصيحة العملة',
+    Enus.suggestionCurrencyDesc:
+        'عادةً ما تكون أسعار ألفا بنك أفضل من أكشاك المطار اليوم.',
+    Enus.suggestionAlfaBank: 'موقع ألفا بنك',
+    Enus.suggestionTransportTitle: 'نصيحة المواصلات',
+    Enus.suggestionTransportDesc:
+        'المترو الأسرع بعد الخامسة — احصل على بطاقة ترويكا قريبًا.',
+    Enus.suggestionNearestMetro: 'أقرب مترو',
+    Enus.suggestionPhotoTitle: 'موقع للتصوير',
+    Enus.suggestionPhotoDesc:
+        'منظر تلال سبارو صافٍ بعد الظهر — لقطات أفق رائعة.',
+    Enus.suggestionSparrowHills: 'تلال سبارو',
     Enus.payBalance: 'دفع الرصيد',
     Enus.paymentProgress: 'تقدم الدفع',
     Enus.paidAmount: 'المدفوع: @amount',

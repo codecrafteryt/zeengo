@@ -7,6 +7,7 @@ import '../../data/enus.dart';
 import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
 import '../widgets/custom_bottom_sheet_widget.dart';
+import '../widgets/custom_header_bar_widget.dart';
 import '../widgets/custom_text_widget.dart';
 import '../widgets/payout/payment_method_tile.dart';
 import '../widgets/payout/payout_balance_card.dart';
@@ -15,7 +16,29 @@ import 'payment_method.dart';
 import 'payout_method_detail.dart';
 
 class Payouts extends StatefulWidget {
-  const Payouts({super.key});
+  const Payouts({super.key, this.embedded = false});
+
+  /// When true, renders list content only (for bottom sheet).
+  final bool embedded;
+
+  static Future<void> showAsSheet(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return CustomBottomSheetWidget.show(
+      context: context,
+      heightFactor: 0.98,
+      radius: 16.r,
+      showHandle: false,
+      scrollable: false,
+      padding: EdgeInsets.fromLTRB(
+        16.w,
+        8.h,
+        16.w,
+        12.h + MediaQuery.paddingOf(context).bottom,
+      ),
+      backgroundColor: palette.scaffold,
+      child: const Payouts(embedded: true),
+    );
+  }
 
   @override
   State<Payouts> createState() => _PayoutsState();
@@ -40,6 +63,7 @@ class _PayoutsState extends State<Payouts> {
         context: context,
         heightFactor: 0.98,
         radius: 16,
+        showHandle: false,
         child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
       );
       return;
@@ -57,52 +81,71 @@ class _PayoutsState extends State<Payouts> {
     final top = MediaQuery.paddingOf(context).top;
     final bottom = MediaQuery.paddingOf(context).bottom;
 
-    return Scaffold(
-      backgroundColor: palette.scaffold,
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(16.w, top + 12.h, 16.w, 20.h + bottom),
-        children: [
-          const PayoutBalanceCard(
-            dueAmount: _dueAmount,
-            paidAmount: '\$450',
-            totalAmount: '\$550',
-          ),
-          if (_selected != null) ...[
-            SizedBox(height: 12.h),
-            PayoutMethodDetail(
-              methodId: _selected!,
-              onClose: () => setState(() => _selected = null),
-              onAction: _onPayAction,
-            ),
-          ],
+    final list = ListView(
+      padding: widget.embedded
+          ? EdgeInsets.only(bottom: 8.h)
+          : EdgeInsets.fromLTRB(16.w, top + 12.h, 16.w, 20.h + bottom),
+      children: [
+        if (widget.embedded) ...[
+          const CustomHeaderBarWidget(),
           SizedBox(height: 8.h),
           CustomTextWidget(
-            Enus.choosePaymentMethod.tr,
-            fontSize: 15.sp,
+            Enus.pay.tr,
+            fontSize: 24.sp,
             fontWeight: FontWeight.w700,
-            color: MyColors.darkPurple,
+            color: palette.textPrimary,
           ),
+          SizedBox(height: 14.h),
+        ],
+        const PayoutBalanceCard(
+          dueAmount: _dueAmount,
+          paidAmount: '\$450',
+          totalAmount: '\$550',
+        ),
+        if (_selected != null) ...[
           SizedBox(height: 12.h),
-          for (final m in PaymentMethodsCatalog.all)
-            PaymentMethodTile(
-              svgAsset: m.svgAsset,
-              title: m.titleKey.tr,
-              subtitle: m.subtitleKey.tr,
-              accent: m.accent,
-              badge: m.badgeKey?.tr,
-              expanded: _selected == m.id,
-              onTap: () => _toggle(m.id),
-            ),
-          SizedBox(height: 8.h),
-          CustomTextWidget(
-            Enus.paymentsSecureFooter.tr,
-            textAlign: TextAlign.center,
-            fontSize: 11.sp,
-            height: 1.4,
-            color: palette.textSecondary,
+          PayoutMethodDetail(
+            methodId: _selected!,
+            onClose: () => setState(() => _selected = null),
+            onAction: _onPayAction,
           ),
         ],
-      ),
+        SizedBox(height: 8.h),
+        CustomTextWidget(
+          Enus.choosePaymentMethod.tr,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w700,
+          color: MyColors.darkPurple,
+        ),
+        SizedBox(height: 12.h),
+        for (final m in PaymentMethodsCatalog.all)
+          PaymentMethodTile(
+            svgAsset: m.svgAsset,
+            title: m.titleKey.tr,
+            subtitle: m.subtitleKey.tr,
+            accent: m.accent,
+            badge: m.badgeKey?.tr,
+            expanded: _selected == m.id,
+            onTap: () => _toggle(m.id),
+          ),
+        SizedBox(height: 8.h),
+        CustomTextWidget(
+          Enus.paymentsSecureFooter.tr,
+          textAlign: TextAlign.center,
+          fontSize: 11.sp,
+          height: 1.4,
+          color: palette.textSecondary,
+        ),
+      ],
+    );
+
+    if (widget.embedded) {
+      return list;
+    }
+
+    return Scaffold(
+      backgroundColor: palette.scaffold,
+      body: list,
     );
   }
 }

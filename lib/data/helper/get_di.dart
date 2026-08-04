@@ -5,6 +5,7 @@ import '../../controller/auth_controller.dart';
 import '../../controller/currency_converter_controller.dart';
 import '../../controller/language_controller.dart';
 import '../../controller/map_controller.dart';
+import '../../controller/suggestions_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../api_provider/api_provider.dart';
 import '../repos/auth_repo/auth_repo.dart';
@@ -34,6 +35,7 @@ class DependencyInjection {
     );
 
     Get.lazyPut(() => CurrencyConverterController(), fenix: true);
+    Get.lazyPut(() => SuggestionsController(), fenix: true);
 
     Get.put(
       MapController(sharedPreferences: sharedPreferences),

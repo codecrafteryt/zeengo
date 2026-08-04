@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:zeengo/views/payouts/payouts.dart';
+
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
@@ -15,6 +17,7 @@ import '../../widgets/explore/explore_restaurants_card.dart';
 import '../../widgets/explore/explore_schedule_card.dart';
 import '../../widgets/explore/explore_stats_row.dart';
 import '../../widgets/explore/explore_weather_card.dart';
+import '../../widgets/suggestions/suggestions_sheet.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -88,12 +91,14 @@ class ExploreScreen extends StatelessWidget {
                       title: Enus.suggestions.tr,
                       subtitle: Enus.whatToDoNow.tr,
                       accent: const Color(0xFFD97706),
+                      onTap: () => SuggestionsSheet.show(context),
                     ),
                     ExploreActionItem(
                       svgAsset: MyImages.navPaySvg,
                       title: Enus.payBalance.tr,
                       subtitle: '\$100',
                       accent: MyColors.darkPurple,
+                      onTap: () => Payouts.showAsSheet(context),
                     ),
                   ],
                 ),
