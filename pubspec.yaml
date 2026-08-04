@@ -85,6 +85,7 @@ flutter:
     - assets/fonts/
     - assets/svgs/
     - assets/svgs/close_cancel.svg
+    - assets/svgs/translate_flat.svg
     - assets/svgs/search_svgs/
     - assets/svgs/nav_bar/
     - assets/svgs/explore/

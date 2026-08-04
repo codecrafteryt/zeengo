@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/enus.dart';
 import '../utils/values/app_palette.dart';
 import '../utils/values/my_color.dart';
+import '../utils/values/my_images.dart';
 import '../views/widgets/custom_text_widget.dart';
 
 class LanguageController extends GetxController {
@@ -47,6 +49,15 @@ class LanguageController extends GetxController {
 
   Future<void> setArabic() => setLocale(arabic);
 
+  Widget _leadingTranslateIcon(Color color) {
+    return SvgPicture.asset(
+      MyImages.translateFlatSvg,
+      width: 24,
+      height: 24,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    );
+  }
+
   void showLanguagePicker() {
     Get.bottomSheet(
       SafeArea(
@@ -56,7 +67,8 @@ class LanguageController extends GetxController {
             return Container(
               decoration: BoxDecoration(
                 color: palette.card,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               child: Column(
@@ -83,7 +95,7 @@ class LanguageController extends GetxController {
                   ),
                   const SizedBox(height: 12),
                   ListTile(
-                    leading: Icon(Icons.language, color: palette.icon),
+                    leading: _leadingTranslateIcon(palette.icon),
                     title: CustomTextWidget(
                       Enus.english.tr,
                       color: palette.textPrimary,
@@ -97,7 +109,7 @@ class LanguageController extends GetxController {
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.language, color: palette.icon),
+                    leading: _leadingTranslateIcon(palette.icon),
                     title: CustomTextWidget(
                       Enus.arabic.tr,
                       color: palette.textPrimary,

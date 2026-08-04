@@ -35,55 +35,81 @@ class ExploreActionsGrid extends StatelessWidget {
       itemCount: items.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 10.h,
-        crossAxisSpacing: 10.w,
-        childAspectRatio: 1.35,
+        mainAxisSpacing: 12.h,
+        crossAxisSpacing: 12.w,
+        childAspectRatio: 1.22,
       ),
-      itemBuilder: (_, i) => _ActionCard(item: items[i]),
+      itemBuilder: (_, i) => _ActionCard(item: items[i], index: i),
     );
   }
 }
 
 class _ActionCard extends StatelessWidget {
-  const _ActionCard({required this.item});
+  const _ActionCard({required this.item, required this.index});
 
   final ExploreActionItem item;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return AppCard(
-      onTap: item.onTap,
-      padding: EdgeInsets.all(14.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppSvgIcon(
-            asset: item.svgAsset,
-            size: 20.sp,
-            color: item.accent,
-            bgColor: item.accent.withValues(alpha: 0.12),
-            padding: 10,
-          ),
-          const Spacer(),
-          CustomTextWidget(
-            item.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w700,
-            color: palette.textPrimary,
-          ),
-          SizedBox(height: 2.h),
-          CustomTextWidget(
-            item.subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            color: palette.textSecondary,
-          ),
-        ],
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 420 + (index * 70)),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * 14),
+          child: child,
+        ),
+      ),
+      child: AppCard(
+        onTap: item.onTap,
+        radius: 22.r,
+        padding: EdgeInsets.all(14.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppSvgIcon(
+              asset: item.svgAsset,
+              size: 20.sp,
+              color: item.accent,
+              bgColor: item.accent.withValues(alpha: 0.14),
+              padding: 11,
+            ),
+            const Spacer(),
+            CustomTextWidget(
+              item.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w700,
+              color: palette.textPrimary,
+            ),
+            SizedBox(height: 3.h),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextWidget(
+                    item.subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: palette.textSecondary,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 11.sp,
+                  color: item.accent.withValues(alpha: 0.7),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

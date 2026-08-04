@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(milliseconds: 1800), () {
+    Future<void>.delayed(const Duration(milliseconds: 1100), () {
       if (!mounted) return;
       Get.off(() => const HomePages());
     });
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               20.sbh,
-              LoadingAnimationWidget.waveDots(
+              LoadingAnimationWidget.staggeredDotsWave(
                 color: MyColors.darkPurple,
                 size: 50,
               ),

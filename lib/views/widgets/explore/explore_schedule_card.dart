@@ -24,6 +24,7 @@ class ExploreScheduleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     return AppCard(
+      radius: 22.r,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,24 +46,48 @@ class ExploreScheduleCard extends StatelessWidget {
                   color: palette.textPrimary,
                 ),
               ),
-              CustomTextWidget(
-                dateLabel,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: MyColors.darkPurple,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: MyColors.darkPurple.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: CustomTextWidget(
+                  dateLabel,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: MyColors.darkPurple,
+                ),
               ),
             ],
           ),
-          SizedBox(height: 20.h),
-          Center(
-            child: CustomTextWidget(
-              emptyMessage ?? Enus.noEventsToday.tr,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: palette.textSecondary,
+          SizedBox(height: 18.h),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 22.h, horizontal: 16.w),
+            decoration: BoxDecoration(
+              color: palette.cardMuted,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: palette.border.withValues(alpha: 0.65)),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.event_available_rounded,
+                  size: 28.sp,
+                  color: MyColors.darkPurple.withValues(alpha: 0.75),
+                ),
+                SizedBox(height: 10.h),
+                CustomTextWidget(
+                  emptyMessage ?? Enus.noEventsToday.tr,
+                  textAlign: TextAlign.center,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: palette.textSecondary,
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 8.h),
         ],
       ),
     );

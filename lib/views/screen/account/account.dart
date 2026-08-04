@@ -127,10 +127,10 @@ class Account extends StatelessWidget {
             context,
             titleKey: Enus.trip,
             tiles: const [
-              (Icons.assignment_outlined, Enus.bookingDetails),
-              (Icons.calendar_today_outlined, Enus.dailyProgram),
-              (Icons.edit_outlined, Enus.requestChanges),
-              (Icons.notifications_outlined, Enus.notifications),
+              (Icons.assignment_outlined, null, Enus.bookingDetails),
+              (Icons.calendar_today_outlined, null, Enus.dailyProgram),
+              (Icons.edit_outlined, null, Enus.requestChanges),
+              (Icons.notifications_outlined, null, Enus.notifications),
             ],
           ),
 
@@ -138,9 +138,9 @@ class Account extends StatelessWidget {
             context,
             titleKey: Enus.payments,
             tiles: const [
-              (Icons.account_balance_wallet_outlined, Enus.outstandingBalance),
-              (Icons.receipt_long_outlined, Enus.paymentHistory),
-              (Icons.currency_exchange_outlined, Enus.currencyCalculator),
+              (Icons.account_balance_wallet_outlined, null, Enus.outstandingBalance),
+              (Icons.receipt_long_outlined, null, Enus.paymentHistory),
+              (Icons.currency_exchange_outlined, null, Enus.currencyCalculator),
             ],
           ),
 
@@ -148,10 +148,10 @@ class Account extends StatelessWidget {
             context,
             titleKey: Enus.travel,
             tiles: const [
-              (Icons.mosque_outlined, Enus.prayerTimes),
-              (Icons.menu_book_outlined, Enus.russiaGuide),
-              (Icons.map_outlined, Enus.maps),
-              (Icons.place_outlined, Enus.nearbyPlaces),
+              (Icons.mosque_outlined, null, Enus.prayerTimes),
+              (Icons.menu_book_outlined, null, Enus.russiaGuide),
+              (Icons.map_outlined, null, Enus.maps),
+              (Icons.place_outlined, null, Enus.nearbyPlaces),
             ],
           ),
 
@@ -159,8 +159,8 @@ class Account extends StatelessWidget {
             context,
             titleKey: Enus.support,
             tiles: const [
-              (Icons.chat_bubble_outline_rounded, Enus.chat),
-              (Icons.emergency_outlined, Enus.emergencyContacts),
+              (Icons.chat_bubble_outline_rounded, null, Enus.chat),
+              (Icons.emergency_outlined, null, Enus.emergencyContacts),
             ],
           ),
 
@@ -168,10 +168,10 @@ class Account extends StatelessWidget {
             context,
             titleKey: Enus.settings,
             tiles: const [
-              (Icons.translate_rounded, Enus.language),
-              (Icons.dark_mode_outlined, Enus.theme),
-              (Icons.info_outline_rounded, Enus.about),
-              (Icons.menu_book_outlined, Enus.privacyPolicy),
+              (null, MyImages.translateFlatSvg, Enus.language),
+              (Icons.dark_mode_outlined, null, Enus.theme),
+              (Icons.info_outline_rounded, null, Enus.about),
+              (Icons.menu_book_outlined, null, Enus.privacyPolicy),
             ],
             onTileTap: (key) {
               if (key == Enus.language) {
@@ -232,7 +232,7 @@ class Account extends StatelessWidget {
   static List<Widget> _buildSection(
     BuildContext context, {
     required String titleKey,
-    required List<(IconData, String)> tiles,
+    required List<(IconData?, String?, String)> tiles,
     void Function(String key)? onTileTap,
   }) {
     final palette = AppPalette.of(context);
@@ -258,9 +258,10 @@ class Account extends StatelessWidget {
                 if (i > 0) _divider(context),
                 _AccountTile(
                   icon: tiles[i].$1,
-                  label: tiles[i].$2.tr,
+                  svgAsset: tiles[i].$2,
+                  label: tiles[i].$3.tr,
                   onTap: () =>
-                      (onTileTap ?? (key) => _toast(key))(tiles[i].$2),
+                      (onTileTap ?? (key) => _toast(key))(tiles[i].$3),
                 ),
               ],
             ],
@@ -319,12 +320,14 @@ class _AccountCard extends StatelessWidget {
 
 class _AccountTile extends StatelessWidget {
   const _AccountTile({
-    required this.icon,
+    this.icon,
+    this.svgAsset,
     required this.label,
     required this.onTap,
-  });
+  }) : assert(icon != null || svgAsset != null);
 
-  final IconData icon;
+  final IconData? icon;
+  final String? svgAsset;
   final String label;
   final VoidCallback onTap;
 
@@ -339,7 +342,15 @@ class _AccountTile extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           child: Row(
             children: [
-              Icon(icon, size: 24.sp, color: palette.icon),
+              if (svgAsset != null)
+                SvgPicture.asset(
+                  svgAsset!,
+                  width: 24.sp,
+                  height: 24.sp,
+                  colorFilter: ColorFilter.mode(palette.icon, BlendMode.srcIn),
+                )
+              else
+                Icon(icon, size: 24.sp, color: palette.icon),
               SizedBox(width: 16.w),
               Expanded(
                 child: CustomTextWidget(

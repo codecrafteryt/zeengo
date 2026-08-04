@@ -16,6 +16,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
     this.radius,
     this.scrollable = true,
     this.borderColor,
+    this.belowStatusBar = false,
   });
 
   final Widget child;
@@ -27,6 +28,9 @@ class CustomBottomSheetWidget extends StatelessWidget {
   final bool scrollable;
   final Color? borderColor;
 
+  /// When true, sheet height = screen height − status bar (MediaQuery).
+  final bool belowStatusBar;
+
   static Future<T?> show<T>({
     required BuildContext context,
     required Widget child,
@@ -37,6 +41,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
     bool isDismissible = true,
     bool enableDrag = true,
     bool scrollable = true,
+    bool belowStatusBar = false,
     Color? backgroundColor,
     Color? borderColor,
   }) {
@@ -53,6 +58,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
         padding: padding,
         showHandle: showHandle,
         scrollable: scrollable,
+        belowStatusBar: belowStatusBar,
         backgroundColor: backgroundColor,
         borderColor: borderColor,
         child: child,
@@ -65,7 +71,10 @@ class CustomBottomSheetWidget extends StatelessWidget {
     final palette = AppPalette.of(context);
     final bg = backgroundColor ?? palette.card;
     final media = MediaQuery.of(context);
-    final maxH = media.size.height * (heightFactor ?? 0.98);
+    final statusBar = media.padding.top;
+    final maxH = belowStatusBar
+        ? media.size.height - statusBar
+        : media.size.height * (heightFactor ?? 0.98);
     final r = radius ?? 16.r;
     final contentPadding = padding ??
         EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h + media.padding.bottom);
@@ -79,7 +88,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxHeight: maxH,
-            minHeight: maxH * 0.85,
+            minHeight: belowStatusBar ? maxH : maxH * 0.85,
           ),
           child: Container(
             height: maxH,

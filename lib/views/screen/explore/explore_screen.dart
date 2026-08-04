@@ -25,9 +25,10 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.paddingOf(context).bottom;
+    final palette = AppPalette.of(context);
 
     return Scaffold(
-      backgroundColor: AppPalette.of(context).scaffold,
+      backgroundColor: palette.scaffold,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -39,37 +40,40 @@ class ExploreScreen extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 20.h + bottom),
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 24.h + bottom),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                ExploreStatsRow(
-                  items: [
-                    ExploreStatItem(
-                      svgAsset: MyImages.exploreCalendar,
-                      value: '0',
-                      label: Enus.daysLeft.tr,
-                      iconColor: MyColors.darkPurple,
-                      bgColor: MyColors.darkPurple.withValues(alpha: 0.12),
-                    ),
-                    ExploreStatItem(
-                      svgAsset: MyImages.exploreGuests,
-                      value: '2',
-                      label: Enus.guests.tr,
-                      iconColor: MyColors.purple,
-                      bgColor: MyColors.purple.withValues(alpha: 0.12),
-                    ),
-                    ExploreStatItem(
-                      svgAsset: MyImages.exploreMoney,
-                      value: '\$100',
-                      label: Enus.due.tr,
-                      iconColor: const Color(0xFFD97706),
-                      bgColor: const Color(0x1AD97706),
-                    ),
-                  ],
+                Transform.translate(
+                  offset: Offset(0, -18.h),
+                  child: ExploreStatsRow(
+                    items: [
+                      ExploreStatItem(
+                        svgAsset: MyImages.exploreCalendar,
+                        value: '0',
+                        label: Enus.daysLeft.tr,
+                        iconColor: MyColors.darkPurple,
+                        bgColor: MyColors.darkPurple.withValues(alpha: 0.12),
+                      ),
+                      ExploreStatItem(
+                        svgAsset: MyImages.exploreGuests,
+                        value: '2',
+                        label: Enus.guests.tr,
+                        iconColor: MyColors.purple,
+                        bgColor: MyColors.purple.withValues(alpha: 0.12),
+                      ),
+                      ExploreStatItem(
+                        svgAsset: MyImages.exploreMoney,
+                        value: '\$100',
+                        label: Enus.due.tr,
+                        iconColor: const Color(0xFFD97706),
+                        bgColor: const Color(0x1AD97706),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 4.h),
                 ExploreScheduleCard(dateLabel: Enus.mon3Aug.tr),
-                SizedBox(height: 12.h),
+                SizedBox(height: 16.h),
                 ExploreActionsGrid(
                   items: [
                     ExploreActionItem(
@@ -102,13 +106,13 @@ class ExploreScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 16.h),
                 ExplorePaymentCard(
                   progress: 0.82,
                   paidLabel: Enus.paidAmount.trParams({'amount': '\$450'}),
                   totalLabel: Enus.totalAmount.trParams({'amount': '\$550'}),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 18.h),
                 const ExploreRestaurantsCard(
                   items: [
                     ExploreRestaurant(
@@ -131,7 +135,7 @@ class ExploreScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 18.h),
                 ExploreWeatherCard(
                   city: 'Moscow',
                   dateLabel: Enus.monday3Aug.tr,

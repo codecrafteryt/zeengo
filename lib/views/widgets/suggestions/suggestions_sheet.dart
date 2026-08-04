@@ -22,6 +22,7 @@ class SuggestionsSheet extends StatelessWidget {
     return CustomBottomSheetWidget.show(
       context: context,
       heightFactor: 0.98,
+      belowStatusBar: true,
       radius: 16.r,
       showHandle: false,
       scrollable: true,
