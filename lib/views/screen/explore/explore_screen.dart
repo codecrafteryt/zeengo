@@ -13,6 +13,7 @@ import '../../widgets/explore/explore_restaurants_card.dart';
 import '../../widgets/explore/explore_schedule_card.dart';
 import '../../widgets/explore/explore_stats_row.dart';
 import '../../widgets/explore/explore_weather_card.dart';
+import '../../widgets/ai/ai_assistant_sheet.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -72,6 +73,7 @@ class ExploreScreen extends StatelessWidget {
                       title: Enus.aiAssistant.tr,
                       subtitle: Enus.askMeAnything.tr,
                       accent: MyColors.purple,
+                      onTap: () => AiAssistantSheet.show(context),
                     ),
                     ExploreActionItem(
                       svgAsset: MyImages.exploreCurrency,

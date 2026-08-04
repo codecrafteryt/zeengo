@@ -67,6 +67,15 @@ class Enus {
   static const String monday3Aug = 'monday_3_aug';
   static const String aiAssistant = 'ai_assistant';
   static const String askMeAnything = 'ask_me_anything';
+  static const String claudeAiAssistant = 'claude_ai_assistant';
+  static const String aiLanguagesContext = 'ai_languages_context';
+  static const String askTripAnything = 'ask_trip_anything';
+  static const String askTripAnythingAr = 'ask_trip_anything_ar';
+  static const String askAnythingHint = 'ask_anything_hint';
+  static const String aiSuggestionProgram = 'ai_suggestion_program';
+  static const String aiSuggestionHalal = 'ai_suggestion_halal';
+  static const String aiSuggestionHotel = 'ai_suggestion_hotel';
+  static const String aiLocalReply = 'ai_local_reply';
   static const String currency = 'currency';
   static const String suggestions = 'suggestions';
   static const String whatToDoNow = 'what_to_do_now';
