@@ -22,7 +22,7 @@ class AiAssistantSheet extends StatefulWidget {
       context: context,
       heightFactor: 0.92,
       radius: 28.r,
-      showHandle: true,
+      showHandle: false,
       scrollable: false,
       padding: EdgeInsets.fromLTRB(
         18.w,
@@ -31,7 +31,6 @@ class AiAssistantSheet extends StatefulWidget {
         12.h + MediaQuery.paddingOf(context).bottom,
       ),
       backgroundColor: palette.card,
-      borderColor: MyColors.darkPurple.withValues(alpha: 0.45),
       child: const AiAssistantSheet(),
     );
   }

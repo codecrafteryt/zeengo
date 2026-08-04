@@ -24,27 +24,38 @@ class ChatComposer extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            controller: controller,
-            textInputAction: TextInputAction.send,
-            onSubmitted: (_) => onSend(),
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: palette.textPrimary,
-            ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
+          child: SizedBox(
+            height: 50,
+            child: TextField(
+              controller: controller,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => onSend(),
+              style: TextStyle(
                 fontSize: 14.sp,
-                color: palette.textSecondary,
+                color: palette.textPrimary,
               ),
-              filled: true,
-              fillColor: palette.cardMuted,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28.r),
-                borderSide: BorderSide.none,
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(
+                  fontSize: 14.sp,
+                  color: palette.textSecondary,
+                ),
+                filled: true,
+                fillColor: palette.cardMuted,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 18.w),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
@@ -57,8 +68,8 @@ class ChatComposer extends StatelessWidget {
             customBorder: const CircleBorder(),
             onTap: onSend,
             child: SizedBox(
-              width: 48.w,
-              height: 48.w,
+              width: 50,
+              height: 50,
               child: Center(
                 child: SvgPicture.asset(
                   MyImages.chatSend,
