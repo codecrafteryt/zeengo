@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
+import '../../../utils/values/app_palette.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ExploreActionItem {
   const ExploreActionItem({
@@ -51,6 +51,7 @@ class _ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       onTap: item.onTap,
       padding: EdgeInsets.all(14.w),
@@ -65,28 +66,22 @@ class _ActionCard extends StatelessWidget {
             padding: 10,
           ),
           const Spacer(),
-          Text(
+          CustomTextWidget(
             item.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w700,
+            color: palette.textPrimary,
           ),
           SizedBox(height: 2.h),
-          Text(
+          CustomTextWidget(
             item.subtitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            color: palette.textSecondary,
           ),
         ],
       ),

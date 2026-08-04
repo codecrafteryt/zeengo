@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class PayoutInfoBox extends StatelessWidget {
   const PayoutInfoBox({super.key, required this.children});
@@ -16,13 +18,14 @@ class PayoutInfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
-        color: MyColors.scaffoldMuted,
+        color: palette.cardMuted,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: MyColors.borderSubtle),
+        border: Border.all(color: palette.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,29 +43,24 @@ class PayoutKeyValue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Padding(
       padding: EdgeInsets.only(bottom: 10.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          CustomTextWidget(
             label,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w600,
-              color: MyColors.darkPurple,
-            ),
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: MyColors.darkPurple,
           ),
           SizedBox(height: 3.h),
-          Text(
+          CustomTextWidget(
             value,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: palette.textPrimary,
           ),
         ],
       ),
@@ -82,25 +80,23 @@ class PayoutWalletBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return PayoutInfoBox(
       children: [
-        Text(
+        CustomTextWidget(
           label,
-          style: TextStyle(
-            fontFamily: MyFonts.plusJakartaSans,
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w600,
-            color: MyColors.darkPurple,
-          ),
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w600,
+          color: MyColors.darkPurple,
         ),
         SizedBox(height: 8.h),
         SelectableText(
           address,
           style: TextStyle(
-            fontFamily: MyFonts.plusJakartaSans,
+            fontFamily: MyFonts.roboto,
             fontSize: 12.sp,
             fontWeight: FontWeight.w700,
-            color: MyColors.blackDark,
+            color: palette.textPrimary,
             height: 1.4,
           ),
         ),
@@ -119,14 +115,11 @@ class PayoutWalletBox extends StatelessWidget {
               ),
               SizedBox(width: 6.w),
               Flexible(
-                child: Text(
+                child: CustomTextWidget(
                   Enus.qrScanWallet.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.darkPurple,
-                  ),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: MyColors.darkPurple,
                 ),
               ),
             ],

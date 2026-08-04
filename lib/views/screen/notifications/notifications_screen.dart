@@ -3,35 +3,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
+import '../../widgets/custom_text_widget.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final bottom = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
-      backgroundColor: MyColors.scaffoldMuted,
+      backgroundColor: palette.scaffold,
       appBar: AppBar(
-        backgroundColor: MyColors.white,
+        backgroundColor: palette.card,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: MyColors.blackDark),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: palette.icon),
         ),
-        title: Text(
+        title: CustomTextWidget(
           Enus.notifications.tr,
-          style: TextStyle(
-            fontFamily: MyFonts.plusJakartaSans,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: MyColors.blackDark,
-          ),
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          color: palette.textPrimary,
         ),
         centerTitle: true,
       ),
@@ -52,26 +51,20 @@ class NotificationsScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-              Text(
+              CustomTextWidget(
                 Enus.noNotifications.tr,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.blackDark,
-                ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: palette.textPrimary,
               ),
               SizedBox(height: 8.h),
-              Text(
+              CustomTextWidget(
                 Enus.noNotificationsMessage.tr,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 13.sp,
-                  height: 1.4,
-                  color: MyColors.textSecondary,
-                ),
+                fontSize: 13.sp,
+                height: 1.4,
+                color: palette.textSecondary,
               ),
             ],
           ),

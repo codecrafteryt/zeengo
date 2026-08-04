@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import '../../../controller/language_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../../screen/notifications/notifications_screen.dart';
 import '../app_circle_icon_button.dart';
+import '../custom_text_widget.dart';
 
 class ExploreHeader extends StatelessWidget {
   const ExploreHeader({
@@ -43,14 +43,11 @@ class ExploreHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          CustomTextWidget(
             'ZEENGO - $bookingId',
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-              color: MyColors.white.withValues(alpha: 0.85),
-            ),
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            color: MyColors.white.withValues(alpha: 0.85),
           ),
           SizedBox(height: 12.h),
           Row(
@@ -58,6 +55,7 @@ class ExploreHeader extends StatelessWidget {
               Obx(
                 () => AppCircleIconButton(
                   label: lang.isArabic ? 'EN' : 'ع',
+                  backgroundColor: MyColors.white,
                   foregroundColor: MyColors.darkPurple,
                   onTap: lang.showLanguagePicker,
                 ),
@@ -65,32 +63,27 @@ class ExploreHeader extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    Text(
+                    CustomTextWidget(
                       Enus.welcomeUser.trParams({'name': userName}),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w700,
-                        color: MyColors.white,
-                      ),
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w700,
+                      color: MyColors.white,
                     ),
                     SizedBox(height: 4.h),
-                    Text(
+                    CustomTextWidget(
                       packageLabel,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.white.withValues(alpha: 0.9),
-                      ),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.white.withValues(alpha: 0.9),
                     ),
                   ],
                 ),
               ),
               AppCircleIconButton(
                 svgAsset: MyImages.notificationFlat,
+                backgroundColor: MyColors.white,
                 foregroundColor: MyColors.darkPurple,
                 onTap: () => Get.to(() => const NotificationsScreen()),
               ),

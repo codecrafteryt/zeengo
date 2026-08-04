@@ -5,11 +5,13 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../utils/extensions/extentions.dart';
+import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
 import 'explore/home_pages.dart';
@@ -33,27 +35,33 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10.w),
-              child: Image.asset(
-                MyImages.appIcon,
-                width: 250.w,
-                height: 250.h,
-                fit: BoxFit.contain,
+    final palette = AppPalette.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: palette.scaffold,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10.w),
+                child: Image.asset(
+                  MyImages.appIcon,
+                  width: 250.w,
+                  height: 250.h,
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
-            20.sbh,
-            LoadingAnimationWidget.waveDots(
-              color: MyColors.darkPurple,
-              size: 50,
-            ),
-          ],
+              20.sbh,
+              LoadingAnimationWidget.waveDots(
+                color: MyColors.darkPurple,
+                size: 50,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_badge.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class PaymentMethodTile extends StatelessWidget {
   const PaymentMethodTile({
@@ -29,6 +30,7 @@ class PaymentMethodTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       onTap: onTap,
       margin: EdgeInsets.only(bottom: 10.h),
@@ -50,16 +52,13 @@ class PaymentMethodTile extends StatelessWidget {
                 Row(
                   children: [
                     Flexible(
-                      child: Text(
+                      child: CustomTextWidget(
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: MyFonts.plusJakartaSans,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w700,
-                          color: MyColors.blackDark,
-                        ),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: palette.textPrimary,
                       ),
                     ),
                     if (badge != null) ...[
@@ -69,15 +68,12 @@ class PaymentMethodTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 3.h),
-                Text(
+                CustomTextWidget(
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    color: MyColors.textSecondary,
-                  ),
+                  fontSize: 12.sp,
+                  color: palette.textSecondary,
                 ),
               ],
             ),

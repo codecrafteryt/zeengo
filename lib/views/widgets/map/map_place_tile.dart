@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class MapPlaceTile extends StatelessWidget {
   const MapPlaceTile({
@@ -32,6 +33,7 @@ class MapPlaceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.all(14.w),
@@ -49,25 +51,19 @@ class MapPlaceTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                CustomTextWidget(
                   place.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
                 ),
                 SizedBox(height: 3.h),
-                Text(
+                CustomTextWidget(
                   place.categoryLabelKey.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    color: MyColors.textSecondary,
-                  ),
+                  fontSize: 12.sp,
+                  color: palette.textSecondary,
                 ),
               ],
             ),
@@ -75,26 +71,20 @@ class MapPlaceTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
+              CustomTextWidget(
                 '${place.distanceKm.toStringAsFixed(1)} km',
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.darkPurple,
-                ),
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: MyColors.darkPurple,
               ),
               SizedBox(height: 6.h),
               InkWell(
                 onTap: onDirections,
-                child: Text(
+                child: CustomTextWidget(
                   Enus.directions.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.darkPurple,
-                  ),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: MyColors.darkPurple,
                 ),
               ),
             ],

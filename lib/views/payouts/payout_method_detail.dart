@@ -3,9 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../data/enus.dart';
+import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
 import '../../utils/values/my_images.dart';
+import '../widgets/custom_text_widget.dart';
 import '../widgets/payout/payout_detail_shell.dart';
 import '../widgets/payout/payout_info_widgets.dart';
 import 'payment_method.dart';
@@ -22,22 +23,9 @@ class PayoutMethodDetail extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onAction;
 
-  TextStyle get _body => TextStyle(
-        fontFamily: MyFonts.plusJakartaSans,
-        fontSize: 13.sp,
-        height: 1.4,
-        color: MyColors.textSecondary,
-      );
-
-  TextStyle get _label => TextStyle(
-        fontFamily: MyFonts.plusJakartaSans,
-        fontSize: 11.sp,
-        fontWeight: FontWeight.w600,
-        color: MyColors.darkPurple,
-      );
-
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return switch (methodId) {
       PaymentMethodId.card => PayoutDetailShell(
           title: Enus.payByCardStripe.tr,
@@ -45,7 +33,12 @@ class PayoutMethodDetail extends StatelessWidget {
           onAction: onAction,
           buttonLabel: Enus.payNowStripe.tr,
           leadingSvg: MyImages.navPaySvg,
-          child: Text(Enus.stripeDescription.tr, style: _body),
+          child: CustomTextWidget(
+            Enus.stripeDescription.tr,
+            fontSize: 13.sp,
+            height: 1.4,
+            color: palette.textSecondary,
+          ),
         ),
       PaymentMethodId.applePay => PayoutDetailShell(
           title: Enus.pmApplePay.tr,
@@ -54,7 +47,12 @@ class PayoutMethodDetail extends StatelessWidget {
           buttonLabel: Enus.requestApplePayWhatsapp.tr,
           buttonColor: const Color(0xFF2563EB),
           leadingSvg: MyImages.chatPhone,
-          child: Text(Enus.applePayDescription.tr, style: _body),
+          child: CustomTextWidget(
+            Enus.applePayDescription.tr,
+            fontSize: 13.sp,
+            height: 1.4,
+            color: palette.textSecondary,
+          ),
         ),
       PaymentMethodId.alRajhi => PayoutDetailShell(
           title: Enus.alRajhiTransfer.tr,
@@ -76,17 +74,24 @@ class PayoutMethodDetail extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 10.h),
-              Text(Enus.afterTransferNote.tr, style: _body),
+              CustomTextWidget(
+                Enus.afterTransferNote.tr,
+                fontSize: 13.sp,
+                height: 1.4,
+                color: palette.textSecondary,
+              ),
             ],
           ),
         ),
       PaymentMethodId.usdtTrc20 => _crypto(
+          context: context,
           title: Enus.usdtTrc20Title.tr,
           label: Enus.walletTrc20.tr,
           address: 'TQn9Y2khEsLJW1ChVvFMSMeRDow5KcbLSE',
           warning: Enus.usdtTrc20Warning.tr,
         ),
       PaymentMethodId.usdtBep20 => _crypto(
+          context: context,
           title: Enus.usdtBep20Title.tr,
           label: Enus.walletBep20.tr,
           address: '0x742d35Cc6634C0532925a3b844Bc9e759e0B48',
@@ -102,20 +107,27 @@ class PayoutMethodDetail extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(Enus.cashAgentDescription.tr, style: _body),
+              CustomTextWidget(
+                Enus.cashAgentDescription.tr,
+                fontSize: 13.sp,
+                height: 1.4,
+                color: palette.textSecondary,
+              ),
               SizedBox(height: 12.h),
               PayoutInfoBox(
                 children: [
-                  Text(Enus.acceptedCurrencies.tr, style: _label),
+                  CustomTextWidget(
+                    Enus.acceptedCurrencies.tr,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: MyColors.darkPurple,
+                  ),
                   SizedBox(height: 6.h),
-                  Text(
+                  CustomTextWidget(
                     'USD · SAR · EUR · RUB',
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w800,
-                      color: MyColors.blackDark,
-                    ),
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w800,
+                    color: palette.textPrimary,
                   ),
                 ],
               ),
@@ -126,11 +138,13 @@ class PayoutMethodDetail extends StatelessWidget {
   }
 
   Widget _crypto({
+    required BuildContext context,
     required String title,
     required String label,
     required String address,
     required String warning,
   }) {
+    final palette = AppPalette.of(context);
     return PayoutDetailShell(
       title: title,
       onClose: onClose,
@@ -148,7 +162,14 @@ class PayoutMethodDetail extends StatelessWidget {
             children: [
               Icon(Icons.warning_amber_rounded, size: 18.sp, color: const Color(0xFFD97706)),
               SizedBox(width: 6.w),
-              Expanded(child: Text(warning, style: _body)),
+              Expanded(
+                child: CustomTextWidget(
+                  warning,
+                  fontSize: 13.sp,
+                  height: 1.4,
+                  color: palette.textSecondary,
+                ),
+              ),
             ],
           ),
         ],

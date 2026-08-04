@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../utils/values/my_color.dart';
+import '../../utils/values/app_palette.dart';
 
 /// Airbnb-style reusable bottom sheet.
 /// Use [CustomBottomSheetWidget.show] from any screen.
@@ -12,7 +12,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
     this.heightFactor,
     this.padding,
     this.showHandle = true,
-    this.backgroundColor = MyColors.white,
+    this.backgroundColor,
     this.radius,
   });
 
@@ -20,7 +20,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
   final double? heightFactor;
   final EdgeInsetsGeometry? padding;
   final bool showHandle;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final double? radius;
 
   static Future<T?> show<T>({
@@ -32,7 +32,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
     bool showHandle = true,
     bool isDismissible = true,
     bool enableDrag = true,
-    Color backgroundColor = MyColors.white,
+    Color? backgroundColor,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -40,7 +40,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
       isDismissible: isDismissible,
       enableDrag: enableDrag,
       backgroundColor: Colors.transparent,
-      barrierColor: MyColors.black.withValues(alpha: 0.45),
+      barrierColor: AppPalette.of(context).overlay,
       builder: (ctx) => CustomBottomSheetWidget(
         heightFactor: heightFactor,
         radius: radius,
@@ -54,6 +54,8 @@ class CustomBottomSheetWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final bg = backgroundColor ?? palette.card;
     final media = MediaQuery.of(context);
     final maxH = media.size.height * (heightFactor ?? 0.98);
     final r = radius ?? 16.r;
@@ -70,7 +72,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
             minHeight: maxH * 0.85,
           ),
           child: Material(
-            color: backgroundColor,
+            color: bg,
             elevation: 0,
             borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
             clipBehavior: Clip.antiAlias,
@@ -84,7 +86,7 @@ class CustomBottomSheetWidget extends StatelessWidget {
                       width: 40.w,
                       height: 4.h,
                       decoration: BoxDecoration(
-                        color: MyColors.borderSubtle,
+                        color: palette.border,
                         borderRadius: BorderRadius.circular(4.r),
                       ),
                     ),

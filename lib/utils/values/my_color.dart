@@ -20,6 +20,7 @@ class MyColors {
   static const Color white = Color(0xFFFFFFFF); // rgba(255, 255, 255, 1)
   static const Color light = Color(0xFFF9F9F9); // rgba(249, 249, 249, 1)
   static const Color black = Color(0xFF000000); // rgba(0, 0, 0, 1)
+  static const Color darkBg = Color.fromRGBO(0, 0, 0, 1);
   static const Color blackDark = Color(0xFF262626); // rgba(33, 33, 33, 1)
 
   // Grayscale Colors

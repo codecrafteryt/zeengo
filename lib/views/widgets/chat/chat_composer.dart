@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 
 class ChatComposer extends StatelessWidget {
@@ -20,6 +20,7 @@ class ChatComposer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Row(
       children: [
         Expanded(
@@ -28,19 +29,17 @@ class ChatComposer extends StatelessWidget {
             textInputAction: TextInputAction.send,
             onSubmitted: (_) => onSend(),
             style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
               fontSize: 14.sp,
-              color: MyColors.blackDark,
+              color: palette.textPrimary,
             ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(
-                fontFamily: MyFonts.plusJakartaSans,
                 fontSize: 14.sp,
-                color: MyColors.textSecondary,
+                color: palette.textSecondary,
               ),
               filled: true,
-              fillColor: MyColors.scaffoldMuted,
+              fillColor: palette.cardMuted,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
               border: OutlineInputBorder(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
+import '../custom_text_widget.dart';
 
 class ChatMessage {
   const ChatMessage({
@@ -25,12 +26,13 @@ class ChatMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final mine = message.isMine;
     final bubble = Container(
       constraints: BoxConstraints(maxWidth: 0.72.sw),
       padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 8.h),
       decoration: BoxDecoration(
-        color: mine ? MyColors.darkPurple : MyColors.scaffoldMuted,
+        color: mine ? MyColors.darkPurple : palette.cardMuted,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(18.r),
           topRight: Radius.circular(18.r),
@@ -42,29 +44,23 @@ class ChatMessageBubble extends StatelessWidget {
         crossAxisAlignment:
             mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Text(
+          CustomTextWidget(
             message.text,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 14.sp,
-              height: 1.35,
-              fontWeight: FontWeight.w500,
-              color: mine ? MyColors.white : MyColors.blackDark,
-            ),
+            fontSize: 14.sp,
+            height: 1.35,
+            fontWeight: FontWeight.w500,
+            color: mine ? MyColors.white : palette.textPrimary,
           ),
           SizedBox(height: 4.h),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              CustomTextWidget(
                 message.time,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 10.sp,
-                  color: mine
-                      ? MyColors.white.withValues(alpha: 0.75)
-                      : MyColors.textSecondary,
-                ),
+                fontSize: 10.sp,
+                color: mine
+                    ? MyColors.white.withValues(alpha: 0.75)
+                    : palette.textSecondary,
               ),
               if (mine) ...[
                 SizedBox(width: 4.w),
@@ -99,14 +95,11 @@ class ChatMessageBubble extends StatelessWidget {
                 if (!mine && message.senderName != null) ...[
                   Padding(
                     padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
-                    child: Text(
+                    child: CustomTextWidget(
                       message.senderName!,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w600,
-                        color: MyColors.darkPurple,
-                      ),
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: MyColors.darkPurple,
                     ),
                   ),
                 ],
@@ -137,13 +130,11 @@ class _Avatar extends StatelessWidget {
       backgroundColor: isMine
           ? MyColors.darkPurple.withValues(alpha: 0.15)
           : MyColors.purple.withValues(alpha: 0.15),
-      child: Text(
+      child: CustomTextWidget(
         label.characters.first.toUpperCase(),
-        style: TextStyle(
-          fontSize: 11.sp,
-          fontWeight: FontWeight.w700,
-          color: isMine ? MyColors.darkPurple : MyColors.purple,
-        ),
+        fontSize: 11.sp,
+        fontWeight: FontWeight.w700,
+        color: isMine ? MyColors.darkPurple : MyColors.purple,
       ),
     );
   }

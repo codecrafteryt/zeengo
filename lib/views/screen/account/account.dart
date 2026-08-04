@@ -10,21 +10,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/language_controller.dart';
+import '../../../controller/theme_controller.dart';
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
+import '../../widgets/custom_text_widget.dart';
 
 class Account extends StatelessWidget {
   const Account({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final topPad = MediaQuery.paddingOf(context).top;
     final bottomPad = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
-      backgroundColor: MyColors.scaffoldMuted,
+      backgroundColor: palette.scaffold,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -32,28 +35,25 @@ class Account extends StatelessWidget {
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.fromLTRB(24.w, topPad + 16.h, 24.w, 28.h),
-              decoration: const BoxDecoration(
-                color: MyColors.white,
+              decoration: BoxDecoration(
+                color: palette.card,
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0x0F000000),
+                    color: Colors.black.withValues(alpha: 0.06),
                     blurRadius: 12,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  CustomTextWidget(
                     Enus.profile.tr,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontSize: 28.sp,
-                      fontWeight: FontWeight.w700,
-                      color: MyColors.blackDark,
-                      letterSpacing: -0.5,
-                    ),
+                    fontSize: 28.sp,
+                    fontWeight: FontWeight.w700,
+                    color: palette.textPrimary,
+                    letterSpacing: -0.5,
                   ),
                   SizedBox(height: 24.h),
                   Row(
@@ -64,8 +64,8 @@ class Account extends StatelessWidget {
                         height: 72.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: MyColors.darkWhite,
-                          border: Border.all(color: MyColors.borderSubtle, width: 1),
+                          color: palette.cardMuted,
+                          border: Border.all(color: palette.border, width: 1),
                         ),
                         child: Icon(
                           Icons.person_rounded,
@@ -78,26 +78,20 @@ class Account extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            CustomTextWidget(
                               Enus.guest.tr,
-                              style: TextStyle(
-                                fontFamily: MyFonts.plusJakartaSans,
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.w700,
-                                color: MyColors.blackDark,
-                              ),
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.w700,
+                              color: palette.textPrimary,
                             ),
                             SizedBox(height: 4.h),
-                            Text(
+                            CustomTextWidget(
                               Enus.showProfile.tr,
-                              style: TextStyle(
-                                fontFamily: MyFonts.plusJakartaSans,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: MyColors.textSecondary,
-                                decoration: TextDecoration.underline,
-                                decorationColor: MyColors.textSecondary,
-                              ),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: palette.textSecondary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: palette.textSecondary,
                             ),
                           ],
                         ),
@@ -111,17 +105,15 @@ class Account extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () => _toast(Enus.profile),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: MyColors.blackDark,
-                        side: const BorderSide(color: MyColors.blackDark, width: 1.2),
+                        foregroundColor: palette.textPrimary,
+                        side: BorderSide(color: palette.textPrimary, width: 1.2),
                         shape: const StadiumBorder(),
                       ),
-                      child: Text(
+                      child: CustomTextWidget(
                         Enus.showProfile.tr,
-                        style: TextStyle(
-                          fontFamily: MyFonts.plusJakartaSans,
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        color: palette.textPrimary,
                       ),
                     ),
                   ),
@@ -132,6 +124,7 @@ class Account extends StatelessWidget {
           SliverToBoxAdapter(child: SizedBox(height: 24.h)),
 
           ..._buildSection(
+            context,
             titleKey: Enus.trip,
             tiles: const [
               (Icons.assignment_outlined, Enus.bookingDetails),
@@ -142,6 +135,7 @@ class Account extends StatelessWidget {
           ),
 
           ..._buildSection(
+            context,
             titleKey: Enus.payments,
             tiles: const [
               (Icons.account_balance_wallet_outlined, Enus.outstandingBalance),
@@ -151,6 +145,7 @@ class Account extends StatelessWidget {
           ),
 
           ..._buildSection(
+            context,
             titleKey: Enus.travel,
             tiles: const [
               (Icons.mosque_outlined, Enus.prayerTimes),
@@ -161,6 +156,7 @@ class Account extends StatelessWidget {
           ),
 
           ..._buildSection(
+            context,
             titleKey: Enus.support,
             tiles: const [
               (Icons.chat_bubble_outline_rounded, Enus.chat),
@@ -169,15 +165,21 @@ class Account extends StatelessWidget {
           ),
 
           ..._buildSection(
+            context,
             titleKey: Enus.settings,
             tiles: const [
               (Icons.translate_rounded, Enus.language),
+              (Icons.dark_mode_outlined, Enus.theme),
               (Icons.info_outline_rounded, Enus.about),
               (Icons.menu_book_outlined, Enus.privacyPolicy),
             ],
             onTileTap: (key) {
               if (key == Enus.language) {
                 Get.find<LanguageController>().showLanguagePicker();
+                return;
+              }
+              if (key == Enus.theme) {
+                Get.find<ThemeController>().showThemePicker();
                 return;
               }
               _toast(key);
@@ -190,7 +192,7 @@ class Account extends StatelessWidget {
               child: Column(
                 children: [
                   InkWell(
-                    onTap: (){},
+                    onTap: () {},
                     borderRadius: BorderRadius.circular(8.r),
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -200,29 +202,26 @@ class Account extends StatelessWidget {
                             MyImages.logout,
                             width: 23.w,
                             height: 23.h,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.black,
+                            colorFilter: ColorFilter.mode(
+                              palette.icon,
                               BlendMode.srcIn,
                             ),
                           ),
                           SizedBox(width: 16.w),
-                          Text(
+                          CustomTextWidget(
                             Enus.logout.tr,
-                            style: TextStyle(
-                              fontFamily: MyFonts.plusJakartaSans,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500,
-                              color: MyColors.blackDark,
-                              decoration: TextDecoration.underline,
-                              decorationColor: MyColors.blackDark,
-                            ),
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                            color: palette.textPrimary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: palette.textPrimary,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
-              )
+              ),
             ),
           ),
         ],
@@ -230,23 +229,22 @@ class Account extends StatelessWidget {
     );
   }
 
-  static List<Widget> _buildSection({
+  static List<Widget> _buildSection(
+    BuildContext context, {
     required String titleKey,
     required List<(IconData, String)> tiles,
     void Function(String key)? onTileTap,
   }) {
+    final palette = AppPalette.of(context);
     return [
       SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w),
-          child: Text(
+          child: CustomTextWidget(
             titleKey.tr,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: palette.textPrimary,
           ),
         ),
       ),
@@ -257,7 +255,7 @@ class Account extends StatelessWidget {
           child: _AccountCard(
             children: [
               for (var i = 0; i < tiles.length; i++) ...[
-                if (i > 0) _divider(),
+                if (i > 0) _divider(context),
                 _AccountTile(
                   icon: tiles[i].$1,
                   label: tiles[i].$2.tr,
@@ -283,8 +281,12 @@ class Account extends StatelessWidget {
     );
   }
 
-  static Widget _divider() {
-    return Divider(height: 1, thickness: 1, color: MyColors.borderSubtle);
+  static Widget _divider(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: AppPalette.of(context).border,
+    );
   }
 }
 
@@ -295,11 +297,12 @@ class _AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: MyColors.white,
+        color: palette.card,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: MyColors.borderSubtle),
+        border: Border.all(color: palette.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -327,6 +330,7 @@ class _AccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -335,17 +339,14 @@ class _AccountTile extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           child: Row(
             children: [
-              Icon(icon, size: 24.sp, color: MyColors.blackDark),
+              Icon(icon, size: 24.sp, color: palette.icon),
               SizedBox(width: 16.w),
               Expanded(
-                child: Text(
+                child: CustomTextWidget(
                   label,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w500,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
+                  color: palette.textPrimary,
                 ),
               ),
               Icon(

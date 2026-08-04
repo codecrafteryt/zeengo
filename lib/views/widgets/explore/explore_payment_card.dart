@@ -3,9 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_card.dart';
+import '../custom_text_widget.dart';
 
 class ExplorePaymentCard extends StatelessWidget {
   const ExplorePaymentCard({
@@ -21,6 +22,7 @@ class ExplorePaymentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final pct = (progress.clamp(0.0, 1.0) * 100).round();
 
     return AppCard(
@@ -29,24 +31,18 @@ class ExplorePaymentCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: CustomTextWidget(
                   Enus.paymentProgress.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
-                ),
-              ),
-              Text(
-                '$pct%',
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
-                  color: MyColors.darkPurple,
+                  color: palette.textPrimary,
                 ),
+              ),
+              CustomTextWidget(
+                '$pct%',
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: MyColors.darkPurple,
               ),
             ],
           ),
@@ -56,7 +52,7 @@ class ExplorePaymentCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0),
               minHeight: 10.h,
-              backgroundColor: MyColors.borderSubtle,
+              backgroundColor: palette.border,
               valueColor:
                   const AlwaysStoppedAnimation<Color>(MyColors.darkPurple),
             ),
@@ -64,24 +60,18 @@ class ExplorePaymentCard extends StatelessWidget {
           SizedBox(height: 12.h),
           Row(
             children: [
-              Text(
+              CustomTextWidget(
                 paidLabel,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.green,
-                ),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: MyColors.green,
               ),
               const Spacer(),
-              Text(
+              CustomTextWidget(
                 totalLabel,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.blackDark,
-                ),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: palette.textPrimary,
               ),
             ],
           ),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_card.dart';
+import '../custom_text_widget.dart';
 
 /// Expandable detail shell: title, close, body, primary CTA.
 class PayoutDetailShell extends StatelessWidget {
@@ -29,6 +30,7 @@ class PayoutDetailShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       margin: EdgeInsets.only(bottom: 12.h),
       child: Column(
@@ -37,14 +39,11 @@ class PayoutDetailShell extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: CustomTextWidget(
                   title,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
                 ),
               ),
               InkWell(
@@ -52,7 +51,11 @@ class PayoutDetailShell extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.r),
                 child: Padding(
                   padding: EdgeInsets.all(4.w),
-                  child: Icon(Icons.close_rounded, size: 20.sp, color: MyColors.textSecondary),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 20.sp,
+                    color: palette.textSecondary,
+                  ),
                 ),
               ),
             ],
@@ -89,14 +92,12 @@ class PayoutDetailShell extends StatelessWidget {
                     SizedBox(width: 8.w),
                   ],
                   Flexible(
-                    child: Text(
+                    child: CustomTextWidget(
                       buttonLabel,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: MyColors.white,
                     ),
                   ),
                 ],

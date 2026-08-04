@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ExploreRestaurant {
   const ExploreRestaurant({
@@ -30,6 +31,7 @@ class ExploreRestaurantsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
       child: Column(
@@ -46,21 +48,18 @@ class ExploreRestaurantsCard extends StatelessWidget {
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: Text(
+                child: CustomTextWidget(
                   Enus.nearbyHalalRestaurants.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
                 ),
               ),
             ],
           ),
           SizedBox(height: 8.h),
           for (var i = 0; i < items.length; i++) ...[
-            if (i > 0) Divider(height: 1, color: MyColors.borderSubtle),
+            if (i > 0) Divider(height: 1, color: palette.border),
             _RestaurantTile(item: items[i]),
           ],
         ],
@@ -76,6 +75,7 @@ class _RestaurantTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final stars = item.rating.round().clamp(0, 5);
 
     return Padding(
@@ -94,23 +94,17 @@ class _RestaurantTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                CustomTextWidget(
                   item.name,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
                 ),
                 SizedBox(height: 2.h),
-                Text(
+                CustomTextWidget(
                   item.cuisine,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    color: MyColors.darkPurple,
-                  ),
+                  fontSize: 12.sp,
+                  color: MyColors.darkPurple,
                 ),
               ],
             ),
@@ -118,14 +112,11 @@ class _RestaurantTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
+              CustomTextWidget(
                 item.distance,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.darkPurple,
-                ),
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: MyColors.darkPurple,
               ),
               SizedBox(height: 4.h),
               Row(

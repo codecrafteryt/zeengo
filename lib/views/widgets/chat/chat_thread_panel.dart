@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../utils/values/my_color.dart';
+import '../../../utils/values/app_palette.dart';
 import '../app_card.dart';
 import 'chat_composer.dart';
 import 'chat_empty_state.dart';
@@ -40,6 +40,7 @@ class ChatThreadPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 12.h),
       child: Column(
@@ -50,7 +51,7 @@ class ChatThreadPanel extends StatelessWidget {
             statusLabel: statusLabel,
             accent: accent,
           ),
-          Divider(height: 24.h, color: MyColors.borderSubtle),
+          Divider(height: 24.h, color: palette.border),
           Expanded(
             child: messages.isEmpty
                 ? ChatEmptyState(message: emptyMessage)

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
 import 'app_card.dart';
+import 'custom_text_widget.dart';
 
 class AppSegmentTab {
   const AppSegmentTab({
@@ -61,7 +62,8 @@ class _SegmentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? MyColors.darkPurple : MyColors.textSecondary;
+    final palette = AppPalette.of(context);
+    final color = selected ? MyColors.darkPurple : palette.textSecondary;
 
     return AppCard(
       onTap: onTap,
@@ -69,7 +71,7 @@ class _SegmentItem extends StatelessWidget {
       radius: 16.r,
       color: selected
           ? MyColors.darkPurple.withValues(alpha: 0.08)
-          : MyColors.white,
+          : palette.card,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -80,16 +82,13 @@ class _SegmentItem extends StatelessWidget {
             colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           ),
           SizedBox(height: 6.h),
-          Text(
+          CustomTextWidget(
             tab.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 12.sp,
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-              color: color,
-            ),
+            fontSize: 12.sp,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: color,
           ),
         ],
       ),

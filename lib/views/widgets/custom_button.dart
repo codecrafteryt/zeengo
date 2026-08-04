@@ -10,7 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../utils/values/my_fonts.dart';
+import 'custom_text_widget.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -29,7 +29,7 @@ class CustomButton extends StatelessWidget {
   final Color? iconColor;
   final double? iconSize;
   final FontWeight? fontWeight;
-  final bool isLoading; // Added this parameter
+  final bool isLoading;
   final String? svgIconPath;
 
   const CustomButton({
@@ -50,14 +50,13 @@ class CustomButton extends StatelessWidget {
     this.suffixIcon,
     this.iconColor,
     this.iconSize,
-    this.isLoading = false, // Set default to false
+    this.isLoading = false,
     this.svgIconPath,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // height: 50,
       height: height ?? 50,
       width: width ?? 352.w,
       child: TextButton(
@@ -74,77 +73,64 @@ class CustomButton extends StatelessWidget {
         child: Center(
           child: isLoading
               ? SizedBox(
-            height: 20.0.h,
-            width: 20.0.w,
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              backgroundColor: Colors.grey.shade400,
-              strokeWidth: 2.0.w,
-            ),
-          )
+                  height: 20.0.h,
+                  width: 20.0.w,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    backgroundColor: Colors.grey.shade400,
+                    strokeWidth: 2.0.w,
+                  ),
+                )
               : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-
-              /// ✅ SVG PREFIX ICON
-              if (svgIconPath != null)
-                Padding(
-                  padding: EdgeInsets.only(right: 8.r),
-                  child: SvgPicture.asset(
-                    svgIconPath!,
-                    height: iconSize ?? 22.h,
-                    width: iconSize ?? 22.w,
-                    colorFilter: iconColor != null
-                        ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
-                        : null,
-                  ),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (svgIconPath != null)
+                      Padding(
+                        padding: EdgeInsets.only(right: 8.r),
+                        child: SvgPicture.asset(
+                          svgIconPath!,
+                          height: iconSize ?? 22.h,
+                          width: iconSize ?? 22.w,
+                          colorFilter: iconColor != null
+                              ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
+                              : null,
+                        ),
+                      ),
+                    if (imagePath != null)
+                      Padding(
+                        padding: EdgeInsets.only(right: 8.r),
+                        child: Image.asset(
+                          imagePath!,
+                          height: 24.h,
+                          width: 24.w,
+                        ),
+                      ),
+                    if (icon != null)
+                      Padding(
+                        padding: EdgeInsets.only(right: 8.r),
+                        child: Icon(
+                          icon,
+                          color: iconColor ?? textColor,
+                          size: iconSize ?? 24.h,
+                        ),
+                      ),
+                    CustomTextWidget(
+                      text,
+                      color: textColor,
+                      fontSize: fontSize ?? 14.sp,
+                      fontWeight: fontWeight ?? FontWeight.w500,
+                    ),
+                    if (suffixIcon != null)
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.r),
+                        child: Icon(
+                          suffixIcon,
+                          color: iconColor ?? textColor,
+                          size: iconSize ?? 24.h,
+                        ),
+                      ),
+                  ],
                 ),
-
-              /// IMAGE PREFIX
-              if (imagePath != null)
-                Padding(
-                  padding: EdgeInsets.only(right: 8.r),
-                  child: Image.asset(
-                    imagePath!,
-                    height: 24.h,
-                    width: 24.w,
-                  ),
-                ),
-
-              /// MATERIAL ICON PREFIX
-              if (icon != null)
-                Padding(
-                  padding: EdgeInsets.only(right: 8.r),
-                  child: Icon(
-                    icon,
-                    color: iconColor ?? textColor,
-                    size: iconSize ?? 24.h,
-                  ),
-                ),
-
-              /// TEXT
-              Text(
-                text,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: fontSize ?? 14.sp,
-                  fontWeight: fontWeight ?? FontWeight.w500,
-                  fontFamily: MyFonts.plusJakartaSans,
-                ),
-              ),
-
-              /// SUFFIX ICON
-              if (suffixIcon != null)
-                Padding(
-                  padding: EdgeInsets.only(left: 8.r),
-                  child: Icon(
-                    suffixIcon,
-                    color: iconColor ?? textColor,
-                    size: iconSize ?? 24.h,
-                  ),
-                ),
-            ],
-          ),
         ),
       ),
     );

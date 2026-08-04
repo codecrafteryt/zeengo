@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../utils/values/my_color.dart';
+import '../../utils/values/app_palette.dart';
 import 'app_card.dart';
+import 'custom_text_widget.dart';
 
 /// Circular tappable icon button (header actions, etc.).
 class AppCircleIconButton extends StatelessWidget {
@@ -15,8 +16,8 @@ class AppCircleIconButton extends StatelessWidget {
     this.onTap,
     this.size,
     this.iconSize,
-    this.backgroundColor = MyColors.white,
-    this.foregroundColor = MyColors.blackDark,
+    this.backgroundColor,
+    this.foregroundColor,
   }) : assert(svgAsset != null || icon != null || label != null);
 
   final String? svgAsset;
@@ -25,11 +26,14 @@ class AppCircleIconButton extends StatelessWidget {
   final VoidCallback? onTap;
   final double? size;
   final double? iconSize;
-  final Color backgroundColor;
-  final Color foregroundColor;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final bg = backgroundColor ?? palette.card;
+    final fg = foregroundColor ?? palette.icon;
     final dim = size ?? 40.w;
     final iSize = iconSize ?? 20.sp;
 
@@ -42,26 +46,24 @@ class AppCircleIconButton extends StatelessWidget {
           width: dim,
           height: dim,
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: bg,
             shape: BoxShape.circle,
-            boxShadow: AppShadows.soft,
+            boxShadow: AppShadows.soft(context),
           ),
           alignment: Alignment.center,
-          child: _buildChild(iSize),
+          child: _buildChild(iSize, fg),
         ),
       ),
     );
   }
 
-  Widget _buildChild(double iSize) {
+  Widget _buildChild(double iSize, Color fg) {
     if (label != null) {
-      return Text(
+      return CustomTextWidget(
         label!,
-        style: TextStyle(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w700,
-          color: foregroundColor,
-        ),
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w700,
+        color: fg,
       );
     }
     if (svgAsset != null) {
@@ -69,9 +71,9 @@ class AppCircleIconButton extends StatelessWidget {
         svgAsset!,
         width: iSize,
         height: iSize,
-        colorFilter: ColorFilter.mode(foregroundColor, BlendMode.srcIn),
+        colorFilter: ColorFilter.mode(fg, BlendMode.srcIn),
       );
     }
-    return Icon(icon, size: iSize, color: foregroundColor);
+    return Icon(icon, size: iSize, color: fg);
   }
 }

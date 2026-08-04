@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
+import '../custom_text_widget.dart';
 
 class ChatQuickReplies extends StatelessWidget {
   const ChatQuickReplies({
@@ -16,6 +17,7 @@ class ChatQuickReplies extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return SizedBox(
       height: 38.h,
       child: ListView.separated(
@@ -32,20 +34,17 @@ class ChatQuickReplies extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: MyColors.white,
+                  color: palette.card,
                   borderRadius: BorderRadius.circular(22.r),
                   border: Border.all(
                     color: MyColors.darkPurple.withValues(alpha: 0.45),
                   ),
                 ),
-                child: Text(
+                child: CustomTextWidget(
                   text,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: palette.textPrimary,
                 ),
               ),
             ),

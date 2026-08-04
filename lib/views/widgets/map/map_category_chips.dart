@@ -4,10 +4,11 @@ import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class MapCategoryChips extends StatelessWidget {
   const MapCategoryChips({
@@ -21,6 +22,7 @@ class MapCategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final items = <(PlaceCategory, String, String?)>[
       (PlaceCategory.all, Enus.catAll.tr, null),
       (PlaceCategory.mosques, Enus.catMosques.tr, MyImages.mapMosque),
@@ -38,10 +40,10 @@ class MapCategoryChips extends StatelessWidget {
         itemBuilder: (_, i) {
           final (cat, label, icon) = items[i];
           final active = selected == cat;
-          final color = active ? MyColors.white : MyColors.blackDark;
+          final color = active ? MyColors.white : palette.textPrimary;
 
           return Material(
-            color: active ? MyColors.darkPurple : MyColors.white,
+            color: active ? MyColors.darkPurple : palette.card,
             borderRadius: BorderRadius.circular(22.r),
             elevation: active ? 0 : 1,
             shadowColor: MyColors.black.withValues(alpha: 0.08),
@@ -56,14 +58,11 @@ class MapCategoryChips extends StatelessWidget {
                       AppSvgIcon(asset: icon, size: 16.sp, color: color),
                       SizedBox(width: 6.w),
                     ],
-                    Text(
+                    CustomTextWidget(
                       label,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                      ),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w700,
+                      color: color,
                     ),
                   ],
                 ),

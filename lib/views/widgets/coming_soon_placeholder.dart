@@ -7,8 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../data/enus.dart';
+import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
+import '../widgets/custom_text_widget.dart';
 
 class ComingSoonPlaceholder extends StatelessWidget {
   const ComingSoonPlaceholder({
@@ -24,9 +25,10 @@ class ComingSoonPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final bottomPad = MediaQuery.paddingOf(context).bottom;
     return ColoredBox(
-      color: MyColors.scaffoldMuted,
+      color: palette.scaffold,
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(28.w, 24.h, 28.w, 24.h + bottomPad),
@@ -38,7 +40,7 @@ class ComingSoonPlaceholder extends StatelessWidget {
                   width: 120.w,
                   height: 120.w,
                   decoration: BoxDecoration(
-                    color: MyColors.white,
+                    color: palette.card,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -65,16 +67,13 @@ class ComingSoonPlaceholder extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 32.h),
-                Text(
+                CustomTextWidget(
                   title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                    height: 1.2,
-                  ),
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
+                  height: 1.2,
                 ),
                 SizedBox(height: 12.h),
                 Container(
@@ -83,28 +82,22 @@ class ComingSoonPlaceholder extends StatelessWidget {
                     color: MyColors.brandPrimary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Text(
+                  child: CustomTextWidget(
                     Enus.comingSoon.tr,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                      color: MyColors.brandPrimary,
-                    ),
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                    color: MyColors.brandPrimary,
                   ),
                 ),
                 SizedBox(height: 20.h),
-                Text(
+                CustomTextWidget(
                   message ?? Enus.comingSoonDefaultMessage.tr,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 15.sp,
-                    height: 1.5,
-                    fontWeight: FontWeight.w400,
-                    color: MyColors.textSecondary,
-                  ),
+                  fontSize: 15.sp,
+                  height: 1.5,
+                  fontWeight: FontWeight.w400,
+                  color: palette.textSecondary,
                 ),
               ],
             ),

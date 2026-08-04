@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
+import 'custom_text_widget.dart';
 
 /// Small pill badge (Recommended / Popular).
 class AppBadge extends StatelessWidget {
@@ -25,14 +25,11 @@ class AppBadge extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20.r),
       ),
-      child: Text(
+      child: CustomTextWidget(
         label,
-        style: TextStyle(
-          fontFamily: MyFonts.plusJakartaSans,
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w700,
-          color: textColor,
-        ),
+        fontSize: 10.sp,
+        fontWeight: FontWeight.w700,
+        color: textColor,
       ),
     );
   }

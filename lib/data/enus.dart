@@ -12,6 +12,11 @@ class Enus {
   static const String english = 'english';
   static const String arabic = 'arabic';
   static const String chooseLanguage = 'choose_language';
+  static const String chooseTheme = 'choose_theme';
+  static const String theme = 'theme';
+  static const String themeSystem = 'theme_system';
+  static const String themeLight = 'theme_light';
+  static const String themeDark = 'theme_dark';
 
   // Nav
   static const String explore = 'explore';

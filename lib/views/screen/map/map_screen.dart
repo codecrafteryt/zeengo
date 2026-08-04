@@ -7,8 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../controller/map_controller.dart';
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/air_bnb_style.dart';
 import '../../../utils/values/my_color.dart';
+import '../../widgets/custom_text_widget.dart';
 import '../../widgets/map/map_category_chips.dart';
 import '../../widgets/map/map_directions_sheet.dart';
 import '../../widgets/map/map_location_header.dart';
@@ -34,7 +36,7 @@ class MapScreen extends StatelessWidget {
     final c = _controller();
 
     return Scaffold(
-      backgroundColor: MyColors.scaffoldMuted,
+      backgroundColor: AppPalette.of(context).scaffold,
       body: GetBuilder<MapController>(
         init: c,
         builder: (ctrl) {
@@ -139,6 +141,7 @@ class _BottomPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final places = controller.filteredPlaces;
 
     return Container(
@@ -146,7 +149,7 @@ class _BottomPanel extends StatelessWidget {
       margin: EdgeInsets.only(bottom: controller.activePlace == null ? 0 : 110.h),
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h + bottomPad),
       decoration: BoxDecoration(
-        color: MyColors.scaffoldMuted,
+        color: palette.scaffold,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
@@ -166,7 +169,12 @@ class _BottomPanel extends StatelessWidget {
           SizedBox(height: 12.h),
           Expanded(
             child: places.isEmpty
-                ? Center(child: Text(Enus.noPlacesFound.tr))
+                ? Center(
+                    child: CustomTextWidget(
+                      Enus.noPlacesFound.tr,
+                      color: palette.textSecondary,
+                    ),
+                  )
                 : ListView.builder(
                     itemCount: places.length,
                     itemBuilder: (_, i) => MapPlaceTile(

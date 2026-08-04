@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/enus.dart';
+import '../utils/values/app_palette.dart';
+import '../utils/values/my_color.dart';
+import '../views/widgets/custom_text_widget.dart';
 
 class LanguageController extends GetxController {
   LanguageController({required this.sharedPreferences});
@@ -47,60 +50,70 @@ class LanguageController extends GetxController {
   void showLanguagePicker() {
     Get.bottomSheet(
       SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.black12,
-                    borderRadius: BorderRadius.circular(2),
+        child: Builder(
+          builder: (context) {
+            final palette = AppPalette.of(context);
+            return Container(
+              decoration: BoxDecoration(
+                color: palette.card,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: palette.border,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  CustomTextWidget(
+                    Enus.chooseLanguage.tr,
+                    textAlign: TextAlign.center,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: palette.textPrimary,
+                  ),
+                  const SizedBox(height: 12),
+                  ListTile(
+                    leading: Icon(Icons.language, color: palette.icon),
+                    title: CustomTextWidget(
+                      Enus.english.tr,
+                      color: palette.textPrimary,
+                    ),
+                    trailing: !isArabic
+                        ? const Icon(Icons.check, color: MyColors.darkPurple)
+                        : null,
+                    onTap: () async {
+                      Get.back();
+                      await setEnglish();
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.language, color: palette.icon),
+                    title: CustomTextWidget(
+                      Enus.arabic.tr,
+                      color: palette.textPrimary,
+                    ),
+                    trailing: isArabic
+                        ? const Icon(Icons.check, color: MyColors.darkPurple)
+                        : null,
+                    onTap: () async {
+                      Get.back();
+                      await setArabic();
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                Enus.chooseLanguage.tr,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 12),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(Enus.english.tr),
-                trailing: !isArabic
-                    ? const Icon(Icons.check, color: Color(0xFF6366F1))
-                    : null,
-                onTap: () async {
-                  Get.back();
-                  await setEnglish();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(Enus.arabic.tr),
-                trailing: isArabic
-                    ? const Icon(Icons.check, color: Color(0xFF6366F1))
-                    : null,
-                onTap: () async {
-                  Get.back();
-                  await setArabic();
-                },
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
       backgroundColor: Colors.transparent,

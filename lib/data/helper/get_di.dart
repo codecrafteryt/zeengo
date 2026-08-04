@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../controller/auth_controller.dart';
 import '../../controller/language_controller.dart';
 import '../../controller/map_controller.dart';
+import '../../controller/theme_controller.dart';
 import '../api_provider/api_provider.dart';
 import '../repos/auth_repo/auth_repo.dart';
 
@@ -14,6 +15,10 @@ class DependencyInjection {
     Get.put<SharedPreferences>(sharedPreferences, permanent: true);
     Get.put(
       LanguageController(sharedPreferences: sharedPreferences),
+      permanent: true,
+    );
+    Get.put(
+      ThemeController(sharedPreferences: sharedPreferences),
       permanent: true,
     );
     Get.lazyPut(() => ApiProvider(), fenix: true);

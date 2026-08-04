@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
+import '../../../utils/values/app_palette.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ExploreStatItem {
   const ExploreStatItem({
@@ -47,6 +47,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 8.w),
       child: Column(
@@ -59,27 +60,21 @@ class _StatCard extends StatelessWidget {
             padding: 10,
           ),
           SizedBox(height: 10.h),
-          Text(
+          CustomTextWidget(
             item.value,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w700,
+            color: palette.textPrimary,
           ),
           SizedBox(height: 2.h),
-          Text(
+          CustomTextWidget(
             item.label,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w500,
+            color: palette.textSecondary,
           ),
         ],
       ),

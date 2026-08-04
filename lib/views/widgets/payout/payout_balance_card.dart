@@ -3,9 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_card.dart';
+import '../custom_text_widget.dart';
 
 class PayoutBalanceCard extends StatelessWidget {
   const PayoutBalanceCard({
@@ -21,6 +22,7 @@ class PayoutBalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final paid = double.tryParse(paidAmount.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
     final total = double.tryParse(totalAmount.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 1;
     final progress = (paid / total).clamp(0.0, 1.0);
@@ -29,37 +31,28 @@ class PayoutBalanceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          CustomTextWidget(
             Enus.outstandingBalance.tr,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-              color: MyColors.darkPurple,
-            ),
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: MyColors.darkPurple,
           ),
           SizedBox(height: 8.h),
-          Text(
+          CustomTextWidget(
             dueAmount,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 32.sp,
-              fontWeight: FontWeight.w800,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 32.sp,
+            fontWeight: FontWeight.w800,
+            color: palette.textPrimary,
           ),
           SizedBox(height: 6.h),
-          Text(
+          CustomTextWidget(
             Enus.paidOfTotal.trParams({
               'paid': paidAmount,
               'total': totalAmount,
             }),
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w500,
+            color: palette.textSecondary,
           ),
           SizedBox(height: 14.h),
           ClipRRect(
@@ -67,7 +60,7 @@ class PayoutBalanceCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8.h,
-              backgroundColor: MyColors.borderSubtle,
+              backgroundColor: palette.border,
               valueColor:
                   const AlwaysStoppedAnimation<Color>(MyColors.darkPurple),
             ),

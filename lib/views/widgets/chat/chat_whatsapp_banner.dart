@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ChatWhatsappBanner extends StatelessWidget {
   const ChatWhatsappBanner({
@@ -46,24 +46,18 @@ class ChatWhatsappBanner extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    CustomTextWidget(
                       title,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                        color: MyColors.green,
-                      ),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: MyColors.green,
                     ),
                     SizedBox(height: 2.h),
-                    Text(
+                    CustomTextWidget(
                       subtitle,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: MyColors.green.withValues(alpha: 0.85),
-                      ),
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                      color: MyColors.green.withValues(alpha: 0.85),
                     ),
                   ],
                 ),

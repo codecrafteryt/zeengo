@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class MapDirectionsSheet extends StatelessWidget {
   const MapDirectionsSheet({
@@ -30,6 +31,7 @@ class MapDirectionsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       margin: EdgeInsets.zero,
       radius: 24.r,
@@ -41,7 +43,7 @@ class MapDirectionsSheet extends StatelessWidget {
             width: 40.w,
             height: 4.h,
             decoration: BoxDecoration(
-              color: MyColors.borderSubtle,
+              color: palette.border,
               borderRadius: BorderRadius.circular(4.r),
             ),
           ),
@@ -60,23 +62,17 @@ class MapDirectionsSheet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    CustomTextWidget(
                       place.name,
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w800,
-                        color: MyColors.blackDark,
-                      ),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w800,
+                      color: palette.textPrimary,
                     ),
                     SizedBox(height: 2.h),
-                    Text(
+                    CustomTextWidget(
                       '$distanceLabel · $etaLabel · $providerLabel',
-                      style: TextStyle(
-                        fontFamily: MyFonts.plusJakartaSans,
-                        fontSize: 12.sp,
-                        color: MyColors.textSecondary,
-                      ),
+                      fontSize: 12.sp,
+                      color: palette.textSecondary,
                     ),
                   ],
                 ),
@@ -98,13 +94,11 @@ class MapDirectionsSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                   ),
-                  child: Text(
+                  child: CustomTextWidget(
                     Enus.startNavigation.tr,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
-                    ),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.sp,
+                    color: MyColors.white,
                   ),
                 ),
               ),
@@ -120,13 +114,11 @@ class MapDirectionsSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                   ),
-                  child: Text(
+                  child: CustomTextWidget(
                     Enus.openInMaps.tr,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13.sp,
-                    ),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.sp,
+                    color: MyColors.darkPurple,
                   ),
                 ),
               ),

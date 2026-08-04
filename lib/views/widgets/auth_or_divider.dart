@@ -9,19 +9,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../data/enus.dart';
-import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
+import '../../utils/values/app_palette.dart';
+import '../widgets/custom_text_widget.dart';
 
 class AuthOrDivider extends StatelessWidget {
   const AuthOrDivider({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final line = Expanded(
       child: Divider(
         height: 1,
         thickness: 1,
-        color: MyColors.borderSubtle,
+        color: palette.border,
       ),
     );
     return Row(
@@ -29,14 +30,11 @@ class AuthOrDivider extends StatelessWidget {
         line,
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text(
+          child: CustomTextWidget(
             Enus.or.tr,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w500,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w500,
+            color: palette.textSecondary,
           ),
         ),
         line,

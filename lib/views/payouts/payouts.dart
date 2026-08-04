@@ -4,9 +4,10 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/enus.dart';
+import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
-import '../../utils/values/my_fonts.dart';
 import '../widgets/custom_bottom_sheet_widget.dart';
+import '../widgets/custom_text_widget.dart';
 import '../widgets/payout/payment_method_tile.dart';
 import '../widgets/payout/payout_balance_card.dart';
 import '../widgets/payout/stripe_card_payment_sheet.dart';
@@ -52,11 +53,12 @@ class _PayoutsState extends State<Payouts> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     final top = MediaQuery.paddingOf(context).top;
     final bottom = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
-      backgroundColor: MyColors.scaffoldMuted,
+      backgroundColor: palette.scaffold,
       body: ListView(
         padding: EdgeInsets.fromLTRB(16.w, top + 12.h, 16.w, 20.h + bottom),
         children: [
@@ -74,14 +76,11 @@ class _PayoutsState extends State<Payouts> {
             ),
           ],
           SizedBox(height: 8.h),
-          Text(
+          CustomTextWidget(
             Enus.choosePaymentMethod.tr,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w700,
-              color: MyColors.darkPurple,
-            ),
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w700,
+            color: MyColors.darkPurple,
           ),
           SizedBox(height: 12.h),
           for (final m in PaymentMethodsCatalog.all)
@@ -95,15 +94,12 @@ class _PayoutsState extends State<Payouts> {
               onTap: () => _toggle(m.id),
             ),
           SizedBox(height: 8.h),
-          Text(
+          CustomTextWidget(
             Enus.paymentsSecureFooter.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 11.sp,
-              height: 1.4,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 11.sp,
+            height: 1.4,
+            color: palette.textSecondary,
           ),
         ],
       ),

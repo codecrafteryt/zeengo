@@ -92,3 +92,9 @@ flutter:
     - assets/svgs/map/
     - assets/svgs/notification/
     - assets/svgs/profile/
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto_normal.ttf
+          weight: 400
+

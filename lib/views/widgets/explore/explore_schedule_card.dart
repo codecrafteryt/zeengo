@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ExploreScheduleCard extends StatelessWidget {
   const ExploreScheduleCard({
@@ -21,6 +22,7 @@ class ExploreScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,37 +38,28 @@ class ExploreScheduleCard extends StatelessWidget {
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: Text(
+                child: CustomTextWidget(
                   Enus.todaysSchedule.tr,
-                  style: TextStyle(
-                    fontFamily: MyFonts.plusJakartaSans,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: MyColors.blackDark,
-                  ),
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: palette.textPrimary,
                 ),
               ),
-              Text(
+              CustomTextWidget(
                 dateLabel,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: MyColors.darkPurple,
-                ),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: MyColors.darkPurple,
               ),
             ],
           ),
           SizedBox(height: 20.h),
           Center(
-            child: Text(
+            child: CustomTextWidget(
               emptyMessage ?? Enus.noEventsToday.tr,
-              style: TextStyle(
-                fontFamily: MyFonts.plusJakartaSans,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: MyColors.textSecondary,
-              ),
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: palette.textSecondary,
             ),
           ),
           SizedBox(height: 8.h),

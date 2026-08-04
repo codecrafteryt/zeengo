@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
 import '../../widgets/explore/explore_actions_grid.dart';
@@ -21,7 +22,7 @@ class ExploreScreen extends StatelessWidget {
     final bottom = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
-      backgroundColor: MyColors.scaffoldMuted,
+      backgroundColor: AppPalette.of(context).scaffold,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [

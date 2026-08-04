@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class ChatThreadHeader extends StatelessWidget {
   const ChatThreadHeader({
@@ -23,6 +24,7 @@ class ChatThreadHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Row(
       children: [
         AppSvgIcon(
@@ -37,16 +39,13 @@ class ChatThreadHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              CustomTextWidget(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: MyColors.blackDark,
-                ),
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: palette.textPrimary,
               ),
               SizedBox(height: 4.h),
               Row(
@@ -60,14 +59,11 @@ class ChatThreadHeader extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 6.w),
-                  Text(
+                  CustomTextWidget(
                     statusLabel,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                      color: accent,
-                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: accent,
                   ),
                 ],
               ),

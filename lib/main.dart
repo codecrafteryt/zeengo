@@ -5,9 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'controller/language_controller.dart';
+import 'controller/theme_controller.dart';
 import 'data/helper/get_di.dart';
 import 'data/languages.dart';
 import 'services/stripe_payment_service.dart';
+import 'utils/values/app_theme.dart';
 import 'views/screen/splash_screen.dart';
 
 Future<void> main() async {
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final languageController = Get.find<LanguageController>();
+    final themeController = Get.find<ThemeController>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
@@ -46,11 +49,9 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            theme: ThemeData(
-              colorScheme:
-                  ColorScheme.fromSeed(seedColor: const Color(0xFF007782)),
-              useMaterial3: true,
-            ),
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: themeController.themeMode,
             home: child,
           ),
         );

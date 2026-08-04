@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../../../utils/values/my_images.dart';
 import '../app_card.dart';
 import '../app_svg_icon.dart';
+import '../custom_text_widget.dart';
 
 class MapLocationHeader extends StatelessWidget {
   const MapLocationHeader({
@@ -25,6 +26,7 @@ class MapLocationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return AppCard(
       child: Column(
         children: [
@@ -38,14 +40,11 @@ class MapLocationHeader extends StatelessWidget {
                     color: MyColors.green.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
-                  child: Text(
+                  child: CustomTextWidget(
                     Enus.driverActive.tr,
-                    style: TextStyle(
-                      fontFamily: MyFonts.plusJakartaSans,
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w700,
-                      color: MyColors.green,
-                    ),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                    color: MyColors.green,
                   ),
                 ),
             ],
@@ -59,23 +58,17 @@ class MapLocationHeader extends StatelessWidget {
             padding: 14,
           ),
           SizedBox(height: 12.h),
-          Text(
+          CustomTextWidget(
             city,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w800,
-              color: MyColors.blackDark,
-            ),
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w800,
+            color: palette.textPrimary,
           ),
           SizedBox(height: 4.h),
-          Text(
+          CustomTextWidget(
             coords,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 12.sp,
-              color: MyColors.textSecondary,
-            ),
+            fontSize: 12.sp,
+            color: palette.textSecondary,
           ),
           SizedBox(height: 14.h),
           SizedBox(
@@ -87,13 +80,11 @@ class MapLocationHeader extends StatelessWidget {
                 size: 16.sp,
                 color: MyColors.white,
               ),
-              label: Text(
+              label: CustomTextWidget(
                 Enus.openYandexMaps.tr,
-                style: TextStyle(
-                  fontFamily: MyFonts.plusJakartaSans,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w700,
+                color: MyColors.white,
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: MyColors.darkPurple,

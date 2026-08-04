@@ -4,9 +4,10 @@ import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../../../utils/values/my_fonts.dart';
 import '../app_card.dart';
+import '../custom_text_widget.dart';
 
 class MapProviderSwitch extends StatelessWidget {
   const MapProviderSwitch({
@@ -58,6 +59,7 @@ class _Tab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
     return Material(
       color: selected ? MyColors.darkPurple : Colors.transparent,
       borderRadius: BorderRadius.circular(12.r),
@@ -66,15 +68,12 @@ class _Tab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: Text(
+          child: CustomTextWidget(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: MyFonts.plusJakartaSans,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: selected ? MyColors.white : MyColors.textSecondary,
-            ),
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w700,
+            color: selected ? MyColors.white : palette.textSecondary,
           ),
         ),
       ),
