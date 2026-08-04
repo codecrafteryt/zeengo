@@ -32,39 +32,67 @@ class MapCategoryChips extends StatelessWidget {
     ];
 
     return SizedBox(
-      height: 40.h,
+      height: 42.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
         itemCount: items.length,
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (_, i) {
           final (cat, label, icon) = items[i];
           final active = selected == cat;
-          final color = active ? MyColors.white : palette.textPrimary;
 
-          return Material(
-            color: active ? MyColors.darkPurple : palette.card,
-            borderRadius: BorderRadius.circular(22.r),
-            elevation: active ? 0 : 1,
-            shadowColor: MyColors.black.withValues(alpha: 0.08),
-            child: InkWell(
-              onTap: () => onChanged(cat),
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22.r),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
-                child: Row(
-                  children: [
-                    if (icon != null) ...[
-                      AppSvgIcon(asset: icon, size: 16.sp, color: color),
-                      SizedBox(width: 6.w),
+              gradient: active
+                  ? const LinearGradient(
+                      colors: [Color(0xFF818CF8), MyColors.darkPurple],
+                    )
+                  : null,
+              color: active ? null : palette.card,
+              border: Border.all(
+                color: active
+                    ? Colors.transparent
+                    : palette.border.withValues(alpha: 0.8),
+              ),
+              boxShadow: active
+                  ? [
+                      BoxShadow(
+                        color: MyColors.darkPurple.withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => onChanged(cat),
+                borderRadius: BorderRadius.circular(22.r),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Row(
+                    children: [
+                      if (icon != null) ...[
+                        AppSvgIcon(
+                          asset: icon,
+                          size: 15.sp,
+                          color: active ? MyColors.white : palette.textPrimary,
+                        ),
+                        SizedBox(width: 6.w),
+                      ],
+                      CustomTextWidget(
+                        label,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w700,
+                        color: active ? MyColors.white : palette.textPrimary,
+                      ),
                     ],
-                    CustomTextWidget(
-                      label,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

@@ -7,16 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../controller/map_controller.dart';
 import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
-import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/air_bnb_style.dart';
-import '../../../utils/values/my_color.dart';
+import '../../../utils/values/app_palette.dart';
 import '../../widgets/custom_text_widget.dart';
 import '../../widgets/map/map_category_chips.dart';
 import '../../widgets/map/map_directions_sheet.dart';
 import '../../widgets/map/map_location_header.dart';
 import '../../widgets/map/map_place_tile.dart';
 import '../../widgets/map/map_provider_switch.dart';
-import '../../widgets/map/map_yandex_placeholder.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -40,31 +38,23 @@ class MapScreen extends StatelessWidget {
       body: GetBuilder<MapController>(
         init: c,
         builder: (ctrl) {
-          final showYandexStub =
-              ctrl.provider == MapProviderType.yandex && !ctrl.isYandexReady;
-
           return Stack(
             children: [
-
-                // MapYandexPlaceholder(
-                //   onUseGoogle: () => ctrl.setProvider(MapProviderType.google),
-                // )
-
-                GoogleMap(
-                  initialCameraPosition: const CameraPosition(
-                    target: MapController.moscowCenter,
-                    zoom: 12.2,
-                  ),
-                  padding: EdgeInsets.only(top: top + 210.h, bottom: 220.h),
-                  style: kAirbnbLikeMapStyle,
-                  markers: ctrl.markers,
-                  polylines: ctrl.polylines,
-                  mapToolbarEnabled: false,
-                  zoomControlsEnabled: false,
-                  myLocationButtonEnabled: false,
-                  compassEnabled: false,
-                  onMapCreated: ctrl.onMapCreated,
+              GoogleMap(
+                initialCameraPosition: const CameraPosition(
+                  target: MapController.moscowCenter,
+                  zoom: 12.2,
                 ),
+                padding: EdgeInsets.only(top: top + 150.h, bottom: 240.h),
+                style: kAirbnbLikeMapStyle,
+                markers: ctrl.markers,
+                polylines: ctrl.polylines,
+                mapToolbarEnabled: false,
+                zoomControlsEnabled: false,
+                myLocationButtonEnabled: false,
+                compassEnabled: false,
+                onMapCreated: ctrl.onMapCreated,
+              ),
               SafeArea(
                 bottom: false,
                 child: Padding(
@@ -119,6 +109,7 @@ class MapScreen extends StatelessWidget {
                       onStart: ctrl.beginNavigation,
                       onOpenExternal: () =>
                           ctrl.openExternalMaps(ctrl.activePlace!),
+                      onClose: ctrl.clearDirections,
                     ),
                   ),
                 ),
@@ -143,25 +134,51 @@ class _BottomPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final places = controller.filteredPlaces;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      height: 0.38.sh,
-      margin: EdgeInsets.only(bottom: controller.activePlace == null ? 0 : 110.h),
-      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h + bottomPad),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+      height: 0.40.sh,
+      margin: EdgeInsets.only(
+        bottom: controller.activePlace == null ? 0 : 118.h,
+      ),
+      padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 8.h + bottomPad),
       decoration: BoxDecoration(
         color: palette.scaffold,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+        border: Border(
+          top: BorderSide(color: palette.border.withValues(alpha: 0.6)),
+        ),
         boxShadow: [
           BoxShadow(
-            color: MyColors.black.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
+            blurRadius: 28,
+            offset: const Offset(0, -8),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: palette.border,
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          CustomTextWidget(
+            Enus.nearbyPlaces.tr,
+            fontSize: 17.sp,
+            fontWeight: FontWeight.w700,
+            color: palette.textPrimary,
+          ),
+          SizedBox(height: 12.h),
           MapCategoryChips(
             selected: controller.selectedCategory,
             onChanged: controller.setCategory,
@@ -170,16 +187,30 @@ class _BottomPanel extends StatelessWidget {
           Expanded(
             child: places.isEmpty
                 ? Center(
-                    child: CustomTextWidget(
-                      Enus.noPlacesFound.tr,
-                      color: palette.textSecondary,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.place_outlined,
+                          size: 28.sp,
+                          color: palette.textSecondary,
+                        ),
+                        SizedBox(height: 8.h),
+                        CustomTextWidget(
+                          Enus.noPlacesFound.tr,
+                          color: palette.textSecondary,
+                        ),
+                      ],
                     ),
                   )
                 : ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: places.length,
                     itemBuilder: (_, i) => MapPlaceTile(
                       place: places[i],
-                      onDirections: () => controller.startDirections(places[i]),
+                      index: i,
+                      onDirections: () =>
+                          controller.startDirections(places[i]),
                     ),
                   ),
           ),

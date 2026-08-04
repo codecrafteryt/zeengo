@@ -7,7 +7,6 @@ import '../../../data/models/map/nearby_place.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
-import '../app_card.dart';
 import '../app_svg_icon.dart';
 import '../custom_text_widget.dart';
 
@@ -20,6 +19,7 @@ class MapDirectionsSheet extends StatelessWidget {
     required this.providerLabel,
     required this.onStart,
     required this.onOpenExternal,
+    this.onClose,
   });
 
   final NearbyPlace place;
@@ -28,24 +28,61 @@ class MapDirectionsSheet extends StatelessWidget {
   final String providerLabel;
   final VoidCallback onStart;
   final VoidCallback onOpenExternal;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return AppCard(
-      margin: EdgeInsets.zero,
-      radius: 24.r,
-      padding: EdgeInsets.fromLTRB(18.w, 12.h, 18.w, 18.h),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(18.w, 10.h, 18.w, 16.h),
+      decoration: BoxDecoration(
+        color: palette.card,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: palette.border.withValues(alpha: 0.65)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
+            blurRadius: 28,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 40.w,
-            height: 4.h,
-            decoration: BoxDecoration(
-              color: palette.border,
-              borderRadius: BorderRadius.circular(4.r),
-            ),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              if (onClose != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onClose,
+                      customBorder: const CircleBorder(),
+                      child: Ink(
+                        width: 32.w,
+                        height: 32.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: palette.cardMuted,
+                          border: Border.all(
+                            color: palette.border.withValues(alpha: 0.8),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18.sp,
+                          color: palette.icon,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
           SizedBox(height: 14.h),
           Row(
@@ -68,11 +105,15 @@ class MapDirectionsSheet extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                       color: palette.textPrimary,
                     ),
-                    SizedBox(height: 2.h),
-                    CustomTextWidget(
-                      '$distanceLabel · $etaLabel · $providerLabel',
-                      fontSize: 12.sp,
-                      color: palette.textSecondary,
+                    SizedBox(height: 6.h),
+                    Wrap(
+                      spacing: 6.w,
+                      runSpacing: 6.h,
+                      children: [
+                        _MetaChip(label: distanceLabel),
+                        _MetaChip(label: etaLabel),
+                        _MetaChip(label: providerLabel),
+                      ],
                     ),
                   ],
                 ),
@@ -83,48 +124,80 @@ class MapDirectionsSheet extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
-                  onPressed: onStart,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.darkPurple,
-                    foregroundColor: MyColors.white,
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: onStart,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColors.darkPurple,
+                      foregroundColor: MyColors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
                     ),
-                  ),
-                  child: CustomTextWidget(
-                    Enus.startNavigation.tr,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
-                    color: MyColors.white,
+                    child: CustomTextWidget(
+                      Enus.startNavigation.tr,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.sp,
+                      color: MyColors.white,
+                    ),
                   ),
                 ),
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: OutlinedButton(
-                  onPressed: onOpenExternal,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: MyColors.darkPurple,
-                    side: const BorderSide(color: MyColors.darkPurple),
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
+                child: SizedBox(
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: onOpenExternal,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: MyColors.darkPurple,
+                      side: const BorderSide(
+                        color: MyColors.darkPurple,
+                        width: 1.2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
                     ),
-                  ),
-                  child: CustomTextWidget(
-                    Enus.openInMaps.tr,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13.sp,
-                    color: MyColors.darkPurple,
+                    child: CustomTextWidget(
+                      Enus.openInMaps.tr,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.sp,
+                      color: MyColors.darkPurple,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  const _MetaChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: palette.cardMuted,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: palette.border.withValues(alpha: 0.7)),
+      ),
+      child: CustomTextWidget(
+        label,
+        fontSize: 11.sp,
+        fontWeight: FontWeight.w600,
+        color: palette.textSecondary,
       ),
     );
   }

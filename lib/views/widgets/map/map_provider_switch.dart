@@ -6,7 +6,6 @@ import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
-import '../app_card.dart';
 import '../custom_text_widget.dart';
 
 class MapProviderSwitch extends StatelessWidget {
@@ -21,14 +20,29 @@ class MapProviderSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
+    final palette = AppPalette.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
       padding: EdgeInsets.all(4.w),
-      radius: 14.r,
+      decoration: BoxDecoration(
+        color: palette.card.withValues(alpha: isDark ? 0.92 : 0.96),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: palette.border.withValues(alpha: 0.7)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
             child: _Tab(
               label: Enus.googleMaps.tr,
+              icon: Icons.map_rounded,
               selected: value == MapProviderType.google,
               onTap: () => onChanged(MapProviderType.google),
             ),
@@ -36,6 +50,7 @@ class MapProviderSwitch extends StatelessWidget {
           Expanded(
             child: _Tab(
               label: Enus.yandexMaps.tr,
+              icon: Icons.layers_rounded,
               selected: value == MapProviderType.yandex,
               onTap: () => onChanged(MapProviderType.yandex),
             ),
@@ -49,31 +64,64 @@ class MapProviderSwitch extends StatelessWidget {
 class _Tab extends StatelessWidget {
   const _Tab({
     required this.label,
+    required this.icon,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
+  final IconData icon;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    return Material(
-      color: selected ? MyColors.darkPurple : Colors.transparent,
-      borderRadius: BorderRadius.circular(12.r),
-      child: InkWell(
-        onTap: onTap,
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: CustomTextWidget(
-            label,
-            textAlign: TextAlign.center,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w700,
-            color: selected ? MyColors.white : palette.textSecondary,
+        gradient: selected
+            ? const LinearGradient(
+                colors: [Color(0xFF818CF8), MyColors.darkPurple],
+              )
+            : null,
+        boxShadow: selected
+            ? [
+                BoxShadow(
+                  color: MyColors.darkPurple.withValues(alpha: 0.28),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 11.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 15.sp,
+                  color: selected ? MyColors.white : palette.textSecondary,
+                ),
+                SizedBox(width: 6.w),
+                CustomTextWidget(
+                  label,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: selected ? MyColors.white : palette.textSecondary,
+                ),
+              ],
+            ),
           ),
         ),
       ),
