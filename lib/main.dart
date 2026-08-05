@@ -20,8 +20,17 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // Cache themes so Obx rebuilds do not recreate ThemeData every frame.
+  late final ThemeData _lightTheme = AppTheme.light();
+  late final ThemeData _darkTheme = AppTheme.dark();
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +58,8 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            theme: AppTheme.light(),
-            darkTheme: AppTheme.dark(),
+            theme: _lightTheme,
+            darkTheme: _darkTheme,
             themeMode: themeController.themeMode,
             home: child,
           ),

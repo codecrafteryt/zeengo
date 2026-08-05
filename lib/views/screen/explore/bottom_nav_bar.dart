@@ -26,14 +26,6 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _children = [
-    ExploreScreen(),
-    MapScreen(),
-    ChatsScreen(),
-    Payouts(),
-    Account(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
   }
@@ -59,10 +51,20 @@ class _NavBarState extends State<NavBar> {
     final palette = AppPalette.of(context);
     final bottomPad = MediaQuery.paddingOf(context).bottom;
 
+    // Map is only mounted on the Map tab so the Android PlatformView does not
+    // keep composing frames (E/FrameEvents updateAcquireFence spam).
+    final children = <Widget>[
+      const ExploreScreen(),
+      MapTabHost(isActive: _selectedIndex == 1),
+      const ChatsScreen(),
+      const Payouts(),
+      const Account(),
+    ];
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: _children,
+        children: children,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

@@ -18,9 +18,13 @@ class MapController extends GetxController {
   final SharedPreferences sharedPreferences;
 
   static const String _providerKey = 'map_provider';
+  /// Rebuilds only the native [GoogleMap] (markers / polylines).
+  static const String mapLayerId = 'mapLayer';
+  /// Rebuilds map chrome (chips, sheets, provider switch).
+  static const String mapUiId = 'mapUi';
   static const LatLng moscowCenter = LatLng(55.7558, 37.6173);
 
-  final Completer<GoogleMapController> googleMapController =
+  Completer<GoogleMapController> googleMapController =
       Completer<GoogleMapController>();
 
   MapProviderType provider = MapProviderType.google;
@@ -30,6 +34,10 @@ class MapController extends GetxController {
   Set<Polyline> polylines = {};
   bool isNavigating = false;
   EdgeInsets mapPadding = EdgeInsets.zero;
+
+  void refreshMap() => update([mapLayerId]);
+  void refreshUi() => update([mapUiId]);
+  void refreshAll() => update([mapLayerId, mapUiId]);
 
   List<NearbyPlace> get filteredPlaces {
     if (selectedCategory == PlaceCategory.all) {
@@ -51,9 +59,15 @@ class MapController extends GetxController {
   }
 
   void onMapCreated(GoogleMapController controller) {
-    if (!googleMapController.isCompleted) {
-      googleMapController.complete(controller);
+    // Map is unmounted when leaving the tab; remount needs a fresh Completer.
+    if (googleMapController.isCompleted) {
+      googleMapController = Completer<GoogleMapController>();
     }
+    googleMapController.complete(controller);
+  }
+
+  void onMapDisposed() {
+    googleMapController = Completer<GoogleMapController>();
   }
 
   Future<void> setProvider(MapProviderType type) async {
@@ -65,15 +79,18 @@ class MapController extends GetxController {
     if (type == MapProviderType.google) {
       _rebuildMarkers();
       await _focusMoscow();
+      refreshMap();
     }
-    update();
+    refreshUi();
   }
 
   void setCategory(PlaceCategory category) {
     selectedCategory = category;
-    clearDirections();
+    activePlace = null;
+    isNavigating = false;
+    polylines = {};
     _rebuildMarkers();
-    update();
+    refreshAll();
   }
 
   void _rebuildMarkers() {
@@ -122,7 +139,7 @@ class MapController extends GetxController {
         infoWindow: InfoWindow(title: place.name),
       ),
     };
-    update();
+    refreshAll();
     await _fitRoute(moscowCenter, dest);
   }
 
@@ -167,7 +184,7 @@ class MapController extends GetxController {
   Future<void> beginNavigation() async {
     if (activePlace == null) return;
     isNavigating = true;
-    update();
+    refreshUi();
     try {
       final c = await googleMapController.future;
       await c.animateCamera(
@@ -188,7 +205,7 @@ class MapController extends GetxController {
     isNavigating = false;
     polylines = {};
     _rebuildMarkers();
-    update();
+    refreshAll();
   }
 
   String etaFor(NearbyPlace place) {
