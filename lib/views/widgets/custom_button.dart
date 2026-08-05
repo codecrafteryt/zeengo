@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'custom_text_widget.dart';
 
 class CustomButton extends StatelessWidget {
@@ -72,12 +73,11 @@ class CustomButton extends StatelessWidget {
         child: Center(
           child: isLoading
               ? SizedBox(
-                  height: 20.0.h,
-                  width: 20.0.w,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    backgroundColor: Colors.grey.shade400,
-                    strokeWidth: 2.0.w,
+                  height: 22.h,
+                  width: 22.w,
+                  child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: textColor ?? Colors.white,
+                    size: 30,
                   ),
                 )
               : Row(

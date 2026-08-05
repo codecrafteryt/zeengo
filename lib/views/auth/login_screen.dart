@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../data/enus.dart';
 import '../../utils/extensions/extentions.dart';
@@ -86,22 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
     Get.off(() => const HomePages());
   }
 
-  InputDecorationTheme _fieldTheme(AppPalette palette) {
-    // Shared colours for outlined floating-label fields (see 3rd SS).
-    return InputDecorationTheme(
-      floatingLabelStyle: TextStyle(
-        color: MyColors.darkPurple,
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
-      ),
-      errorStyle: TextStyle(
-        color: const Color.fromRGBO(240, 66, 72, 1),
-        fontSize: 12.sp,
-        fontWeight: FontWeight.w500,
-      ),
-    );
-  }
-
   Widget _buildOutlinedField({
     required AppPalette palette,
     required TextEditingController controller,
@@ -114,37 +97,39 @@ class _LoginScreenState extends State<LoginScreen> {
     TextInputType keyboardType = TextInputType.text,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final border = palette.border;
+
     return CustomTextField(
       controller: controller,
       focusNode: focusNode,
       labelText: label,
-      // No separate outer label + no prefix (outlined floating label like SS3).
       hintText: '',
       height: 50,
       borderRadius: 12.r,
       padding: EdgeInsets.zero,
       keyboardType: keyboardType,
       isObscureText: obscure,
-      // Outlined look: transparent fill sits on scaffold.
       filled: true,
       fillColor: isDark ? palette.cardMuted : palette.card,
       focusedFillColor: isDark ? palette.cardMuted : palette.card,
-      borderColor: palette.border,
-      focusedBorderColor: MyColors.darkPurple,
+      // Theme container border for idle + focus (no purple).
+      borderColor: border,
+      focusedBorderColor: border,
       enabledBorderWidth: 1,
-      focusedBorderWidth: 1.5,
+      focusedBorderWidth: 1,
       errorBorderColor: const Color.fromRGBO(240, 66, 72, 1),
       errorBorderWidth: 1.2,
-      focusedErrorBorderWidth: 1.5,
+      focusedErrorBorderWidth: 1.2,
       labelColor: palette.textSecondary,
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      // Always float "Email" / "Password" (default, not only on focus).
+      floatingLabelBehavior: FloatingLabelBehavior.always,
       floatingLabelStyle: TextStyle(
-        color: MyColors.darkPurple,
+        color: palette.textSecondary,
         fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
       ),
       textColor: palette.textPrimary,
-      cursorColor: MyColors.darkPurple,
+      cursorColor: palette.textPrimary,
       fontSize: 15.sp,
       contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       validator: validator,
@@ -161,219 +146,129 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-      child: Scaffold(
-        backgroundColor: palette.scaffold,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: isDark
-                        ? [
-                            const Color(0xFF0A0A0A),
-                            palette.scaffold,
-                            const Color(0xFF050505),
-                          ]
-                        : [
-                            const Color(0xFFFAFAF8),
-                            palette.scaffold,
-                            const Color(0xFFF2F2F0),
-                          ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: -80,
-              right: -60,
-              child: _Blob(
-                size: 220.w,
-                color: MyColors.darkPurple.withValues(alpha: isDark ? 0.12 : 0.08),
-              ),
-            ),
-            Positioned(
-              bottom: 120,
-              left: -80,
-              child: _Blob(
-                size: 180.w,
-                color: MyColors.darkPurple.withValues(alpha: isDark ? 0.08 : 0.05),
-              ),
-            ),
-            SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 24.h + bottom),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight - 20.h,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Form(
-                          key: _formKey,
-                          child: Theme(
-                            data: Theme.of(context).copyWith(
-                              inputDecorationTheme: _fieldTheme(palette),
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.opaque,
+        child: Scaffold(
+          backgroundColor: palette.scaffold,
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 24.h + bottom),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - 20.h,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Center(
+                              child: Image.asset(
+                                MyImages.appIcon,
+                                width: 110.w,
+                                height: 110.w,
+                                fit: BoxFit.contain,
+                              ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // Logo — top center, no box, larger.
-                                Center(
-                                  child: Image.asset(
-                                    MyImages.appIcon,
-                                    width: 110.w,
-                                    height: 110.w,
-                                    fit: BoxFit.contain,
-                                  ),
+                            28.sbh,
+                            CustomTextWidget(
+                              Enus.welcomeBack.tr,
+                              fontSize: 32.sp,
+                              fontWeight: FontWeight.w700,
+                              height: 1.15,
+                              color: palette.textPrimary,
+                              letterSpacing: -0.6,
+                              textAlign: TextAlign.center,
+                            ),
+                            10.sbh,
+                            CustomTextWidget(
+                              Enus.loginSubtitle.tr,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 1.45,
+                              color: palette.textSecondary,
+                              textAlign: TextAlign.center,
+                            ),
+                            40.sbh,
+                            _buildOutlinedField(
+                              palette: palette,
+                              controller: _emailController,
+                              focusNode: _emailFocus,
+                              label: Enus.email.tr,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: _validateEmail,
+                              onFieldSubmitted: (_) =>
+                                  _passwordFocus.requestFocus(),
+                            ),
+                            20.sbh,
+                            _buildOutlinedField(
+                              palette: palette,
+                              controller: _passwordController,
+                              focusNode: _passwordFocus,
+                              label: Enus.password.tr,
+                              obscure: _obscurePassword,
+                              keyboardType: TextInputType.visiblePassword,
+                              validator: _validatePassword,
+                              onFieldSubmitted: (_) => _onContinue(),
+                              suffix: IconButton(
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
                                 ),
-                                28.sbh,
-                                CustomTextWidget(
-                                  Enus.welcomeBack.tr,
-                                  fontSize: 32.sp,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.15,
-                                  color: palette.textPrimary,
-                                  letterSpacing: -0.6,
-                                  textAlign: TextAlign.center,
-                                ),
-                                10.sbh,
-                                CustomTextWidget(
-                                  Enus.loginSubtitle.tr,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.45,
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
                                   color: palette.textSecondary,
-                                  textAlign: TextAlign.center,
+                                  size: 22.sp,
                                 ),
-                                40.sbh,
-                                // Outlined floating-label fields (no wrap card).
-                                _buildOutlinedField(
-                                  palette: palette,
-                                  controller: _emailController,
-                                  focusNode: _emailFocus,
-                                  label: Enus.email.tr,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: _validateEmail,
-                                  onFieldSubmitted: (_) =>
-                                      _passwordFocus.requestFocus(),
-                                ),
-                                20.sbh,
-                                _buildOutlinedField(
-                                  palette: palette,
-                                  controller: _passwordController,
-                                  focusNode: _passwordFocus,
-                                  label: Enus.password.tr,
-                                  obscure: _obscurePassword,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  validator: _validatePassword,
-                                  onFieldSubmitted: (_) => _onContinue(),
-                                  suffix: IconButton(
-                                    onPressed: () => setState(
-                                      () =>
-                                          _obscurePassword = !_obscurePassword,
-                                    ),
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility_outlined
-                                          : Icons.visibility_off_outlined,
-                                      color: palette.textSecondary,
-                                      size: 22.sp,
-                                    ),
-                                  ),
-                                ),
-                                if (_formError != null) ...[
-                                  14.sbh,
-                                  CustomTextWidget(
-                                    _formError!,
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: MyColors.red,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                                25.sbh,
-                                CustomButton(
-                                  text: Enus.continueText.tr,
-                                  onPressed: _isLoading ? null : _onContinue,
-                                  height: 50,
-                                  width: double.infinity,
-                                  // Default radius is 40 on CustomButton.
-                                  backgroundColor: MyColors.darkPurple,
-                                  textColor: MyColors.white,
-                                  borderColor: MyColors.darkPurple,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                const Spacer(),
-                                28.sbh,
-                                Center(
-                                  child: CustomTextWidget(
-                                    Enus.appName.tr,
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: palette.textSecondary,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                            if (_formError != null) ...[
+                              14.sbh,
+                              CustomTextWidget(
+                                _formError!,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                                color: MyColors.red,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            30.sbh,
+                            CustomButton(
+                              text: Enus.continueText.tr,
+                              onPressed: _isLoading ? null : _onContinue,
+                              isLoading: _isLoading,
+                              height: 50,
+                              width: double.infinity,
+                              backgroundColor: MyColors.darkPurple,
+                              textColor: MyColors.white,
+                              borderColor: MyColors.darkPurple,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            const Spacer(),
+                            28.sbh,
+                            Center(
+                              child: CustomTextWidget(
+                                Enus.appName.tr,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                                color: palette.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-            if (_isLoading)
-              Positioned.fill(
-                child: ColoredBox(
-                  color: palette.overlay,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        LoadingAnimationWidget.staggeredDotsWave(
-                          color: MyColors.darkPurple,
-                          size: 52,
-                        ),
-                        16.sbh,
-                        CustomTextWidget(
-                          Enus.signingIn.tr,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: MyColors.white,
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Blob extends StatelessWidget {
-  const _Blob({required this.size, required this.color});
-
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
