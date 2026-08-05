@@ -15,7 +15,11 @@ class HomePages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // NavBar pins its own bar to the physical bottom and applies the IME inset
+    // itself. This host must not shrink the body or strip viewInsets, or the
+    // pinned bar would land on top of the keyboard.
+    return const Scaffold(
+      resizeToAvoidBottomInset: false,
       body: NavBar(),
     );
   }

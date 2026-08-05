@@ -25,9 +25,9 @@ class CurrencyCalculatorSheet extends StatelessWidget {
     final palette = AppPalette.of(context);
     return CustomBottomSheetWidget.show(
       context: context,
-      heightFactor: 0.98,
-      belowStatusBar: true,
-      radius: 16.r,
+      heightFactor: 0.95,
+      belowStatusBar: false,
+      radius: 12.r,
       showHandle: false,
       scrollable: true,
       padding: EdgeInsets.fromLTRB(

@@ -10,6 +10,9 @@ import 'chat_quick_replies.dart';
 import 'chat_thread_header.dart';
 
 /// Airbnb-style chat thread panel (header + messages + quick replies + composer).
+///
+/// Layout is overflow-safe: non-flex chrome is dropped when height is tight
+/// (keyboard / small devices), so Column never reports BOTTOM OVERFLOWED.
 class ChatThreadPanel extends StatelessWidget {
   const ChatThreadPanel({
     super.key,
@@ -24,6 +27,8 @@ class ChatThreadPanel extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.onQuickReply,
+    this.compact = false,
+    this.focusNode,
   });
 
   final String title;
@@ -37,42 +42,63 @@ class ChatThreadPanel extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final ValueChanged<String> onQuickReply;
+  final bool compact;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     return AppCard(
-      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 12.h),
-      child: Column(
-        children: [
-          ChatThreadHeader(
-            title: title,
-            svgAsset: svgAsset,
-            statusLabel: statusLabel,
-            accent: accent,
-          ),
-          Divider(height: 24.h, color: palette.border),
-          Expanded(
-            child: messages.isEmpty
-                ? ChatEmptyState(message: emptyMessage)
-                : ListView.builder(
-                    reverse: true,
-                    padding: EdgeInsets.only(bottom: 8.h),
-                    itemCount: messages.length,
-                    itemBuilder: (_, i) {
-                      final msg = messages[messages.length - 1 - i];
-                      return ChatMessageBubble(message: msg);
-                    },
-                  ),
-          ),
-          ChatQuickReplies(items: quickReplies, onSelected: onQuickReply),
-          SizedBox(height: 10.h),
-          ChatComposer(
-            controller: controller,
-            hint: composerHint,
-            onSend: onSend,
-          ),
-        ],
+      padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Android adjustResize shrinks height; drop chrome before overflow.
+          final h = constraints.maxHeight;
+          final showHeader = h >= 160;
+          final showReplies = !compact && h >= 300;
+
+          return Column(
+            children: [
+              if (showHeader) ...[
+                ChatThreadHeader(
+                  title: title,
+                  svgAsset: svgAsset,
+                  statusLabel: statusLabel,
+                  accent: accent,
+                ),
+                Divider(height: 20.h, color: palette.border),
+              ],
+              Expanded(
+                child: messages.isEmpty
+                    ? ChatEmptyState(message: emptyMessage)
+                    : ListView.builder(
+                        reverse: true,
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        itemCount: messages.length,
+                        itemBuilder: (_, i) {
+                          final msg = messages[messages.length - 1 - i];
+                          return ChatMessageBubble(message: msg);
+                        },
+                      ),
+              ),
+              if (showReplies) ...[
+                SizedBox(height: 8.h),
+                ChatQuickReplies(
+                  items: quickReplies,
+                  onSelected: onQuickReply,
+                ),
+                SizedBox(height: 10.h),
+              ] else
+                SizedBox(height: 8.h),
+              ChatComposer(
+                controller: controller,
+                hint: composerHint,
+                onSend: onSend,
+                focusNode: focusNode,
+              ),
+            ],
+          );
+        },
       ),
     );
   }

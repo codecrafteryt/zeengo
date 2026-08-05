@@ -23,6 +23,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
   static const _whatsappNumber = '+79160000000';
 
   final _controller = TextEditingController();
+  final _composerFocus = FocusNode();
   int _tab = 1;
   late List<List<ChatMessage>> _threads;
 
@@ -53,11 +54,16 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   void initState() {
     super.initState();
-    _threads = _channels.map((c) => List<ChatMessage>.from(c.seedMessages)).toList();
+    _threads =
+        _channels.map((c) => List<ChatMessage>.from(c.seedMessages)).toList();
+    _composerFocus.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    _composerFocus.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -83,49 +89,72 @@ class _ChatsScreenState extends State<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final top = MediaQuery.paddingOf(context).top;
-    final bottom = MediaQuery.paddingOf(context).bottom;
+    // Keyboard height is applied by NavBar shell (content bottom inset).
+    // Do NOT also pad with viewInsets here or the field would jump twice.
     final channels = _channels;
     final channel = channels[_tab];
 
-    return Scaffold(
-      backgroundColor: AppPalette.of(context).scaffold,
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(16.w, top + 12.h, 16.w, 12.h + bottom),
-        child: Column(
-          children: [
-            AppSegmentTabs(
-              index: _tab,
-              onChanged: (i) => setState(() => _tab = i),
-              tabs: [
-                AppSegmentTab(label: Enus.support.tr, svgAsset: MyImages.chatHeadset),
-                AppSegmentTab(label: Enus.driver.tr, svgAsset: MyImages.chatCar),
-                AppSegmentTab(label: Enus.splizer.tr, svgAsset: MyImages.chatBriefcase),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Expanded(
-              child: ChatThreadPanel(
-                title: channel.title,
-                svgAsset: channel.svgAsset,
-                accent: channel.accent,
-                statusLabel: Enus.online.tr,
-                emptyMessage: channel.emptyMessage,
-                messages: _threads[_tab],
-                quickReplies: channel.quickReplies,
-                composerHint: Enus.typeMessage.tr,
-                controller: _controller,
-                onSend: _send,
-                onQuickReply: _send,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            ChatWhatsappBanner(
-              title: Enus.whatsappZeengo.tr,
-              subtitle: Enus.whatsappSubtitle.tr,
-              onTap: _openWhatsapp,
-            ),
-          ],
+    return ColoredBox(
+      color: AppPalette.of(context).scaffold,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Shell already shortens this viewport when the keyboard is open.
+              final short =
+                  _composerFocus.hasFocus || constraints.maxHeight < 520;
+              return Column(
+                children: [
+                  AppSegmentTabs(
+                    index: _tab,
+                    onChanged: (i) => setState(() => _tab = i),
+                    tabs: [
+                      AppSegmentTab(
+                        label: Enus.support.tr,
+                        svgAsset: MyImages.chatHeadset,
+                      ),
+                      AppSegmentTab(
+                        label: Enus.driver.tr,
+                        svgAsset: MyImages.chatCar,
+                      ),
+                      AppSegmentTab(
+                        label: Enus.splizer.tr,
+                        svgAsset: MyImages.chatBriefcase,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: short ? 8.h : 12.h),
+                  Expanded(
+                    child: ChatThreadPanel(
+                      title: channel.title,
+                      svgAsset: channel.svgAsset,
+                      accent: channel.accent,
+                      statusLabel: Enus.online.tr,
+                      emptyMessage: channel.emptyMessage,
+                      messages: _threads[_tab],
+                      quickReplies: channel.quickReplies,
+                      composerHint: Enus.typeMessage.tr,
+                      controller: _controller,
+                      focusNode: _composerFocus,
+                      onSend: _send,
+                      onQuickReply: _send,
+                      compact: short,
+                    ),
+                  ),
+                  if (!short) ...[
+                    SizedBox(height: 12.h),
+                    ChatWhatsappBanner(
+                      title: Enus.whatsappZeengo.tr,
+                      subtitle: Enus.whatsappSubtitle.tr,
+                      onTap: _openWhatsapp,
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

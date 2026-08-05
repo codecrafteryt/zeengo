@@ -11,6 +11,7 @@ class MyImages {
   static const String closeFlatSvg = "assets/svgs/search_svgs/close_flat.svg";
   static const String closeCancelSvg = "assets/svgs/close_cancel.svg";
   static const String translateFlatSvg = "assets/svgs/translate_flat.svg";
+  static const String arrowBackFlatSvg = "assets/svgs/arrow_back_flat.svg";
 
   static const String navExploreSvg = "assets/svgs/nav_bar/buttom_search.svg";
   static const String navMapSvg = "assets/svgs/nav_bar/map_icon.svg";

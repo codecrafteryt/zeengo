@@ -38,7 +38,7 @@ class CustomTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final VoidCallback? onPrefixIconPressed;
   final EdgeInsetsGeometry? contentPadding;
-  final FocusNode? focusNode; // Added FocusNode property
+  final FocusNode? focusNode;
   final ValueChanged<String>? onFieldSubmitted;
   final bool readOnly;
   final VoidCallback? onTap;
@@ -50,11 +50,11 @@ class CustomTextField extends StatelessWidget {
   final Color? errorBorderColor;
   final double errorBorderWidth;
   final double focusedErrorBorderWidth;
-  // parameters for limitations
   final int? maxLength;
   final String? allowedPattern;
   final bool preventSpaces;
   final ValueChanged<String>? onChanged;
+  final bool filled;
 
   const CustomTextField({
     super.key,
@@ -84,8 +84,8 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.onPrefixIconPressed,
     this.contentPadding,
-    this.focusNode, // Initialize focusNode
-    this.onFieldSubmitted, // Initialize onFieldSubmitted
+    this.focusNode,
+    this.onFieldSubmitted,
     this.readOnly = false,
     this.onTap,
     this.maxLength,
@@ -95,106 +95,141 @@ class CustomTextField extends StatelessWidget {
     this.floatingLabelBehavior,
     this.labelColor,
     this.floatingLabelStyle,
-    this.enabledBorderWidth = 2,
-    this.focusedBorderWidth = 1,
+    this.enabledBorderWidth = 1,
+    this.focusedBorderWidth = 1.5,
     this.errorBorderColor,
-    this.errorBorderWidth = 1,
-    this.focusedErrorBorderWidth = 1,
+    this.errorBorderWidth = 1.2,
+    this.focusedErrorBorderWidth = 1.5,
+    this.filled = true,
   });
+
+  static const _errorColor = Color.fromRGBO(240, 66, 72, 1);
 
   @override
   Widget build(BuildContext context) {
+    final resolvedFontSize = fontSize ?? 15.sp;
+    final errorColor = errorBorderColor ?? _errorColor;
+    final resolvedContentPadding = contentPadding ??
+        EdgeInsets.symmetric(
+          horizontal: 14.w,
+          vertical: height != null ? 14.h : 13,
+        );
+
+    final radius = BorderRadius.circular(borderRadius);
+
     return Padding(
-        padding: padding,
-        child: TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          focusNode: focusNode, // Assign focusNode here
-          onFieldSubmitted: onFieldSubmitted, // Assign onFieldSubmitted here
-          readOnly: readOnly,
-          onTap: onTap,
-          onChanged: onChanged,
-          maxLength: maxLength,
-          // Add input formatters based on parameters
-          inputFormatters: [
-            if (maxLength != null)
-              LengthLimitingTextInputFormatter(maxLength!),
-            if (allowedPattern != null)
-              FilteringTextInputFormatter.allow(RegExp(allowedPattern!)),
-            if (preventSpaces)
-              FilteringTextInputFormatter.deny(RegExp(r'\s')),
-            // maxLength: 50,                    // Limit to 50 characters
-            // allowedPattern: r'[a-zA-Z0-9]',  // Only allow alphanumeric
-            // preventSpaces: true,             // Prevent spaces
-          ],
-          decoration: InputDecoration(
-            counterText: "", // Hides the character counter
-            filled: true,
-            fillColor: fillColor,
-            labelText: labelText,
-            floatingLabelBehavior: floatingLabelBehavior,
-            hintText: hintText,
-            contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13),
-            hintStyle: TextStyle(
-              color: hintColor,
-              fontSize: fontSize,
-              fontWeight: hintFontWeight,
-            ),
-            labelStyle: TextStyle(color: labelColor ?? hintColor, fontSize: fontSize),
-            floatingLabelStyle: floatingLabelStyle,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: BorderSide(color: borderColor, width: enabledBorderWidth),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: BorderSide(color: focusedBorderColor, width: focusedBorderWidth),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: BorderSide(
-                color: errorBorderColor ?? const Color.fromRGBO(240, 66, 72, 1),
-                width: errorBorderWidth,
-              ),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-              borderSide: BorderSide(
-                color: errorBorderColor ?? const Color.fromRGBO(240, 66, 72, 1),
-                width: focusedErrorBorderWidth,
-              ),
-            ),
-            suffixIcon: showCustomSendIcon
-                ? Container(
-              margin: EdgeInsets.only(right: 8.0.w),
-              // child: GestureDetector(
-              //   onTap: () {
-              //     // Custom action on tap
-              //   },
-              //   child: CircleAvatar(
-              //     backgroundColor: const Color.fromRGBO(117, 129, 141, 1),
-              //     child: FaIcon(
-              //       FontAwesomeIcons.paperPlane,
-              //       color: const Color.fromRGBO(255, 249, 233, 1),
-              //       size: 20.h,
-              //     ),
-              //   ),
-              // ),
-            )
-                : suffixIcon,
-            prefixIcon: prefixIcon != null
-                ? GestureDetector(
-              onTap: onPrefixIconPressed, // Add this line
-              child:
-              Icon(prefixIcon, color: prefixIconColor ?? hintColor),
-            )
-                : null,
+      padding: padding,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        focusNode: focusNode,
+        onFieldSubmitted: onFieldSubmitted,
+        readOnly: readOnly,
+        onTap: onTap,
+        onChanged: onChanged,
+        maxLength: maxLength,
+        inputFormatters: [
+          if (maxLength != null) LengthLimitingTextInputFormatter(maxLength!),
+          if (allowedPattern != null)
+            FilteringTextInputFormatter.allow(RegExp(allowedPattern!)),
+          if (preventSpaces) FilteringTextInputFormatter.deny(RegExp(r'\s')),
+        ],
+        decoration: InputDecoration(
+          counterText: '',
+          filled: filled,
+          fillColor: fillColor,
+          isDense: false,
+          // Input box target height; avoid maxHeight so floating labels / errors
+          // are not clipped (Material outlined style, 3rd SS).
+          constraints: height != null
+              ? BoxConstraints(minHeight: height!)
+              : null,
+          labelText: labelText,
+          floatingLabelBehavior:
+              floatingLabelBehavior ?? FloatingLabelBehavior.auto,
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+          alignLabelWithHint: true,
+          hintText: hintText.isEmpty ? null : hintText,
+          contentPadding: resolvedContentPadding,
+          hintStyle: TextStyle(
+            color: hintColor,
+            fontSize: resolvedFontSize,
+            fontWeight: hintFontWeight,
           ),
-          style: TextStyle(color: textColor),
-          cursorColor: cursorColor,
-          validator: validator,
-          obscureText: isObscureText,
+          labelStyle: TextStyle(
+            color: labelColor ?? hintColor,
+            fontSize: resolvedFontSize,
+            fontWeight: FontWeight.w500,
+          ),
+          floatingLabelStyle: floatingLabelStyle ??
+              TextStyle(
+                color: focusedBorderColor,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+              ),
+          // Error: red floating label + message (Material outlined style).
+          errorStyle: TextStyle(
+            color: errorColor,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            height: 1.25,
+          ),
+          errorMaxLines: 2,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(
+              color: borderColor,
+              width: enabledBorderWidth,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(
+              color: focusedBorderColor,
+              width: focusedBorderWidth,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(
+              color: errorColor,
+              width: errorBorderWidth,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(
+              color: errorColor,
+              width: focusedErrorBorderWidth,
+            ),
+          ),
+          suffixIcon: showCustomSendIcon
+              ? Container(margin: EdgeInsets.only(right: 8.0.w))
+              : suffixIcon,
+          prefixIcon: prefixIcon != null
+              ? Icon(
+                  prefixIcon,
+                  color: prefixIconColor ?? hintColor,
+                  size: 22.sp,
+                )
+              : null,
+          prefixIconConstraints: prefixIcon != null
+              ? BoxConstraints(minWidth: 44.w, minHeight: height ?? 48)
+              : null,
+          suffixIconConstraints: suffixIcon != null
+              ? BoxConstraints(minWidth: 44.w, minHeight: height ?? 48)
+              : null,
         ),
-      );
+        style: TextStyle(
+          color: textColor,
+          fontSize: resolvedFontSize,
+          height: 1.2,
+          fontWeight: FontWeight.w500,
+        ),
+        cursorColor: cursorColor,
+        validator: validator,
+        obscureText: isObscureText,
+      ),
+    );
   }
 }

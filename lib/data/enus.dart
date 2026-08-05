@@ -18,6 +18,22 @@ class Enus {
   static const String themeLight = 'theme_light';
   static const String themeDark = 'theme_dark';
 
+  // Auth
+  static const String login = 'login';
+  static const String welcomeBack = 'welcome_back';
+  static const String loginSubtitle = 'login_subtitle';
+  static const String email = 'email';
+  static const String emailHint = 'email_hint';
+  static const String password = 'password';
+  static const String passwordHint = 'password_hint';
+  static const String continueText = 'continue_text';
+  static const String emailRequired = 'email_required';
+  static const String emailInvalid = 'email_invalid';
+  static const String passwordRequired = 'password_required';
+  static const String passwordMinLength = 'password_min_length';
+  static const String invalidCredentials = 'invalid_credentials';
+  static const String signingIn = 'signing_in';
+
   // Nav
   static const String explore = 'explore';
   static const String map = 'map';

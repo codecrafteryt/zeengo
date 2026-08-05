@@ -6,7 +6,7 @@
   ---------------------------------------
   Description: custom button
 */
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -40,7 +40,7 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.textColor,
     this.backgroundColor,
-    this.borderRadius,
+    this.borderRadius = 40,
     this.fontSize,
     this.fontWeight,
     this.borderColor,
@@ -56,6 +56,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = borderRadius ?? 40;
     return SizedBox(
       height: height ?? 50,
       width: width ?? 352.w,
@@ -63,11 +64,9 @@ class CustomButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: TextButton.styleFrom(
           backgroundColor: backgroundColor ?? Colors.white,
-          shape: borderRadius != null
-              ? RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius!),
-                )
-              : const StadiumBorder(),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+          ),
           side: BorderSide(color: borderColor ?? Colors.white),
         ),
         child: Center(

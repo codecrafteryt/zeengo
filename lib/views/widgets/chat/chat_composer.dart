@@ -6,27 +6,52 @@ import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
 
-class ChatComposer extends StatelessWidget {
+class ChatComposer extends StatefulWidget {
   const ChatComposer({
     super.key,
     required this.controller,
     required this.hint,
     required this.onSend,
+    this.focusNode,
   });
 
   final TextEditingController controller;
   final String hint;
   final VoidCallback onSend;
+  final FocusNode? focusNode;
 
-  static const double _height = 50;
-  static const double _radius = 8;
+  static const double height = 50;
+  static const double radius = 8;
+
+  @override
+  State<ChatComposer> createState() => _ChatComposerState();
+}
+
+class _ChatComposerState extends State<ChatComposer> {
+  late final FocusNode _focus;
+  late final bool _ownsFocus;
+
+  @override
+  void initState() {
+    super.initState();
+    _ownsFocus = widget.focusNode == null;
+    _focus = widget.focusNode ?? FocusNode();
+  }
+
+  @override
+  void dispose() {
+    if (_ownsFocus) {
+      _focus.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final fieldColor = palette.cardMuted;
     final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(_radius),
+      borderRadius: BorderRadius.circular(ChatComposer.radius),
       borderSide: BorderSide.none,
     );
 
@@ -35,15 +60,16 @@ class ChatComposer extends StatelessWidget {
       children: [
         Expanded(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(_radius),
+            borderRadius: BorderRadius.circular(ChatComposer.radius),
             child: Container(
-              height: _height,
+              height: ChatComposer.height,
               alignment: Alignment.center,
               color: fieldColor,
               child: TextField(
-                controller: controller,
+                focusNode: _focus,
+                controller: widget.controller,
                 textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSend(),
+                onSubmitted: (_) => widget.onSend(),
                 cursorColor: MyColors.darkPurple,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -61,7 +87,7 @@ class ChatComposer extends StatelessWidget {
                     horizontal: 18.w,
                     vertical: 14.h,
                   ),
-                  hintText: hint,
+                  hintText: widget.hint,
                   hintStyle: TextStyle(
                     fontSize: 14.sp,
                     height: 1.2,
@@ -78,10 +104,10 @@ class ChatComposer extends StatelessWidget {
           shape: const CircleBorder(),
           child: InkWell(
             customBorder: const CircleBorder(),
-            onTap: onSend,
+            onTap: widget.onSend,
             child: SizedBox(
-              width: _height,
-              height: _height,
+              width: ChatComposer.height,
+              height: ChatComposer.height,
               child: Center(
                 child: SvgPicture.asset(
                   MyImages.chatSend,

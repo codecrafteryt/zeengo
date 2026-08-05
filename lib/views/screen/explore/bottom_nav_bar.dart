@@ -27,6 +27,7 @@ class _NavBarState extends State<NavBar> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() => _selectedIndex = index);
   }
 
@@ -46,27 +47,15 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final palette = AppPalette.of(context);
-    final bottomPad = MediaQuery.paddingOf(context).bottom;
+  /// Fixed height of the custom bottom bar (Material bar + safe inset pad).
+  double _navBarHeight(double bottomSafe) {
+    return kBottomNavigationBarHeight + (bottomSafe > 0 ? bottomSafe : 8);
+  }
 
-    // Map is only mounted on the Map tab so the Android PlatformView does not
-    // keep composing frames (E/FrameEvents updateAcquireFence spam).
-    final children = <Widget>[
-      const ExploreScreen(),
-      MapTabHost(isActive: _selectedIndex == 1),
-      const ChatsScreen(),
-      const Payouts(),
-      const Account(),
-    ];
-
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: children,
-      ),
-      bottomNavigationBar: Container(
+  Widget _buildBottomNav(AppPalette palette, double bottomPad) {
+    return Material(
+      color: palette.navBar,
+      child: Container(
         decoration: BoxDecoration(
           color: palette.navBar,
           border: Border(
@@ -117,6 +106,73 @@ class _NavBarState extends State<NavBar> {
               icon: _navIcon(MyImages.navProfileSvg, selected: false),
               activeIcon: _navIcon(MyImages.navProfileSvg, selected: true),
               label: Enus.profile.tr,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppPalette.of(context);
+    final mq = MediaQuery.of(context);
+    final bottomSafe = mq.padding.bottom;
+    final keyboard = mq.viewInsets.bottom;
+    final navHeight = _navBarHeight(bottomSafe);
+
+    final children = <Widget>[
+      const ExploreScreen(),
+      MapTabHost(isActive: _selectedIndex == 1),
+      const ChatsScreen(),
+      const Payouts(),
+      const Account(),
+    ];
+
+    // ── ROOT CAUSE (why the bar was "moving up") ───────────────────────────
+    // Scaffold.bottomNavigationBar is laid out inside the *same* Flutter view
+    // box as the body. When the IME opens:
+    //   • Android adjustResize shrinks the view, OR
+    //   • Scaffold inset math keeps everything above MediaQuery.viewInsets
+    // so body + bottomNavigationBar both sit on top of the keyboard (nav bar
+    // looks “pushed up”). resizeToAvoidBottomInset:false alone cannot pin a
+    // bar below a smaller host view.
+    //
+    // FIX: leave bottomNavigationBar empty; pin the bar with Positioned(bottom:0)
+    // on a full-height Stack, and shrink *only* the tab content by
+    // (navHeight + keyboard). Requires Android adjustNothing so the view
+    // height stays full screen (see AndroidManifest).
+    // ───────────────────────────────────────────────────────────────────────
+    return MediaQuery(
+      // Shell ignores IME insets so Scaffold never rebases its layout box.
+      data: mq.copyWith(viewInsets: EdgeInsets.zero),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Content only — height reduced by keyboard, not the nav slot.
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: navHeight + keyboard,
+              child: MediaQuery(
+                // Tabs should not re-apply viewInsets (would double-pad).
+                data: mq.copyWith(viewInsets: EdgeInsets.zero),
+                child: IndexedStack(
+                  index: _selectedIndex,
+                  children: children,
+                ),
+              ),
+            ),
+            // Always fixed to the physical bottom of the screen.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: navHeight,
+              child: _buildBottomNav(palette, bottomSafe),
             ),
           ],
         ),

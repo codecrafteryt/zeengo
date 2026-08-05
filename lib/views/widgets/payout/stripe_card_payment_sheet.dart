@@ -8,6 +8,7 @@ import '../../../services/stripe_payment_service.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
+import '../custom_header_bar_widget.dart' show CustomHeaderBarWidget;
 import '../custom_text_widget.dart';
 
 /// Stripe card form for [CustomBottomSheetWidget] (Airbnb-style).
@@ -75,17 +76,12 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const CustomHeaderBarWidget(),
         CustomTextWidget(
           Enus.cardDetails.tr,
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
           color: palette.textPrimary,
-        ),
-        SizedBox(height: 4.h),
-        CustomTextWidget(
-          Enus.payAmount.trParams({'amount': widget.amountLabel}),
-          fontSize: 13.sp,
-          color: palette.textSecondary,
         ),
         SizedBox(height: 20.h),
         Row(

@@ -20,17 +20,12 @@ class AiAssistantSheet extends StatefulWidget {
     final palette = AppPalette.of(context);
     return CustomBottomSheetWidget.show(
       context: context,
-      heightFactor: 0.98,
-      belowStatusBar: true,
-      radius: 16.r,
+      heightFactor: 0.95,
+      belowStatusBar: false,
+      radius: 12.r,
       showHandle: false,
       scrollable: false,
-      padding: EdgeInsets.fromLTRB(
-        18.w,
-        8.h,
-        18.w,
-        12.h + MediaQuery.paddingOf(context).bottom,
-      ),
+      padding: EdgeInsets.fromLTRB(18.w, 8.h, 18.w, 12.h + MediaQuery.paddingOf(context).bottom,),
       backgroundColor: palette.card,
       child: const AiAssistantSheet(),
     );
@@ -116,6 +111,7 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const CustomHeaderBarWidget(),
+
         SizedBox(height: 12.h),
         Expanded(
           child: empty

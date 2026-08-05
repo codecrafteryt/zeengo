@@ -25,9 +25,9 @@ class Payouts extends StatefulWidget {
     final palette = AppPalette.of(context);
     return CustomBottomSheetWidget.show(
       context: context,
-      heightFactor: 0.98,
-      belowStatusBar: true,
-      radius: 16.r,
+      heightFactor: 0.95,
+      belowStatusBar: false,
+      radius: 12.r,
       showHandle: false,
       scrollable: false,
       padding: EdgeInsets.fromLTRB(
@@ -62,8 +62,9 @@ class _PayoutsState extends State<Payouts> {
     if (_selected == PaymentMethodId.card) {
       await CustomBottomSheetWidget.show<bool>(
         context: context,
-        heightFactor: 0.98,
-        radius: 16,
+        heightFactor: 0.95,
+        belowStatusBar: false,
+        radius: 12.r,
         showHandle: false,
         child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
       );

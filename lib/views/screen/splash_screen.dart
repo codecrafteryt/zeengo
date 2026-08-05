@@ -14,6 +14,7 @@ import '../../utils/extensions/extentions.dart';
 import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
+import '../auth/login_screen.dart';
 import 'explore/home_pages.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -27,9 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future<void>.delayed(const Duration(milliseconds: 1100), () {
+    Future<void>.delayed(const Duration(milliseconds: 5100), () {
       if (!mounted) return;
-      Get.off(() => const HomePages());
+      Get.off(() => const LoginScreen());
     });
   }
 

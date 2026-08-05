@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
@@ -19,13 +20,27 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: palette.scaffold,
       appBar: AppBar(
-        backgroundColor: palette.card,
+        backgroundColor: palette.scaffold,
         elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: palette.icon),
+        surfaceTintColor: palette.card,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          behavior: HitTestBehavior.opaque,
+          child: Center(
+            child: SizedBox(
+              width: 20.w,
+              height: 20.h,
+              child: SvgPicture.asset(
+                MyImages.arrowBackFlatSvg,
+                width: 20.w,
+                height: 20.h,
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(palette.icon, BlendMode.srcIn),
+              ),
+            ),
+          ),
         ),
+        leadingWidth: 48,
         title: CustomTextWidget(
           Enus.notifications.tr,
           fontSize: 18.sp,
