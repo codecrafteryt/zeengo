@@ -1,7 +1,7 @@
 /*
   ---------------------------------------
   Project: Zeengo Mobile Application
-  Description: Airbnb-style login
+  Description: Airbnb-style login / booking access
 */
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,44 +26,41 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static const _demoEmail = 'click@gmail';
-  static const _demoPassword = '123456789';
+  // Demo credentials (same values for now).
+  static const _demoBookingCode = 'click@gmail';
+  static const _demoPhone = '123456789';
 
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _emailFocus = FocusNode();
-  final _passwordFocus = FocusNode();
+  final _bookingController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _bookingFocus = FocusNode();
+  final _phoneFocus = FocusNode();
 
-  bool _obscurePassword = true;
   bool _isLoading = false;
   String? _formError;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
+    _bookingController.dispose();
+    _phoneController.dispose();
+    _bookingFocus.dispose();
+    _phoneFocus.dispose();
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
+  String? _validateBookingCode(String? value) {
     final v = value?.trim() ?? '';
-    if (v.isEmpty) return Enus.emailRequired.tr;
-    final ok = RegExp(r'^[^@\s]+@[^@\s]+\.?[^@\s]*$').hasMatch(v);
-    if (!ok) return Enus.emailInvalid.tr;
+    if (v.isEmpty) return Enus.bookingCodeRequired.tr;
     return null;
   }
 
-  String? _validatePassword(String? value) {
-    final v = value ?? '';
-    if (v.isEmpty) return Enus.passwordRequired.tr;
-    if (v.length < 6) return Enus.passwordMinLength.tr;
+  String? _validatePhone(String? value) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return Enus.phoneRequired.tr;
     return null;
   }
 
-  Future<void> _onContinue() async {
+  Future<void> _onViewTrip() async {
     if (_isLoading) return;
     FocusScope.of(context).unfocus();
     setState(() => _formError = null);
@@ -71,10 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final valid = _formKey.currentState?.validate() ?? false;
     if (!valid) return;
 
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    final code = _bookingController.text.trim();
+    final phone = _phoneController.text.trim();
 
-    if (email != _demoEmail || password != _demoPassword) {
+    if (code != _demoBookingCode || phone != _demoPhone) {
       setState(() => _formError = Enus.invalidCredentials.tr);
       return;
     }
@@ -90,10 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
     required TextEditingController controller,
     required FocusNode focusNode,
     required String label,
+    required String hint,
     required String? Function(String?) validator,
     required ValueChanged<String>? onFieldSubmitted,
-    bool obscure = false,
-    Widget? suffix,
     TextInputType keyboardType = TextInputType.text,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -103,16 +99,14 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: controller,
       focusNode: focusNode,
       labelText: label,
-      hintText: '',
+      hintText: hint,
       height: 50,
       borderRadius: 12.r,
       padding: EdgeInsets.zero,
       keyboardType: keyboardType,
-      isObscureText: obscure,
       filled: true,
       fillColor: isDark ? palette.cardMuted : palette.card,
       focusedFillColor: isDark ? palette.cardMuted : palette.card,
-      // Theme container border for idle + focus (no purple).
       borderColor: border,
       focusedBorderColor: border,
       enabledBorderWidth: 1,
@@ -121,20 +115,19 @@ class _LoginScreenState extends State<LoginScreen> {
       errorBorderWidth: 1.2,
       focusedErrorBorderWidth: 1.2,
       labelColor: palette.textSecondary,
-      // Always float "Email" / "Password" (default, not only on focus).
       floatingLabelBehavior: FloatingLabelBehavior.always,
       floatingLabelStyle: TextStyle(
         color: palette.textSecondary,
         fontSize: 13.sp,
         fontWeight: FontWeight.w500,
       ),
+      hintColor: palette.textSecondary,
       textColor: palette.textPrimary,
       cursorColor: palette.textPrimary,
       fontSize: 15.sp,
       contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
-      suffixIcon: suffix,
     );
   }
 
@@ -196,36 +189,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             40.sbh,
                             _buildOutlinedField(
                               palette: palette,
-                              controller: _emailController,
-                              focusNode: _emailFocus,
-                              label: Enus.email.tr,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: _validateEmail,
+                              controller: _bookingController,
+                              focusNode: _bookingFocus,
+                              label: Enus.bookingCode.tr,
+                              hint: Enus.bookingCodeHint.tr,
+                              keyboardType: TextInputType.text,
+                              validator: _validateBookingCode,
                               onFieldSubmitted: (_) =>
-                                  _passwordFocus.requestFocus(),
+                                  _phoneFocus.requestFocus(),
                             ),
                             20.sbh,
                             _buildOutlinedField(
                               palette: palette,
-                              controller: _passwordController,
-                              focusNode: _passwordFocus,
-                              label: Enus.password.tr,
-                              obscure: _obscurePassword,
-                              keyboardType: TextInputType.visiblePassword,
-                              validator: _validatePassword,
-                              onFieldSubmitted: (_) => _onContinue(),
-                              suffix: IconButton(
-                                onPressed: () => setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                ),
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: palette.textSecondary,
-                                  size: 22.sp,
-                                ),
-                              ),
+                              controller: _phoneController,
+                              focusNode: _phoneFocus,
+                              label: Enus.phoneNumber.tr,
+                              hint: Enus.phoneNumberHint.tr,
+                              keyboardType: TextInputType.phone,
+                              validator: _validatePhone,
+                              onFieldSubmitted: (_) => _onViewTrip(),
                             ),
                             if (_formError != null) ...[
                               14.sbh,
@@ -237,10 +219,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 textAlign: TextAlign.center,
                               ),
                             ],
-                            30.sbh,
+                            25.sbh,
                             CustomButton(
-                              text: Enus.continueText.tr,
-                              onPressed: _isLoading ? null : _onContinue,
+                              text: Enus.viewMyTrip.tr,
+                              onPressed: _isLoading ? null : _onViewTrip,
                               isLoading: _isLoading,
                               height: 50,
                               width: double.infinity,
@@ -249,6 +231,27 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderColor: MyColors.darkPurple,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,
+                              suffixIcon: Icons.arrow_forward_rounded,
+                              iconColor: MyColors.white,
+                              iconSize: 20.sp,
+                            ),
+                            16.sbh,
+                            CustomTextWidget(
+                              Enus.bookingCodeHelp.tr,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                              color: palette.textSecondary,
+                              textAlign: TextAlign.center,
+                            ),
+                            4.sbh,
+                            CustomTextWidget(
+                              Enus.bookingCodeHelpAr.tr,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                              color: palette.textSecondary,
+                              textAlign: TextAlign.center,
                             ),
                             const Spacer(),
                             28.sbh,

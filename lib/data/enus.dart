@@ -22,6 +22,19 @@ class Enus {
   static const String login = 'login';
   static const String welcomeBack = 'welcome_back';
   static const String loginSubtitle = 'login_subtitle';
+  static const String bookingCode = 'booking_code';
+  static const String bookingCodeHint = 'booking_code_hint';
+  static const String phoneNumber = 'phone_number';
+  static const String phoneNumberHint = 'phone_number_hint';
+  static const String viewMyTrip = 'view_my_trip';
+  static const String bookingCodeHelp = 'booking_code_help';
+  static const String bookingCodeHelpAr = 'booking_code_help_ar';
+  static const String bookingCodeRequired = 'booking_code_required';
+  static const String phoneRequired = 'phone_required';
+  static const String invalidCredentials = 'invalid_credentials';
+  static const String signingIn = 'signing_in';
+
+  // Legacy auth keys (kept for reuse elsewhere)
   static const String email = 'email';
   static const String emailHint = 'email_hint';
   static const String password = 'password';
@@ -31,8 +44,6 @@ class Enus {
   static const String emailInvalid = 'email_invalid';
   static const String passwordRequired = 'password_required';
   static const String passwordMinLength = 'password_min_length';
-  static const String invalidCredentials = 'invalid_credentials';
-  static const String signingIn = 'signing_in';
 
   // Nav
   static const String explore = 'explore';

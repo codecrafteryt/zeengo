@@ -7,9 +7,8 @@
     AuthRepo authRepo;
     SharedPreferences sharedPreferences;
 
-    AuthController({
-      required this.authRepo,
-      required this.sharedPreferences,
-    });
+    AuthController({required this.authRepo, required this.sharedPreferences,});
+
+
 
   }
