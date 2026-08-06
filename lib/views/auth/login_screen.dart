@@ -1,135 +1,25 @@
 /*
   ---------------------------------------
   Project: Zeengo Mobile Application
-  Description: Airbnb-style login / booking access
+  Description: Booking login UI (stateless; logic in AuthController)
 */
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../controller/auth_controller.dart';
 import '../../data/enus.dart';
 import '../../utils/extensions/extentions.dart';
 import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
-import '../screen/explore/home_pages.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_widget.dart';
 import '../widgets/custom_textfield.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends GetView<AuthController> {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  // Demo credentials (same values for now).
-  static const _demoBookingCode = 'click@gmail';
-  static const _demoPhone = '123456789';
-
-  final _formKey = GlobalKey<FormState>();
-  final _bookingController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _bookingFocus = FocusNode();
-  final _phoneFocus = FocusNode();
-
-  bool _isLoading = false;
-  String? _formError;
-
-  @override
-  void dispose() {
-    _bookingController.dispose();
-    _phoneController.dispose();
-    _bookingFocus.dispose();
-    _phoneFocus.dispose();
-    super.dispose();
-  }
-
-  String? _validateBookingCode(String? value) {
-    final v = value?.trim() ?? '';
-    if (v.isEmpty) return Enus.bookingCodeRequired.tr;
-    return null;
-  }
-
-  String? _validatePhone(String? value) {
-    final v = value?.trim() ?? '';
-    if (v.isEmpty) return Enus.phoneRequired.tr;
-    return null;
-  }
-
-  Future<void> _onViewTrip() async {
-    if (_isLoading) return;
-    FocusScope.of(context).unfocus();
-    setState(() => _formError = null);
-
-    final valid = _formKey.currentState?.validate() ?? false;
-    if (!valid) return;
-
-    final code = _bookingController.text.trim();
-    final phone = _phoneController.text.trim();
-
-    if (code != _demoBookingCode || phone != _demoPhone) {
-      setState(() => _formError = Enus.invalidCredentials.tr);
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
-    Get.off(() => const HomePages());
-  }
-
-  Widget _buildOutlinedField({
-    required AppPalette palette,
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required String label,
-    required String hint,
-    required String? Function(String?) validator,
-    required ValueChanged<String>? onFieldSubmitted,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final border = palette.border;
-
-    return CustomTextField(
-      controller: controller,
-      focusNode: focusNode,
-      labelText: label,
-      hintText: hint,
-      height: 50,
-      borderRadius: 12.r,
-      padding: EdgeInsets.zero,
-      keyboardType: keyboardType,
-      filled: true,
-      fillColor: isDark ? palette.cardMuted : palette.card,
-      focusedFillColor: isDark ? palette.cardMuted : palette.card,
-      borderColor: border,
-      focusedBorderColor: border,
-      enabledBorderWidth: 1,
-      focusedBorderWidth: 1,
-      errorBorderColor: const Color.fromRGBO(240, 66, 72, 1),
-      errorBorderWidth: 1.2,
-      focusedErrorBorderWidth: 1.2,
-      labelColor: palette.textSecondary,
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      floatingLabelStyle: TextStyle(
-        color: palette.textSecondary,
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w500,
-      ),
-      hintColor: palette.textSecondary,
-      textColor: palette.textPrimary,
-      cursorColor: palette.textPrimary,
-      fontSize: 15.sp,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-      validator: validator,
-      onFieldSubmitted: onFieldSubmitted,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: IntrinsicHeight(
                       child: Form(
-                        key: _formKey,
+                        key: controller.formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -187,53 +77,62 @@ class _LoginScreenState extends State<LoginScreen> {
                               textAlign: TextAlign.center,
                             ),
                             40.sbh,
-                            _buildOutlinedField(
-                              palette: palette,
-                              controller: _bookingController,
-                              focusNode: _bookingFocus,
-                              label: Enus.bookingCode.tr,
-                              hint: Enus.bookingCodeHint.tr,
+                            CustomTextField(
+                              themed: true,
+                              controller: controller.bookingController,
+                              focusNode: controller.bookingFocus,
+                              labelText: Enus.bookingCode.tr,
+                              hintText: Enus.bookingCodeHint.tr,
                               keyboardType: TextInputType.text,
-                              validator: _validateBookingCode,
-                              onFieldSubmitted: (_) =>
-                                  _phoneFocus.requestFocus(),
+                              validator: controller.validateBookingCode,
+                              onFieldSubmitted: (_) => controller.focusPhone(),
                             ),
                             20.sbh,
-                            _buildOutlinedField(
-                              palette: palette,
-                              controller: _phoneController,
-                              focusNode: _phoneFocus,
-                              label: Enus.phoneNumber.tr,
-                              hint: Enus.phoneNumberHint.tr,
+                            CustomTextField(
+                              themed: true,
+                              controller: controller.phoneController,
+                              focusNode: controller.phoneFocus,
+                              labelText: Enus.phoneNumber.tr,
+                              hintText: Enus.phoneNumberHint.tr,
                               keyboardType: TextInputType.phone,
-                              validator: _validatePhone,
-                              onFieldSubmitted: (_) => _onViewTrip(),
+                              validator: controller.validatePhone,
+                              onFieldSubmitted: (_) => controller.viewMyTrip(),
                             ),
-                            if (_formError != null) ...[
-                              14.sbh,
-                              CustomTextWidget(
-                                _formError!,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w500,
-                                color: MyColors.red,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                            Obx(() {
+                              final err = controller.formError.value;
+                              if (err == null) return const SizedBox.shrink();
+                              return Column(
+                                children: [
+                                  14.sbh,
+                                  CustomTextWidget(
+                                    err,
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: MyColors.red,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            }),
                             25.sbh,
-                            CustomButton(
-                              text: Enus.viewMyTrip.tr,
-                              onPressed: _isLoading ? null : _onViewTrip,
-                              isLoading: _isLoading,
-                              height: 50,
-                              width: double.infinity,
-                              backgroundColor: MyColors.darkPurple,
-                              textColor: MyColors.white,
-                              borderColor: MyColors.darkPurple,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w700,
-                              suffixIcon: Icons.arrow_forward_rounded,
-                              iconColor: MyColors.white,
-                              iconSize: 20.sp,
+                            Obx(
+                              () => CustomButton(
+                                text: Enus.viewMyTrip.tr,
+                                onPressed: controller.isLoading.value
+                                    ? null
+                                    : controller.viewMyTrip,
+                                isLoading: controller.isLoading.value,
+                                height: 50,
+                                width: double.infinity,
+                                backgroundColor: MyColors.darkPurple,
+                                textColor: MyColors.white,
+                                borderColor: MyColors.darkPurple,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w700,
+                                suffixIcon: Icons.arrow_forward_rounded,
+                                iconColor: MyColors.white,
+                                iconSize: 20.sp,
+                              ),
                             ),
                             16.sbh,
                             CustomTextWidget(

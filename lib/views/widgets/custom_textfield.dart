@@ -1,15 +1,14 @@
 /*
   ---------------------------------------
-  Project: khelo yar Mobile Application
-  Date: March 30, 2026
-  Author: Ameer Salman
-  ---------------------------------------
-  Description: custom text field
+  Project: Zeengo Mobile Application
+  Description: Reusable text field (raw + theme-aware outlined style)
 */
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../utils/values/app_palette.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? labelText;
@@ -18,18 +17,18 @@ class CustomTextField extends StatelessWidget {
   final FontWeight hintFontWeight;
   final TextEditingController controller;
   final bool isObscureText;
-  final double borderRadius;
-  final EdgeInsetsGeometry padding;
-  final Color borderColor;
-  final Color hintColor;
-  final Color textColor;
-  final Color cursorColor;
+  final double? borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final Color? borderColor;
+  final Color? hintColor;
+  final Color? textColor;
+  final Color? cursorColor;
   final IconData? prefixIcon;
   final Color? prefixIconColor;
-  final Color fillColor;
-  final Color focusedBorderColor;
-  final Color focusedFillColor;
-  final Color focusedTextColor;
+  final Color? fillColor;
+  final Color? focusedBorderColor;
+  final Color? focusedFillColor;
+  final Color? focusedTextColor;
   final double? width;
   final double? height;
   final Widget? suffixIcon;
@@ -45,8 +44,8 @@ class CustomTextField extends StatelessWidget {
   final FloatingLabelBehavior? floatingLabelBehavior;
   final Color? labelColor;
   final TextStyle? floatingLabelStyle;
-  final double enabledBorderWidth;
-  final double focusedBorderWidth;
+  final double? enabledBorderWidth;
+  final double? focusedBorderWidth;
   final Color? errorBorderColor;
   final double errorBorderWidth;
   final double focusedErrorBorderWidth;
@@ -54,7 +53,12 @@ class CustomTextField extends StatelessWidget {
   final String? allowedPattern;
   final bool preventSpaces;
   final ValueChanged<String>? onChanged;
-  final bool filled;
+  final bool? filled;
+
+  /// When true, applies AppPalette outlined style (border = theme container
+  /// border, floating label always on, height 50, etc.) so callers don't
+  /// re-specify the same login/form boilerplate.
+  final bool themed;
 
   const CustomTextField({
     super.key,
@@ -63,18 +67,18 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.hintFontWeight = FontWeight.w400,
     this.isObscureText = false,
-    this.borderRadius = 8.0,
-    this.padding = const EdgeInsets.all(5),
-    this.borderColor = Colors.grey,
-    this.hintColor = Colors.grey,
-    this.textColor = Colors.black,
-    this.cursorColor = Colors.black,
+    this.borderRadius,
+    this.padding,
+    this.borderColor,
+    this.hintColor,
+    this.textColor,
+    this.cursorColor,
     this.prefixIcon,
     this.prefixIconColor,
-    this.fillColor = Colors.white,
-    this.focusedBorderColor = Colors.transparent,
-    this.focusedFillColor = Colors.white,
-    this.focusedTextColor = Colors.black,
+    this.fillColor,
+    this.focusedBorderColor,
+    this.focusedFillColor,
+    this.focusedTextColor,
     this.fontSize,
     this.width,
     this.height,
@@ -95,30 +99,76 @@ class CustomTextField extends StatelessWidget {
     this.floatingLabelBehavior,
     this.labelColor,
     this.floatingLabelStyle,
-    this.enabledBorderWidth = 1,
-    this.focusedBorderWidth = 1.5,
+    this.enabledBorderWidth,
+    this.focusedBorderWidth,
     this.errorBorderColor,
     this.errorBorderWidth = 1.2,
-    this.focusedErrorBorderWidth = 1.5,
-    this.filled = true,
+    this.focusedErrorBorderWidth = 1.2,
+    this.filled,
+    this.themed = false,
   });
 
   static const _errorColor = Color.fromRGBO(240, 66, 72, 1);
 
   @override
   Widget build(BuildContext context) {
-    final resolvedFontSize = fontSize ?? 15.sp;
+    final palette = AppPalette.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final resolvedFontSize = fontSize ?? 13;
     final errorColor = errorBorderColor ?? _errorColor;
-    final resolvedContentPadding = contentPadding ??
-        EdgeInsets.symmetric(
-          horizontal: 14.w,
-          vertical: height != null ? 14.h : 13,
+
+    // Theme-aware defaults (login / auth outline style).
+    final Color resolvedBorder = borderColor ??
+        (themed ? palette.border : Colors.grey);
+    final Color resolvedFocusedBorder = focusedBorderColor ??
+        (themed ? palette.border : Colors.transparent);
+    final Color resolvedFill = fillColor ??
+        (themed
+            ? (isDark ? palette.cardMuted : palette.card)
+            : Colors.white);
+    final Color resolvedHint = hintColor ??
+        (themed ? palette.textSecondary : Colors.grey);
+    final Color resolvedText = textColor ??
+        (themed ? palette.textPrimary : Colors.black);
+    final Color resolvedCursor = cursorColor ??
+        (themed ? palette.textPrimary : Colors.black);
+    final Color resolvedLabel = labelColor ?? resolvedHint;
+
+    final double? heightConstraint =
+        height != null || themed ? (height ?? 50) : null;
+
+    final double resolvedRadius = borderRadius ?? (themed ? 12.r : 8.0);
+    final EdgeInsetsGeometry resolvedPadding =
+        padding ?? (themed ? EdgeInsets.zero : const EdgeInsets.all(5));
+    final bool resolvedFilled = filled ?? true;
+    final double resolvedEnabledWidth = enabledBorderWidth ?? 1;
+    final double resolvedFocusedWidth =
+        focusedBorderWidth ?? (themed ? 1 : 1.5);
+
+    final FloatingLabelBehavior resolvedFloat =
+        floatingLabelBehavior ??
+            (themed
+                ? FloatingLabelBehavior.always
+                : FloatingLabelBehavior.auto);
+
+    final TextStyle resolvedFloatingStyle = floatingLabelStyle ??
+        TextStyle(
+          color: themed ? resolvedLabel : resolvedFocusedBorder,
+          fontSize: themed ? 13.sp : resolvedFontSize,
+          fontWeight: themed ? FontWeight.w500 : FontWeight.w600,
         );
 
-    final radius = BorderRadius.circular(borderRadius);
+    final EdgeInsetsGeometry resolvedContentPadding = contentPadding ??
+        EdgeInsets.symmetric(
+          horizontal: themed ? 16.w : 14.w,
+          vertical: heightConstraint != null ? 14.h : 13,
+        );
+
+    final radius = BorderRadius.circular(resolvedRadius);
 
     return Padding(
-      padding: padding,
+      padding: resolvedPadding,
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
@@ -136,38 +186,29 @@ class CustomTextField extends StatelessWidget {
         ],
         decoration: InputDecoration(
           counterText: '',
-          filled: filled,
-          fillColor: fillColor,
+          filled: resolvedFilled,
+          fillColor: resolvedFill,
           isDense: false,
-          // Input box target height; avoid maxHeight so floating labels / errors
-          // are not clipped (Material outlined style, 3rd SS).
-          constraints: height != null
-              ? BoxConstraints(minHeight: height!)
+          constraints: heightConstraint != null
+              ? BoxConstraints(minHeight: heightConstraint)
               : null,
           labelText: labelText,
-          floatingLabelBehavior:
-              floatingLabelBehavior ?? FloatingLabelBehavior.auto,
+          floatingLabelBehavior: resolvedFloat,
           floatingLabelAlignment: FloatingLabelAlignment.start,
           alignLabelWithHint: true,
           hintText: hintText.isEmpty ? null : hintText,
           contentPadding: resolvedContentPadding,
           hintStyle: TextStyle(
-            color: hintColor,
+            color: resolvedHint,
             fontSize: resolvedFontSize,
             fontWeight: hintFontWeight,
           ),
           labelStyle: TextStyle(
-            color: labelColor ?? hintColor,
+            color: resolvedLabel,
             fontSize: resolvedFontSize,
             fontWeight: FontWeight.w500,
           ),
-          floatingLabelStyle: floatingLabelStyle ??
-              TextStyle(
-                color: focusedBorderColor,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-              ),
-          // Error: red floating label + message (Material outlined style).
+          floatingLabelStyle: resolvedFloatingStyle,
           errorStyle: TextStyle(
             color: errorColor,
             fontSize: 12.sp,
@@ -178,15 +219,15 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: radius,
             borderSide: BorderSide(
-              color: borderColor,
-              width: enabledBorderWidth,
+              color: resolvedBorder,
+              width: resolvedEnabledWidth,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: radius,
             borderSide: BorderSide(
-              color: focusedBorderColor,
-              width: focusedBorderWidth,
+              color: resolvedFocusedBorder,
+              width: resolvedFocusedWidth,
             ),
           ),
           errorBorder: OutlineInputBorder(
@@ -207,26 +248,35 @@ class CustomTextField extends StatelessWidget {
               ? Container(margin: EdgeInsets.only(right: 8.0.w))
               : suffixIcon,
           prefixIcon: prefixIcon != null
-              ? Icon(
-                  prefixIcon,
-                  color: prefixIconColor ?? hintColor,
-                  size: 22.sp,
+              ? GestureDetector(
+                  onTap: onPrefixIconPressed,
+                  child: Icon(
+                    prefixIcon,
+                    color: prefixIconColor ?? resolvedHint,
+                    size: 22.sp,
+                  ),
                 )
               : null,
           prefixIconConstraints: prefixIcon != null
-              ? BoxConstraints(minWidth: 44.w, minHeight: height ?? 48)
+              ? BoxConstraints(
+                  minWidth: 44.w,
+                  minHeight: heightConstraint ?? 48,
+                )
               : null,
           suffixIconConstraints: suffixIcon != null
-              ? BoxConstraints(minWidth: 44.w, minHeight: height ?? 48)
+              ? BoxConstraints(
+                  minWidth: 44.w,
+                  minHeight: heightConstraint ?? 48,
+                )
               : null,
         ),
         style: TextStyle(
-          color: textColor,
+          color: resolvedText,
           fontSize: resolvedFontSize,
           height: 1.2,
           fontWeight: FontWeight.w500,
         ),
-        cursorColor: cursorColor,
+        cursorColor: resolvedCursor,
         validator: validator,
         obscureText: isObscureText,
       ),
