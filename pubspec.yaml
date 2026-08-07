@@ -87,6 +87,9 @@ flutter:
     - assets/svgs/close_cancel.svg
     - assets/svgs/translate_flat.svg
     - assets/svgs/arrow_back_flat.svg
+    - assets/svgs/arrow_down_flat.svg
+    - assets/svgs/arrow_up_flat.svg
+    - assets/svgs/map_instant_booking.svg
     - assets/svgs/search_svgs/
     - assets/svgs/nav_bar/
     - assets/svgs/explore/

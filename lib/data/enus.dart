@@ -33,6 +33,10 @@ class Enus {
   static const String phoneRequired = 'phone_required';
   static const String invalidCredentials = 'invalid_credentials';
   static const String signingIn = 'signing_in';
+  static const String staffFastAccess = 'staff_fast_access';
+  static const String staffOpen = 'staff_open';
+  static const String staffPortalHint = 'staff_portal_hint';
+  static const String staffCodeRequired = 'staff_code_required';
 
   // Legacy auth keys (kept for reuse elsewhere)
   static const String email = 'email';

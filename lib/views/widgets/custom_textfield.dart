@@ -167,119 +167,138 @@ class CustomTextField extends StatelessWidget {
 
     final radius = BorderRadius.circular(resolvedRadius);
 
-    return Padding(
-      padding: resolvedPadding,
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        focusNode: focusNode,
-        onFieldSubmitted: onFieldSubmitted,
-        readOnly: readOnly,
-        onTap: onTap,
-        onChanged: onChanged,
-        maxLength: maxLength,
-        inputFormatters: [
-          if (maxLength != null) LengthLimitingTextInputFormatter(maxLength!),
-          if (allowedPattern != null)
-            FilteringTextInputFormatter.allow(RegExp(allowedPattern!)),
-          if (preventSpaces) FilteringTextInputFormatter.deny(RegExp(r'\s')),
-        ],
-        decoration: InputDecoration(
-          counterText: '',
-          filled: resolvedFilled,
-          fillColor: resolvedFill,
-          isDense: false,
-          constraints: heightConstraint != null
-              ? BoxConstraints(minHeight: heightConstraint)
-              : null,
-          labelText: labelText,
-          floatingLabelBehavior: resolvedFloat,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-          alignLabelWithHint: true,
-          hintText: hintText.isEmpty ? null : hintText,
-          contentPadding: resolvedContentPadding,
-          hintStyle: TextStyle(
-            color: resolvedHint,
-            fontSize: resolvedFontSize,
-            fontWeight: hintFontWeight,
+    // InputDecoration cannot lay out with infinite max width (hasSize assert).
+    // Expand to parent when width is finite; never force infinity unbounded.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final hasBoundedWidth = constraints.maxWidth.isFinite;
+        final field = TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          focusNode: focusNode,
+          onFieldSubmitted: onFieldSubmitted,
+          readOnly: readOnly,
+          onTap: onTap,
+          onChanged: onChanged,
+          maxLength: maxLength,
+          inputFormatters: [
+            if (maxLength != null)
+              LengthLimitingTextInputFormatter(maxLength!),
+            if (allowedPattern != null)
+              FilteringTextInputFormatter.allow(RegExp(allowedPattern!)),
+            if (preventSpaces)
+              FilteringTextInputFormatter.deny(RegExp(r'\s')),
+          ],
+          decoration: InputDecoration(
+            counterText: '',
+            filled: resolvedFilled,
+            fillColor: resolvedFill,
+            isDense: false,
+            // Avoid minHeight-only constraints; they fail under unbounded width.
+            constraints: heightConstraint != null && hasBoundedWidth
+                ? BoxConstraints(
+                    minHeight: heightConstraint,
+                    maxWidth: constraints.maxWidth,
+                  )
+                : null,
+            labelText: labelText,
+            floatingLabelBehavior: resolvedFloat,
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            alignLabelWithHint: true,
+            hintText: hintText.isEmpty ? null : hintText,
+            contentPadding: resolvedContentPadding,
+            hintStyle: TextStyle(
+              color: resolvedHint,
+              fontSize: resolvedFontSize,
+              fontWeight: hintFontWeight,
+            ),
+            labelStyle: TextStyle(
+              color: resolvedLabel,
+              fontSize: resolvedFontSize,
+              fontWeight: FontWeight.w500,
+            ),
+            floatingLabelStyle: resolvedFloatingStyle,
+            errorStyle: TextStyle(
+              color: errorColor,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              height: 1.25,
+            ),
+            errorMaxLines: 2,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: radius,
+              borderSide: BorderSide(
+                color: resolvedBorder,
+                width: resolvedEnabledWidth,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: radius,
+              borderSide: BorderSide(
+                color: resolvedFocusedBorder,
+                width: resolvedFocusedWidth,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: radius,
+              borderSide: BorderSide(
+                color: errorColor,
+                width: errorBorderWidth,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: radius,
+              borderSide: BorderSide(
+                color: errorColor,
+                width: focusedErrorBorderWidth,
+              ),
+            ),
+            suffixIcon: showCustomSendIcon
+                ? Container(margin: EdgeInsets.only(right: 8.0.w))
+                : suffixIcon,
+            prefixIcon: prefixIcon != null
+                ? GestureDetector(
+                    onTap: onPrefixIconPressed,
+                    child: Icon(
+                      prefixIcon,
+                      color: prefixIconColor ?? resolvedHint,
+                      size: 22.sp,
+                    ),
+                  )
+                : null,
+            prefixIconConstraints: prefixIcon != null
+                ? BoxConstraints(
+                    minWidth: 44.w,
+                    minHeight: heightConstraint ?? 48,
+                  )
+                : null,
+            suffixIconConstraints: suffixIcon != null
+                ? BoxConstraints(
+                    minWidth: 44.w,
+                    minHeight: heightConstraint ?? 48,
+                  )
+                : null,
           ),
-          labelStyle: TextStyle(
-            color: resolvedLabel,
+          style: TextStyle(
+            color: resolvedText,
             fontSize: resolvedFontSize,
+            height: 1.2,
             fontWeight: FontWeight.w500,
           ),
-          floatingLabelStyle: resolvedFloatingStyle,
-          errorStyle: TextStyle(
-            color: errorColor,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            height: 1.25,
-          ),
-          errorMaxLines: 2,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(
-              color: resolvedBorder,
-              width: resolvedEnabledWidth,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(
-              color: resolvedFocusedBorder,
-              width: resolvedFocusedWidth,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(
-              color: errorColor,
-              width: errorBorderWidth,
-            ),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: radius,
-            borderSide: BorderSide(
-              color: errorColor,
-              width: focusedErrorBorderWidth,
-            ),
-          ),
-          suffixIcon: showCustomSendIcon
-              ? Container(margin: EdgeInsets.only(right: 8.0.w))
-              : suffixIcon,
-          prefixIcon: prefixIcon != null
-              ? GestureDetector(
-                  onTap: onPrefixIconPressed,
-                  child: Icon(
-                    prefixIcon,
-                    color: prefixIconColor ?? resolvedHint,
-                    size: 22.sp,
-                  ),
-                )
-              : null,
-          prefixIconConstraints: prefixIcon != null
-              ? BoxConstraints(
-                  minWidth: 44.w,
-                  minHeight: heightConstraint ?? 48,
-                )
-              : null,
-          suffixIconConstraints: suffixIcon != null
-              ? BoxConstraints(
-                  minWidth: 44.w,
-                  minHeight: heightConstraint ?? 48,
-                )
-              : null,
-        ),
-        style: TextStyle(
-          color: resolvedText,
-          fontSize: resolvedFontSize,
-          height: 1.2,
-          fontWeight: FontWeight.w500,
-        ),
-        cursorColor: resolvedCursor,
-        validator: validator,
-        obscureText: isObscureText,
-      ),
+          cursorColor: resolvedCursor,
+          validator: validator,
+          obscureText: isObscureText,
+        );
+
+        return Padding(
+          padding: resolvedPadding,
+          child: width != null
+              ? SizedBox(width: width, child: field)
+              : hasBoundedWidth
+                  ? SizedBox(width: constraints.maxWidth, child: field)
+                  : field,
+        );
+      },
     );
   }
 }
