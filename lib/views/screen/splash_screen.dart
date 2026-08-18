@@ -37,10 +37,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      value: Theme.of(context).brightness == Brightness.dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
       child: Scaffold(
         backgroundColor: palette.scaffold,
         body: Center(
@@ -50,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Padding(
                 padding: EdgeInsets.all(10.w),
                 child: Image.asset(
-                  MyImages.appIcon,
+                  MyImages.appIconFor(context),
                   width: 250.w,
                   height: 250.h,
                   fit: BoxFit.contain,
@@ -58,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               20.sbh,
               LoadingAnimationWidget.staggeredDotsWave(
-                color: MyColors.darkPurple,
+                color: Theme.of(context).brightness == Brightness.dark ? MyColors.white : MyColors.black,
                 size: 50,
               ),
             ],

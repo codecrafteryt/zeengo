@@ -48,7 +48,7 @@ class LoginScreen extends GetView<AuthController> {
                         children: [
                           Center(
                             child: Image.asset(
-                              MyImages.appIcon,
+                              MyImages.appIconFor(context),
                               width: 110.w,
                               height: 110.w,
                               fit: BoxFit.contain,

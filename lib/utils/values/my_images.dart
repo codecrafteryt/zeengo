@@ -1,5 +1,17 @@
+import 'package:flutter/material.dart';
+
 class MyImages {
   static const String appIcon = 'assets/images/app_icon/app_icon.png';
+  static const String appIconBlack =
+      'assets/images/app_icon/black_app_icon.png';
+  static const String appIconWhite =
+      'assets/images/app_icon/white_app_icon.png';
+
+  /// Light theme → black icon, dark theme → white icon.
+  static String appIconFor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? appIconWhite : appIconBlack;
+  }
   static const String braelo_app = "assets/images/braelo_app.png";
   static const String braelo_logo = 'assets/images/braelo_logo.png';
 
