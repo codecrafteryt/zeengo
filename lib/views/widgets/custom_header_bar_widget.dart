@@ -26,7 +26,7 @@ class CustomHeaderBarWidget extends StatelessWidget {
   final VoidCallback? onLeadingTap;
   final EdgeInsetsGeometry? padding;
 
-  static const EdgeInsets defaultPadding = EdgeInsets.only(top: 4);
+  static const EdgeInsets defaultPadding = EdgeInsets.only(top: 8);
 
   @override
   Widget build(BuildContext context) {

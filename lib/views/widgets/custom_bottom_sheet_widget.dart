@@ -70,69 +70,87 @@ class CustomBottomSheetWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final bg = backgroundColor ?? palette.card;
-    final media = MediaQuery.of(context);
-    final statusBar = media.padding.top;
-    final maxH = belowStatusBar
-        ? media.size.height - statusBar
-        : media.size.height * (heightFactor ?? 0.98);
+    final inherited = MediaQuery.of(context);
+    // Modal routes often zero out padding.top. Always read the window
+    // status bar inset so the close button never sits on system icons.
+    final windowPadding = MediaQueryData.fromView(View.of(context)).padding;
+    final topSafe = windowPadding.top;
+    final keyboard = inherited.viewInsets.bottom;
+    const topGap = 12.0;
+    final usableHeight =
+        (inherited.size.height - topSafe - topGap - keyboard).clamp(
+      160.0,
+      inherited.size.height,
+    );
+    final preferred = belowStatusBar
+        ? usableHeight
+        : inherited.size.height * (heightFactor ?? 0.98);
+    final maxH = preferred > usableHeight ? usableHeight : preferred;
     final r = radius ?? 16.r;
     final contentPadding = padding ??
-        EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h + media.padding.bottom);
+        EdgeInsets.fromLTRB(
+          20.w,
+          8.h,
+          20.w,
+          16.h + windowPadding.bottom,
+        );
 
-    return AnimatedPadding(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: maxH,
-            minHeight: belowStatusBar ? maxH : maxH * 0.85,
-          ),
-          child: Container(
-            height: maxH,
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
-              border: borderColor == null
-                  ? null
-                  : Border.all(color: borderColor!, width: 1.2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.18),
-                  blurRadius: 28,
-                  offset: const Offset(0, -8),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                if (showHandle) ...[
-                  SizedBox(height: 10.h),
-                  Container(
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: palette.border,
-                      borderRadius: BorderRadius.circular(4.r),
-                    ),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: topSafe + topGap,
+        bottom: keyboard,
+      ),
+      child: MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxH, minHeight: maxH),
+            child: Container(
+              height: maxH,
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(r)),
+                border: borderColor == null
+                    ? null
+                    : Border.all(color: borderColor!, width: 1.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 28,
+                    offset: const Offset(0, -8),
                   ),
-                  SizedBox(height: 8.h),
                 ],
-                Expanded(
-                  child: scrollable
-                      ? SingleChildScrollView(
-                          padding: contentPadding,
-                          child: child,
-                        )
-                      : Padding(
-                          padding: contentPadding,
-                          child: child,
-                        ),
-                ),
-              ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  if (showHandle) ...[
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color: palette.border,
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                  ],
+                  Expanded(
+                    child: scrollable
+                        ? SingleChildScrollView(
+                            padding: contentPadding,
+                            child: child,
+                          )
+                        : Padding(
+                            padding: contentPadding,
+                            child: child,
+                          ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

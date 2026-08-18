@@ -9,6 +9,7 @@ import '../../../data/enus.dart';
 import '../../../data/models/map/nearby_place.dart';
 import '../../../utils/values/air_bnb_style.dart';
 import '../../../utils/values/app_palette.dart';
+import '../../widgets/custom_header_bar_widget.dart';
 import '../../widgets/custom_text_widget.dart';
 import '../../widgets/map/map_category_chips.dart';
 import '../../widgets/map/map_directions_sheet.dart';
@@ -71,11 +72,11 @@ class _MapScreenState extends State<MapScreen> {
       backgroundColor: AppPalette.of(context).scaffold,
       body: Stack(
         children: [
-          // Native map rebuilds only when markers/polylines change (mapLayerId).
           GetBuilder<MapController>(
             init: _controller,
             id: MapController.mapLayerId,
             builder: (ctrl) {
+              final navigating = ctrl.isNavigating;
               return RepaintBoundary(
                 child: GoogleMap(
                   key: const ValueKey('zeengo_google_map'),
@@ -83,10 +84,12 @@ class _MapScreenState extends State<MapScreen> {
                     target: MapController.moscowCenter,
                     zoom: 12.2,
                   ),
-                  padding: EdgeInsets.only(
-                    top: mapTopPad,
-                    bottom: mapBottomPad,
-                  ),
+                  padding: navigating
+                      ? EdgeInsets.only(top: top + 56)
+                      : EdgeInsets.only(
+                          top: mapTopPad,
+                          bottom: mapBottomPad,
+                        ),
                   style: kAirbnbLikeMapStyle,
                   markers: ctrl.markers,
                   polylines: ctrl.polylines,
@@ -103,10 +106,23 @@ class _MapScreenState extends State<MapScreen> {
               );
             },
           ),
-          // Chrome rebuilds independently so UI taps do not recreate the map.
           GetBuilder<MapController>(
             id: MapController.mapUiId,
             builder: (ctrl) {
+              if (ctrl.isNavigating) {
+                return SafeArea(
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+                      child: CustomHeaderBarWidget(
+                        onLeadingTap: ctrl.exitNavigation,
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                );
+              }
               return Stack(
                 children: [
                   SafeArea(
