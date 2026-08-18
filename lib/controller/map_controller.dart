@@ -184,7 +184,7 @@ class MapController extends GetxController {
   Future<void> beginNavigation() async {
     if (activePlace == null) return;
     isNavigating = true;
-    refreshUi();
+    refreshAll();
     try {
       final c = await googleMapController.future;
       await c.animateCamera(
@@ -198,6 +198,11 @@ class MapController extends GetxController {
         ),
       );
     } catch (_) {}
+  }
+
+  void exitNavigation() {
+    isNavigating = false;
+    refreshAll();
   }
 
   void clearDirections() {

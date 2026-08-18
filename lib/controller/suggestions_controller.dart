@@ -30,12 +30,12 @@ class SuggestionsController extends GetxController {
   }
 
   void onTipAction(SuggestionTip tip) {
-    Get.snackbar(
-      tip.title,
-      tip.actionLabel,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
+    // Get.snackbar(
+    //   tip.title,
+    //   tip.actionLabel,
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   duration: const Duration(seconds: 2),
+    // );
   }
 
   String _nowLabel() {

@@ -4,7 +4,6 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
-import '../../../services/stripe_payment_service.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_fonts.dart';
@@ -51,18 +50,21 @@ class _StripeCardPaymentSheetState extends State<StripeCardPaymentSheet> {
     }
     setState(() => _loading = true);
     try {
-      final result = await StripePaymentService.instance.payWithCard(
-        amountLabel: widget.amountLabel,
-        billingCountry: _country,
-        billingPostalCode: _zipController.text.trim(),
-      );
+      // Stripe charge call disabled — keep the card sheet UI only.
+      // final result = await StripePaymentService.instance.payWithCard(
+      //   amountLabel: widget.amountLabel,
+      //   billingCountry: _country,
+      //   billingPostalCode: _zipController.text.trim(),
+      // );
+      // if (!mounted) return;
+      // if (result.success) {
+      //   Navigator.of(context).pop(true);
+      //   Get.snackbar(Enus.paymentSuccess.tr, result.message);
+      // } else {
+      //   Get.snackbar(Enus.paymentFailed.tr, result.message);
+      // }
       if (!mounted) return;
-      if (result.success) {
-        Navigator.of(context).pop(true);
-        Get.snackbar(Enus.paymentSuccess.tr, result.message);
-      } else {
-        Get.snackbar(Enus.paymentFailed.tr, result.message);
-      }
+      Navigator.of(context).pop(true);
     } catch (e) {
       Get.snackbar(Enus.paymentFailed.tr, e.toString());
     } finally {

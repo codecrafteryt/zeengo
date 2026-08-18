@@ -60,14 +60,14 @@ class _PayoutsState extends State<Payouts> {
 
   Future<void> _onPayAction() async {
     if (_selected == PaymentMethodId.card) {
-      await CustomBottomSheetWidget.show<bool>(
-        context: context,
-        heightFactor: 0.95,
-        belowStatusBar: false,
-        radius: 12.r,
-        showHandle: false,
-        child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
-      );
+      // await CustomBottomSheetWidget.show<bool>(
+      //   context: context,
+      //   heightFactor: 0.95,
+      //   belowStatusBar: false,
+      //   radius: 12.r,
+      //   showHandle: false,
+      //   child: const StripeCardPaymentSheet(amountLabel: _dueAmount),
+      // );
       return;
     }
     await _openWhatsapp();
