@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:zeengo/views/payouts/payouts.dart';
 
+import '../../../controller/auth_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
@@ -19,7 +20,7 @@ import '../../widgets/explore/explore_stats_row.dart';
 import '../../widgets/explore/explore_weather_card.dart';
 import '../../widgets/suggestions/suggestions_sheet.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends GetView<AuthController> {
   const ExploreScreen({super.key});
 
   @override
@@ -32,11 +33,17 @@ class ExploreScreen extends StatelessWidget {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          const SliverToBoxAdapter(
-            child: ExploreHeader(
-              userName: 'محمد',
-              packageLabel: 'Love Package - 20 Apr 2026',
-              bookingId: 'ZN0001',
+          Obx(
+            () => SliverToBoxAdapter(
+              child: ExploreHeader(
+                userName: controller.userName.value.isEmpty
+                    ? Enus.guest.tr
+                    : controller.userName.value,
+                packageLabel: 'Love Package - 20 Apr 2026',
+                bookingId: controller.znCode.value.isEmpty
+                    ? '—'
+                    : controller.znCode.value,
+              ),
             ),
           ),
           SliverPadding(
