@@ -99,15 +99,27 @@ class ApiProvider extends GetConnect implements GetxService {
 
     debugPrint('====> API Response: [${response.statusCode}] ${Constants.baseUrl + url}\n${response.body}');
 
+    final dynamic normalizedBody = _normalizeJsonBody(response.body);
+
     if (!isSuccessfulHttpStatus(response.statusCode)) {
+      // Prefer real API error envelope when present (Zeengo: success/error).
+      final Map<String, dynamic> errorBody = normalizedBody is Map<String, dynamic>
+          ? normalizedBody
+          : <String, dynamic>{
+              'success': false,
+              'status': '0',
+              'message': 'Some Error has occurred',
+              'data': <String, dynamic>{},
+              'error': normalizedBody is Map
+                  ? normalizedBody
+                  : <String, dynamic>{
+                      'code': 'HTTP_ERROR',
+                      'message': response.statusText ?? 'Please try again later',
+                    },
+            };
       _response = Response(
-        body: {
-          "status": "0",
-          "message": "Some Error has occured\n",
-          "data": {},
-          "error": "Please try again later"
-        },
-        bodyString: "{}",
+        body: errorBody,
+        bodyString: errorBody.toString(),
         request: Request(
             headers: response.request!.headers,
             method: response.request!.method,
@@ -117,7 +129,6 @@ class ApiProvider extends GetConnect implements GetxService {
         statusText: response.statusText,
       );
     } else {
-      final dynamic normalizedBody = _normalizeJsonBody(response.body);
       _response = Response(
         body: normalizedBody,
         bodyString: normalizedBody?.toString() ?? '',
