@@ -1,35 +1,28 @@
-
-import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
+import 'package:get/get.dart';
 
 import '../../api_provider/api_provider.dart';
+import '../../constants.dart';
 
 class AuthRepo extends GetxService {
-  ApiProvider apiProvider;
-  AuthRepo({required this.apiProvider,});
+  AuthRepo({required this.apiProvider});
 
-  // Future<Response> checkSession({required String refreshToken}) async {
-  //   final Map<String, dynamic> body = {
-  //     'refresh': refreshToken,
-  //   };
-  //
-  //   final Map<String, String> headers = {
-  //     'Accept': 'application/json',
-  //     'Content-Type': 'application/json',
-  //   };
-  //
-  //   return await apiProvider.postData(Constants.session, body: body, headers: headers);
-  // }
-  //
-  //
-  // Future<Response> registerRepo({
-  //   required String name,
-  //   required String email,
-  //   required String password
-  // }) async {
-  //   return await apiProvider.postData(Constants.register, body: {
-  //     "email": email,
-  //     "name": name,
-  //     "password": password,
-  //   });}
+  final ApiProvider apiProvider;
 
+  /// `POST /auth/client/login` — body: `{ phone, bookingCode }`.
+  Future<Response> loginRepo({
+    required String phone,
+    required String bookingCode,
+  }) async {
+    return await apiProvider.postData(
+      Constants.clientLogin,
+      body: {
+        'phone': phone,
+        'bookingCode': bookingCode,
+      },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    );
+  }
 }
