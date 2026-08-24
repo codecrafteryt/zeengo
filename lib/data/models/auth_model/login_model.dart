@@ -7,17 +7,20 @@ LoginModel loginModelFromJson(String str) =>
 
 String loginModelToJson(LoginModel data) => json.encode(data.toJson());
 
-/// `POST /auth/client/login` → `data` payload
-/// `{ accessToken, refreshToken, user }`.
+/// Auth payload for login / refresh `data`.
+/// Login: `{ accessToken, refreshToken, user, booking? }`
+/// Refresh: `{ accessToken, refreshToken }`
 class LoginModel extends Serializable {
   String? accessToken;
   String? refreshToken;
   ClientUser? user;
+  LoginBooking? booking;
 
   LoginModel({
     this.accessToken,
     this.refreshToken,
     this.user,
+    this.booking,
   });
 
   factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
@@ -26,6 +29,9 @@ class LoginModel extends Serializable {
         user: json['user'] is Map<String, dynamic>
             ? ClientUser.fromJson(json['user'] as Map<String, dynamic>)
             : null,
+        booking: json['booking'] is Map<String, dynamic>
+            ? LoginBooking.fromJson(json['booking'] as Map<String, dynamic>)
+            : null,
       );
 
   @override
@@ -33,6 +39,7 @@ class LoginModel extends Serializable {
         'accessToken': accessToken,
         'refreshToken': refreshToken,
         'user': user?.toJson(),
+        'booking': booking?.toJson(),
       };
 }
 
@@ -90,5 +97,30 @@ class ClientUser extends Serializable {
         'preferredLang': preferredLang,
         'createdAt': createdAt,
         'updatedAt': updatedAt,
+      };
+}
+
+class LoginBooking extends Serializable {
+  String? id;
+  String? znCode;
+  String? status;
+
+  LoginBooking({
+    this.id,
+    this.znCode,
+    this.status,
+  });
+
+  factory LoginBooking.fromJson(Map<String, dynamic> json) => LoginBooking(
+        id: json['id']?.toString(),
+        znCode: json['znCode']?.toString(),
+        status: json['status']?.toString(),
+      );
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'znCode': znCode,
+        'status': status,
       };
 }
