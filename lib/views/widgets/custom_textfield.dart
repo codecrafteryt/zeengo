@@ -54,6 +54,7 @@ class CustomTextField extends StatelessWidget {
   final bool preventSpaces;
   final ValueChanged<String>? onChanged;
   final bool? filled;
+  final List<TextInputFormatter>? inputFormatters;
 
   /// When true, applies AppPalette outlined style (border = theme container
   /// border, floating label always on, height 50, etc.) so callers don't
@@ -106,6 +107,7 @@ class CustomTextField extends StatelessWidget {
     this.focusedErrorBorderWidth = 1.2,
     this.filled,
     this.themed = false,
+    this.inputFormatters,
   });
 
   static const _errorColor = Color.fromRGBO(240, 66, 72, 1);
@@ -188,6 +190,7 @@ class CustomTextField extends StatelessWidget {
               FilteringTextInputFormatter.allow(RegExp(allowedPattern!)),
             if (preventSpaces)
               FilteringTextInputFormatter.deny(RegExp(r'\s')),
+            ...?inputFormatters,
           ],
           decoration: InputDecoration(
             counterText: '',
