@@ -10,6 +10,7 @@ import '../data/enus.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/auth_model/login_model.dart';
 import '../data/repos/auth_repo/auth_repo.dart';
+import '../views/auth/login_screen.dart';
 import '../views/screen/explore/home_pages.dart';
 
 class AuthController extends GetxController {
@@ -38,9 +39,25 @@ class AuthController extends GetxController {
   final staffExpanded = false.obs;
   final staffError = RxnString();
 
+  /// Shown on Explore header after login / session restore.
+  final userName = ''.obs;
+  final znCode = ''.obs;
+
   /// Keeps `ZN` prefix while the user types (e.g. `0000` → `ZN0000`).
   late final TextInputFormatter bookingCodeFormatter =
       _BookingCodePrefixFormatter(prefix: bookingCodePrefix);
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadSessionFromPrefs();
+  }
+
+  void loadSessionFromPrefs() {
+    userName.value =
+        sharedPreferences.getString(Constants.userFullName) ?? '';
+    znCode.value = sharedPreferences.getString(Constants.znCode) ?? '';
+  }
 
   String? validatePhone(String? value) {
     final v = value?.trim() ?? '';
@@ -62,6 +79,74 @@ class AuthController extends GetxController {
     phoneController.clear();
     bookingController.clear();
     formError.value = null;
+  }
+
+  Future<void> _persistAuthSession(LoginModel data, {String? phoneFallback}) async {
+    await sharedPreferences.setString(
+      Constants.accessToken,
+      data.accessToken ?? '',
+    );
+    await sharedPreferences.setString(
+      Constants.refreshToken,
+      data.refreshToken ?? '',
+    );
+
+    if (data.user != null) {
+      await sharedPreferences.setString(
+        Constants.userId,
+        data.user?.id ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.userFullName,
+        data.user?.fullName ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.userPhone,
+        data.user?.phone ?? phoneFallback ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.userEmail,
+        data.user?.email ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.userPreferredLang,
+        data.user?.preferredLang ?? '',
+      );
+      userName.value = data.user?.fullName ?? '';
+    }
+
+    if (data.booking != null) {
+      await sharedPreferences.setString(
+        Constants.bookingId,
+        data.booking?.id ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.znCode,
+        data.booking?.znCode ?? '',
+      );
+      await sharedPreferences.setString(
+        Constants.bookingStatus,
+        data.booking?.status ?? '',
+      );
+      znCode.value = data.booking?.znCode ?? '';
+    }
+
+    debugPrint(
+      '====> AUTH stored accessToken: '
+      '${sharedPreferences.getString(Constants.accessToken)}',
+    );
+    debugPrint(
+      '====> AUTH stored refreshToken: '
+      '${sharedPreferences.getString(Constants.refreshToken)}',
+    );
+    debugPrint(
+      '====> AUTH stored userName: '
+      '${sharedPreferences.getString(Constants.userFullName)}',
+    );
+    debugPrint(
+      '====> AUTH stored znCode: '
+      '${sharedPreferences.getString(Constants.znCode)}',
+    );
   }
 
   /// `POST /auth/client/login` — phone + booking code.
@@ -109,55 +194,17 @@ class AuthController extends GetxController {
         debugPrint(
           '====> LOGIN parsed data: accessToken=${model.data?.accessToken} '
           'refreshToken=${model.data?.refreshToken} '
-          'user=${model.data?.user?.toJson()}',
+          'user=${model.data?.user?.toJson()} '
+          'booking=${model.data?.booking?.toJson()}',
         );
 
         if (model.status == 200 && model.data != null) {
-          final data = model.data!;
-          await sharedPreferences.setString(
-            Constants.accessToken,
-            data.accessToken ?? '',
+          await _persistAuthSession(
+            model.data!,
+            phoneFallback: phoneController.text.trim(),
           );
-          await sharedPreferences.setString(
-            Constants.refreshToken,
-            data.refreshToken ?? '',
-          );
-          await sharedPreferences.setString(
-            Constants.userId,
-            data.user?.id ?? '',
-          );
-          await sharedPreferences.setString(
-            Constants.userFullName,
-            data.user?.fullName ?? '',
-          );
-          await sharedPreferences.setString(
-            Constants.userPhone,
-            data.user?.phone ?? phoneController.text.trim(),
-          );
-          await sharedPreferences.setString(
-            Constants.userEmail,
-            data.user?.email ?? '',
-          );
-          await sharedPreferences.setString(
-            Constants.userPreferredLang,
-            data.user?.preferredLang ?? '',
-          );
-
-          debugPrint(
-            '====> LOGIN stored accessToken: '
-            '${sharedPreferences.getString(Constants.accessToken)}',
-          );
-          debugPrint(
-            '====> LOGIN stored refreshToken: '
-            '${sharedPreferences.getString(Constants.refreshToken)}',
-          );
-          debugPrint(
-            '====> LOGIN stored userPhone: '
-            '${sharedPreferences.getString(Constants.userPhone)}',
-          );
-
           clearLoginFields();
-          Get.off(() => const HomePages());
+          Get.offAll(() => const HomePages());
         } else {
           formError.value = model.error.isNotEmpty
               ? model.error
@@ -186,6 +233,91 @@ class AuthController extends GetxController {
     } finally {
       if (!isClosed) isLoading.value = false;
     }
+  }
+
+  /// Refresh session via `POST /auth/refresh`. Keeps user logged in across app restarts.
+  Future<void> checkSession1() async {
+    try {
+      final refreshToken =
+          sharedPreferences.getString(Constants.refreshToken);
+      if (refreshToken == null || refreshToken.isEmpty) {
+        debugPrint('====> SESSION: no refresh token — go login');
+        Get.offAll(() => const LoginScreen());
+        return;
+      }
+
+      debugPrint('====> SESSION refreshToken=$refreshToken');
+      final response =
+          await authRepo.checkSession(refreshToken: refreshToken);
+
+      debugPrint('====> SESSION statusCode: ${response.statusCode}');
+      debugPrint('====> SESSION full response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.body;
+        if (body is! Map<String, dynamic>) {
+          Get.offAll(() => const LoginScreen());
+          return;
+        }
+
+        final ApiResponse<LoginModel> model =
+            ApiResponse.fromJson(body, LoginModel.fromJson);
+
+        if (model.status == 200 && model.data != null) {
+          // Refresh returns new tokens; keep existing user/booking prefs.
+          await sharedPreferences.setString(
+            Constants.accessToken,
+            model.data!.accessToken ?? '',
+          );
+          await sharedPreferences.setString(
+            Constants.refreshToken,
+            model.data!.refreshToken ?? '',
+          );
+          loadSessionFromPrefs();
+          debugPrint(
+            '====> SESSION renewed accessToken='
+            '${sharedPreferences.getString(Constants.accessToken)}',
+          );
+          Get.offAll(() => const HomePages());
+        } else {
+          Get.snackbar(
+            Enus.appName.tr,
+            model.error.isNotEmpty
+                ? model.error
+                : 'Session expired. Please log in again.',
+            snackPosition: SnackPosition.BOTTOM,
+            margin: EdgeInsets.all(16.w),
+          );
+          Get.offAll(() => const LoginScreen());
+        }
+      } else if (response.statusCode == 401) {
+        await _clearTokens();
+        Get.offAll(() => const LoginScreen());
+      } else {
+        Get.snackbar(
+          Enus.appName.tr,
+          'Server error. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          margin: EdgeInsets.all(16.w),
+        );
+        Get.offAll(() => const LoginScreen());
+      }
+    } catch (e, st) {
+      debugPrint('====> SESSION exception: $e');
+      debugPrint('====> SESSION stack: $st');
+      Get.snackbar(
+        Enus.appName.tr,
+        'An error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: EdgeInsets.all(16.w),
+      );
+      Get.offAll(() => const LoginScreen());
+    }
+  }
+
+  Future<void> _clearTokens() async {
+    await sharedPreferences.remove(Constants.accessToken);
+    await sharedPreferences.remove(Constants.refreshToken);
   }
 
   void toggleStaffFastAccess() {
