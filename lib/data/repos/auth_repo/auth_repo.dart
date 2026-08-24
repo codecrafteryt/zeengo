@@ -25,4 +25,18 @@ class AuthRepo extends GetxService {
       },
     );
   }
+
+  /// `POST /auth/refresh` — body: `{ refreshToken }` (session keep-alive).
+  Future<Response> checkSession({required String refreshToken}) async {
+    return await apiProvider.postData(
+      Constants.refresh,
+      body: {
+        'refreshToken': refreshToken,
+      },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    );
+  }
 }
