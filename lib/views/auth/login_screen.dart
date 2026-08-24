@@ -76,24 +76,26 @@ class LoginScreen extends GetView<AuthController> {
                           40.sbh,
                           CustomTextField(
                             themed: true,
-                            controller: controller.bookingController,
-                            focusNode: controller.bookingFocus,
-                            labelText: Enus.bookingCode.tr,
-                            hintText: Enus.bookingCodeHint.tr,
-                            keyboardType: TextInputType.text,
-                            validator: controller.validateBookingCode,
-                            onFieldSubmitted: (_) => controller.focusPhone(),
-                          ),
-                          20.sbh,
-                          CustomTextField(
-                            themed: true,
                             controller: controller.phoneController,
                             focusNode: controller.phoneFocus,
                             labelText: Enus.phoneNumber.tr,
                             hintText: Enus.phoneNumberHint.tr,
                             keyboardType: TextInputType.phone,
                             validator: controller.validatePhone,
-                            onFieldSubmitted: (_) => controller.viewMyTrip(),
+                            onFieldSubmitted: (_) =>
+                                controller.focusBookingCode(),
+                          ),
+                          20.sbh,
+                          CustomTextField(
+                            themed: true,
+                            controller: controller.bookingController,
+                            focusNode: controller.bookingFocus,
+                            labelText: Enus.bookingCode.tr,
+                            hintText: Enus.bookingCodeHint.tr,
+                            keyboardType: TextInputType.text,
+                            validator: controller.validateBookingCode,
+                            inputFormatters: [controller.bookingCodeFormatter],
+                            onFieldSubmitted: (_) => controller.login(),
                           ),
                           Obx(() {
                             final error = controller.formError.value;
@@ -118,10 +120,10 @@ class LoginScreen extends GetView<AuthController> {
                           25.sbh,
                           Obx(
                             () => CustomButton(
-                              text: Enus.viewMyTrip.tr,
+                              text: Enus.login.tr,
                               onPressed: controller.isLoading.value
                                   ? null
-                                  : controller.viewMyTrip,
+                                  : controller.login,
                               isLoading: controller.isLoading.value,
                               height: 50,
                               width: double.infinity,
@@ -235,9 +237,7 @@ class LoginScreen extends GetView<AuthController> {
                                             ),
                                             12.sbw,
                                             GestureDetector(
-                                              onTap: (){
-                                                debugPrint("Open");
-                                              },
+                                              onTap: controller.openStaffPortal,
                                               child: Container(
                                                 height: 45,
                                                 width: 70.w,
