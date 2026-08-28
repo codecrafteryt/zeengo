@@ -95,7 +95,6 @@ class Enus {
   static const String todaysSchedule = 'todays_schedule';
   static const String noEventsToday = 'no_events_today';
   static const String mon3Aug = 'mon_3_aug';
-  static const String monday3Aug = 'monday_3_aug';
   static const String aiAssistant = 'ai_assistant';
   static const String askMeAnything = 'ask_me_anything';
   static const String claudeAiAssistant = 'claude_ai_assistant';
@@ -136,8 +135,6 @@ class Enus {
   static const String paidAmount = 'paid_amount';
   static const String totalAmount = 'total_amount';
   static const String nearbyHalalRestaurants = 'nearby_halal_restaurants';
-  static const String cityWeather = 'city_weather';
-  static const String fullForecast = 'full_forecast';
 
   // Inbox / Chat
   static const String driver = 'driver';

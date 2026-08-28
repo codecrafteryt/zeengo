@@ -17,7 +17,6 @@ import '../../widgets/explore/explore_payment_card.dart';
 import '../../widgets/explore/explore_restaurants_card.dart';
 import '../../widgets/explore/explore_schedule_card.dart';
 import '../../widgets/explore/explore_stats_row.dart';
-import '../../widgets/explore/explore_weather_card.dart';
 import '../../widgets/suggestions/suggestions_sheet.dart';
 
 class ExploreScreen extends GetView<AuthController> {
@@ -141,12 +140,6 @@ class ExploreScreen extends GetView<AuthController> {
                       rating: 4,
                     ),
                   ],
-                ),
-                SizedBox(height: 18.h),
-                ExploreWeatherCard(
-                  city: 'Moscow',
-                  dateLabel: Enus.monday3Aug.tr,
-                  temperature: '— °C',
                 ),
               ]),
             ),

@@ -42,7 +42,6 @@ class MyImages {
   static const String exploreBell = "assets/svgs/explore/bell.svg";
   static const String logout = "assets/svgs/profile/logout.svg";
   static const String exploreRestaurant = "assets/svgs/explore/restaurant.svg";
-  static const String exploreWeather = "assets/svgs/explore/weather.svg";
 
   static const String chatHeadset = "assets/svgs/chat/headset.svg";
   static const String chatCar = "assets/svgs/chat/car.svg";
