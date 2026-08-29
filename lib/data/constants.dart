@@ -8,6 +8,9 @@ class Constants {
   static const String clientLogin = '/auth/client/login';
   static const String refresh = '/auth/refresh';
 
+  // ── Client home ───────────────────────────────────────────────────────────
+  static const String clientHome = '/client/home';
+
   // ── SharedPreferences keys ────────────────────────────────────────────────
   static const String accessToken = 'accessToken';
   static const String refreshToken = 'refreshToken';
