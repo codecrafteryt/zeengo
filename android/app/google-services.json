@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "908024410134",
+    "project_id": "zeengo-d4d1b",
+    "storage_bucket": "zeengo-d4d1b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908024410134:android:63f54f159dc10166eb0537",
+        "android_client_info": {
+          "package_name": "com.example.zeengo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEvUPtMGDxbfT-JjONECpKnQRc67pJ97w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
