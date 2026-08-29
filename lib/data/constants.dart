@@ -23,4 +23,5 @@ class Constants {
   static const String znCode = 'znCode';
   static const String bookingStatus = 'bookingStatus';
   static const String firstTimeWalkThrough = 'firstTimeWalkThrough';
+  static const String fcmToken = 'fcmToken';
 }
