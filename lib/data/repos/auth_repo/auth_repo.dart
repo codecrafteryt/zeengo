@@ -8,16 +8,20 @@ class AuthRepo extends GetxService {
 
   final ApiProvider apiProvider;
 
-  /// `POST /auth/client/login` — body: `{ phone, bookingCode }`.
+  /// `POST /auth/client/login` — body: `{ phone, bookingCode, fcmToken, platform }`.
   Future<Response> loginRepo({
     required String phone,
     required String bookingCode,
+    required String fcmToken,
+    required String platform,
   }) async {
     return await apiProvider.postData(
       Constants.clientLogin,
       body: {
         'phone': phone,
         'bookingCode': bookingCode,
+        'fcmToken': fcmToken,
+        'platform': platform,
       },
       headers: {
         'Accept': 'application/json',

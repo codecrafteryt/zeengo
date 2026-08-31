@@ -82,8 +82,7 @@ class LoginScreen extends GetView<AuthController> {
                             hintText: Enus.phoneNumberHint.tr,
                             keyboardType: TextInputType.phone,
                             validator: controller.validatePhone,
-                            onFieldSubmitted: (_) =>
-                                controller.focusBookingCode(),
+                            onFieldSubmitted: (_) => controller.focusBookingCode(),
                           ),
                           20.sbh,
                           CustomTextField(

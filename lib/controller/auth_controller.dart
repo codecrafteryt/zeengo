@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +12,7 @@ import '../data/enus.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/auth_model/login_model.dart';
 import '../data/repos/auth_repo/auth_repo.dart';
+import '../services/notification_service.dart';
 import '../views/auth/login_screen.dart';
 import '../views/screen/explore/home_pages.dart';
 
@@ -149,7 +152,7 @@ class AuthController extends GetxController {
     );
   }
 
-  /// `POST /auth/client/login` — phone + booking code.
+  /// `POST /auth/client/login` — phone + booking code + FCM token.
   Future<void> login() async {
     if (isLoading.value) return;
 
@@ -160,11 +163,20 @@ class AuthController extends GetxController {
     if (!valid) return;
 
     final bookingCode = _normalizeBookingCode(bookingController.text);
+    final phone = phoneController.text.trim();
+    final platform = Platform.isIOS
+        ? 'ios'
+        : (Platform.isAndroid ? 'android' : 'web');
+    final fcmToken = await NotificationService.instance.getToken() ??
+        NotificationService.instance.fcmToken.value;
+
     isLoading.value = true;
     try {
       final response = await authRepo.loginRepo(
-        phone: phoneController.text.trim(),
+        phone: phone,
         bookingCode: bookingCode,
+        fcmToken: fcmToken,
+        platform: platform,
       );
 
       debugPrint('====> LOGIN statusCode: ${response.statusCode}');
@@ -172,8 +184,8 @@ class AuthController extends GetxController {
       debugPrint('====> LOGIN statusText: ${response.statusText}');
       debugPrint('====> LOGIN bodyString: ${response.bodyString}');
       debugPrint(
-        '====> LOGIN request phone=${phoneController.text.trim()} '
-        'bookingCode=$bookingCode',
+        '====> LOGIN request phone=$phone bookingCode=$bookingCode '
+        'platform=$platform fcmToken=$fcmToken',
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
