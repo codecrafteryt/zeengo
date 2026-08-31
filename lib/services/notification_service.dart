@@ -139,8 +139,6 @@ class NotificationService extends GetxService {
   }
 
   Future<void> showRemoteMessage(RemoteMessage message) async {
-    await setupLocalNotificationsOnly();
-
     final notification = message.notification;
     final title = notification?.title ??
         message.data['title']?.toString() ??
@@ -150,15 +148,41 @@ class NotificationService extends GetxService {
         message.data['message']?.toString() ??
         '';
 
-    if (title.isEmpty && body.isEmpty) return;
+    await showLocalNotification(
+      title: title,
+      body: body,
+      data: message.data,
+      id: message.hashCode & 0x7fffffff,
+    );
+  }
 
-    final id = message.hashCode & 0x7fffffff;
-    final payload = jsonEncode(message.data);
+  /// In-app / socket-driven local tray notification.
+  Future<void> showLocalNotification({
+    required String title,
+    String? body,
+    Map<String, dynamic>? data,
+    int? id,
+  }) async {
+    await setupLocalNotificationsOnly();
+
+    final resolvedTitle = title.trim();
+    final resolvedBody = body?.trim() ?? '';
+    // Skip useless fallback-only trays (e.g. title/body both "Zeengo").
+    if (resolvedTitle.isEmpty && resolvedBody.isEmpty) return;
+    final isGenericFallback = resolvedTitle.toLowerCase() == 'zeengo' &&
+        (resolvedBody.isEmpty || resolvedBody.toLowerCase() == 'zeengo');
+    if (isGenericFallback) {
+      debugPrint('====> Skip generic Zeengo local notification');
+      return;
+    }
+
+    final notificationId = id ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    final payload = jsonEncode(data ?? <String, dynamic>{});
 
     await _local.show(
-      id,
-      title,
-      body,
+      notificationId,
+      resolvedTitle.isEmpty ? 'Zeengo' : resolvedTitle,
+      resolvedBody,
       NotificationDetails(
         android: AndroidNotificationDetails(
           _channel.id,

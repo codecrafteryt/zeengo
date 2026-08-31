@@ -15,6 +15,8 @@ import '../data/repos/auth_repo/auth_repo.dart';
 import '../services/notification_service.dart';
 import '../views/auth/login_screen.dart';
 import '../views/screen/explore/home_pages.dart';
+import 'notification_controller.dart';
+import 'socket_controller.dart';
 
 class AuthController extends GetxController {
   AuthController({
@@ -167,8 +169,7 @@ class AuthController extends GetxController {
     final platform = Platform.isIOS
         ? 'ios'
         : (Platform.isAndroid ? 'android' : 'web');
-    final fcmToken = await NotificationService.instance.getToken() ??
-        NotificationService.instance.fcmToken.value;
+    final fcmToken = await _resolveDeviceToken();
 
     isLoading.value = true;
     try {
@@ -216,6 +217,7 @@ class AuthController extends GetxController {
             phoneFallback: phoneController.text.trim(),
           );
           clearLoginFields();
+          _startRealtime();
           Get.offAll(() => const HomePages());
         } else {
           formError.value = model.error.isNotEmpty
@@ -290,6 +292,7 @@ class AuthController extends GetxController {
             '====> SESSION renewed accessToken='
             '${sharedPreferences.getString(Constants.accessToken)}',
           );
+          _startRealtime();
           Get.offAll(() => const HomePages());
         } else {
           Get.snackbar(
@@ -328,8 +331,24 @@ class AuthController extends GetxController {
   }
 
   Future<void> _clearTokens() async {
+    _stopRealtime();
     await sharedPreferences.remove(Constants.accessToken);
     await sharedPreferences.remove(Constants.refreshToken);
+  }
+
+  void _startRealtime() {
+    if (Get.isRegistered<SocketController>()) {
+      Get.find<SocketController>().connect();
+    }
+    if (Get.isRegistered<NotificationController>()) {
+      Get.find<NotificationController>().bootstrapAfterAuth();
+    }
+  }
+
+  void _stopRealtime() {
+    if (Get.isRegistered<SocketController>()) {
+      Get.find<SocketController>().disconnect();
+    }
   }
 
   void toggleStaffFastAccess() {
@@ -370,6 +389,27 @@ class AuthController extends GetxController {
         margin: EdgeInsets.all(16.w),
       );
     }
+  }
+
+  /// FCM device token for login body (`fcmToken`).
+  Future<String> _resolveDeviceToken() async {
+    try {
+      final fresh = await NotificationService.instance.getToken();
+      if (fresh != null && fresh.isNotEmpty) {
+        NotificationService.instance.fcmToken.value = fresh;
+        await sharedPreferences.setString(Constants.fcmToken, fresh);
+        return fresh;
+      }
+    } catch (e) {
+      debugPrint('====> LOGIN getToken error: $e');
+    }
+
+    final cached = NotificationService.instance.fcmToken.value.trim();
+    if (cached.isNotEmpty) return cached;
+
+    final prefsToken =
+        sharedPreferences.getString(Constants.fcmToken)?.trim() ?? '';
+    return prefsToken;
   }
 
   static String _normalizeBookingCode(String raw) {

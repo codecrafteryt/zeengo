@@ -4,12 +4,21 @@ class Constants {
   /// API root from `.env` (`BASE_URL`).
   static String get baseUrl => Env.baseUrl;
 
+  /// Socket.IO URL from `.env` (`SOCKET_URL`).
+  static String get socketUrl => Env.socketUrl;
   // ── Auth endpoints ────────────────────────────────────────────────────────
   static const String clientLogin = '/auth/client/login';
   static const String refresh = '/auth/refresh';
 
   // ── Client home ───────────────────────────────────────────────────────────
   static const String clientHome = '/client/home';
+
+  // ── Notifications ─────────────────────────────────────────────────────────
+  static const String notifications = '/notifications';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+
+  static String notificationRead(String id) => '/notifications/$id/read';
 
   // ── SharedPreferences keys ────────────────────────────────────────────────
   static const String accessToken = 'accessToken';

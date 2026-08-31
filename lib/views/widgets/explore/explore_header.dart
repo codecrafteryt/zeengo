@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/language_controller.dart';
+import '../../../controller/notification_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
@@ -121,10 +122,56 @@ class ExploreHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      _GlassIconButton(
-                        svgAsset: MyImages.notificationFlat,
-                        onTap: () =>
-                            Get.to(() => const NotificationsScreen()),
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          _GlassIconButton(
+                            svgAsset: MyImages.notificationFlat,
+                            onTap: () =>
+                                Get.to(() => const NotificationsScreen()),
+                          ),
+                          if (Get.isRegistered<NotificationController>())
+                            Obx(() {
+                              final count = Get.find<NotificationController>()
+                                  .unreadCount
+                                  .value;
+                              if (count <= 0) {
+                                return const SizedBox.shrink();
+                              }
+                              return Positioned(
+                                right: 2,
+                                top: 2,
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    minWidth: 16.w,
+                                    minHeight: 16.w,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 4.w,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEF4444),
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    border: Border.all(
+                                      color: MyColors.white,
+                                      width: 1.2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      count > 9 ? '9+' : '$count',
+                                      style: TextStyle(
+                                        color: MyColors.white,
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                        ],
                       ),
                     ],
                   ),

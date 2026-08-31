@@ -6,11 +6,14 @@ import '../../controller/currency_converter_controller.dart';
 import '../../controller/home_controller.dart';
 import '../../controller/language_controller.dart';
 import '../../controller/map_controller.dart';
+import '../../controller/notification_controller.dart';
+import '../../controller/socket_controller.dart';
 import '../../controller/suggestions_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../api_provider/api_provider.dart';
 import '../repos/auth_repo/auth_repo.dart';
 import '../repos/home_repo/home_repo.dart';
+import '../repos/notification_repo/notification_repo.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
@@ -34,6 +37,13 @@ class DependencyInjection {
       ),
       fenix: true,
     );
+    Get.lazyPut(
+      () => NotificationRepo(
+        apiProvider: Get.find(),
+        sharedPreferences: Get.find(),
+      ),
+      fenix: true,
+    );
 
     Get.lazyPut(
       () => AuthController(
@@ -48,6 +58,16 @@ class DependencyInjection {
         sharedPreferences: Get.find(),
       ),
       fenix: true,
+    );
+
+    // Keep alive so socket events update inbox + badge while browsing.
+    Get.put(
+      NotificationController(notificationRepo: Get.find()),
+      permanent: true,
+    );
+    Get.put(
+      SocketController(sharedPreferences: sharedPreferences),
+      permanent: true,
     );
 
     Get.lazyPut(() => CurrencyConverterController(), fenix: true);
