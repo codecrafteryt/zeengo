@@ -3,14 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../controller/chat_controller.dart';
 import '../../../data/enus.dart';
+import '../../../data/models/chat_model/chat_model.dart';
 import '../../../utils/values/app_palette.dart';
+import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
+import '../../widgets/app_loading_dots.dart';
 import '../../widgets/app_segment_tabs.dart';
 import '../../widgets/chat/chat_message_bubble.dart';
 import '../../widgets/chat/chat_thread_panel.dart';
 import '../../widgets/chat/chat_whatsapp_banner.dart';
-import 'chat_channel.dart';
+import '../../widgets/custom_text_widget.dart';
 
 class ChatsScreen extends StatefulWidget {
   const ChatsScreen({super.key});
@@ -21,63 +25,42 @@ class ChatsScreen extends StatefulWidget {
 
 class _ChatsScreenState extends State<ChatsScreen> {
   static const _whatsappNumber = '+79160000000';
+  static const _supportTab = 0;
+  static const _driverTab = 1;
 
   final _controller = TextEditingController();
   final _composerFocus = FocusNode();
-  int _tab = 1;
-  late List<List<ChatMessage>> _threads;
-
-  List<ChatChannel> get _channels => ChatChannels.demo(
-        supportTitle: Enus.zeengoSupport.tr,
-        driverTitle: 'Alexei Sokolov',
-        splizerTitle: 'Khalid Al-Zahrani',
-        supportEmpty: Enus.startChatSupport.tr,
-        driverEmpty: Enus.startChatDriver.tr,
-        splizerEmpty: Enus.startChatSplizer.tr,
-        supportReplies: [
-          Enus.qrNeedHelp.tr,
-          Enus.qrDriverArrive.tr,
-          Enus.qrBookRestaurant.tr,
-        ],
-        driverReplies: [
-          Enus.qrWhereAreYou.tr,
-          Enus.qrWhenArrive.tr,
-          Enus.qrAtEntrance.tr,
-        ],
-        splizerReplies: [
-          Enus.qrCanYouHelp.tr,
-          Enus.qrItinerary.tr,
-          Enus.qrChangeBooking.tr,
-        ],
-      );
+  late final ChatController chat;
+  int _tab = _supportTab;
 
   @override
   void initState() {
     super.initState();
-    _threads =
-        _channels.map((c) => List<ChatMessage>.from(c.seedMessages)).toList();
+    chat = Get.find<ChatController>();
     _composerFocus.addListener(() {
       if (mounted) setState(() {});
+    });
+    _controller.addListener(() {
+      chat.onComposerChanged(_controller.text);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      chat.openSupportThread();
     });
   }
 
   @override
   void dispose() {
+    chat.leaveThread();
     _composerFocus.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _send([String? text]) {
+  Future<void> _send([String? text]) async {
     final value = (text ?? _controller.text).trim();
     if (value.isEmpty) return;
-    final now = TimeOfDay.now();
-    final stamped =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-    setState(() {
-      _threads[_tab].add(ChatMessage(text: value, isMine: true, time: stamped));
-      _controller.clear();
-    });
+    _controller.clear();
+    await chat.sendMessage(value);
   }
 
   Future<void> _openWhatsapp() async {
@@ -87,29 +70,50 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
   }
 
+  List<ChatMessage> _mapMessages(List<ChatApiMessage> api) {
+    final myId = chat.myClientId;
+    return api
+        .where((m) => m.matchesInboxTab(_tab))
+        .map(
+          (m) => ChatMessage(
+            text: chat.bubbleText(m),
+            isMine: m.isMine(myId),
+            time: m.timeLabel,
+            senderName: m.isMine(myId)
+                ? null
+                : m.inboundLabel(
+                    support: Enus.support.tr,
+                    driver: Enus.driver.tr,
+                    splizer: Enus.splizer.tr,
+                  ),
+          ),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Keyboard height is applied by NavBar shell (content bottom inset).
-    // Do NOT also pad with viewInsets here or the field would jump twice.
-    final channels = _channels;
-    final channel = channels[_tab];
+    final palette = AppPalette.of(context);
 
     return ColoredBox(
-      color: AppPalette.of(context).scaffold,
+      color: palette.scaffold,
       child: SafeArea(
         bottom: false,
         child: Padding(
           padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              // Shell already shortens this viewport when the keyboard is open.
               final short =
                   _composerFocus.hasFocus || constraints.maxHeight < 520;
+
               return Column(
                 children: [
                   AppSegmentTabs(
                     index: _tab,
-                    onChanged: (i) => setState(() => _tab = i),
+                    onChanged: (i) {
+                      setState(() => _tab = i);
+                      _controller.clear();
+                    },
                     tabs: [
                       AppSegmentTab(
                         label: Enus.support.tr,
@@ -127,21 +131,56 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   ),
                   SizedBox(height: short ? 8.h : 12.h),
                   Expanded(
-                    child: ChatThreadPanel(
-                      title: channel.title,
-                      svgAsset: channel.svgAsset,
-                      accent: channel.accent,
-                      statusLabel: Enus.online.tr,
-                      emptyMessage: channel.emptyMessage,
-                      messages: _threads[_tab],
-                      quickReplies: channel.quickReplies,
-                      composerHint: Enus.typeMessage.tr,
-                      controller: _controller,
-                      focusNode: _composerFocus,
-                      onSend: _send,
-                      onQuickReply: _send,
-                      compact: short,
-                    ),
+                    child: Obx(() {
+                      if (_tab == _supportTab) {
+                        return _buildLivePanel(
+                          palette: palette,
+                          short: short,
+                          title: chat.conversation.value?.title
+                                      ?.trim()
+                                      .isNotEmpty ==
+                                  true
+                              ? chat.conversation.value!.title!.trim()
+                              : Enus.zeengoSupport.tr,
+                          svgAsset: MyImages.chatHeadset,
+                          accent: MyColors.darkPurple,
+                          emptyMessage: Enus.startChatSupport.tr,
+                          quickReplies: [
+                            Enus.qrNeedHelp.tr,
+                            Enus.qrDriverArrive.tr,
+                            Enus.qrBookRestaurant.tr,
+                          ],
+                        );
+                      }
+                      if (_tab == _driverTab) {
+                        return _buildLivePanel(
+                          palette: palette,
+                          short: short,
+                          title: Enus.driver.tr,
+                          svgAsset: MyImages.chatCar,
+                          accent: const Color(0xFF2563EB),
+                          emptyMessage: Enus.startChatDriver.tr,
+                          quickReplies: [
+                            Enus.qrWhereAreYou.tr,
+                            Enus.qrWhenArrive.tr,
+                            Enus.qrAtEntrance.tr,
+                          ],
+                        );
+                      }
+                      return _buildLivePanel(
+                        palette: palette,
+                        short: short,
+                        title: Enus.splizer.tr,
+                        svgAsset: MyImages.chatBriefcase,
+                        accent: MyColors.purple,
+                        emptyMessage: Enus.startChatSplizer.tr,
+                        quickReplies: [
+                          Enus.qrCanYouHelp.tr,
+                          Enus.qrItinerary.tr,
+                          Enus.qrChangeBooking.tr,
+                        ],
+                      );
+                    }),
                   ),
                   if (!short) ...[
                     SizedBox(height: 12.h),
@@ -157,6 +196,70 @@ class _ChatsScreenState extends State<ChatsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLivePanel({
+    required AppPalette palette,
+    required bool short,
+    required String title,
+    required String svgAsset,
+    required Color accent,
+    required String emptyMessage,
+    required List<String> quickReplies,
+  }) {
+    final loading = chat.isLoading.value && chat.messages.isEmpty;
+    final error = chat.errorMessage.value;
+    final status = chat.supportTyping.value
+        ? Enus.supportTyping.tr
+        : Enus.online.tr;
+    final mapped = _mapMessages(chat.messages);
+
+    if (loading) {
+      return const Center(child: AppLoadingDots());
+    }
+
+    if (error != null && error.isNotEmpty && chat.messages.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextWidget(
+                error,
+                textAlign: TextAlign.center,
+                fontSize: 14.sp,
+                color: palette.textSecondary,
+              ),
+              SizedBox(height: 12.h),
+              TextButton(
+                onPressed: chat.openSupportThread,
+                child: CustomTextWidget(
+                  Enus.retry.tr,
+                  color: MyColors.darkPurple,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ChatThreadPanel(
+      title: title,
+      svgAsset: svgAsset,
+      accent: accent,
+      statusLabel: status,
+      emptyMessage: emptyMessage,
+      messages: mapped,
+      quickReplies: quickReplies,
+      composerHint: Enus.typeMessage.tr,
+      controller: _controller,
+      focusNode: _composerFocus,
+      onSend: _send,
+      onQuickReply: _send,
+      compact: short,
     );
   }
 }
