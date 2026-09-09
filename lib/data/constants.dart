@@ -9,6 +9,7 @@ class Constants {
   // ── Auth endpoints ────────────────────────────────────────────────────────
   static const String clientLogin = '/auth/client/login';
   static const String refresh = '/auth/refresh';
+  static const String logout = '/auth/logout';
 
   // ── Client home ───────────────────────────────────────────────────────────
   static const String clientHome = '/client/home';

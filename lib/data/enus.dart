@@ -86,6 +86,17 @@ class Enus {
   static const String language = 'language';
   static const String about = 'about';
   static const String logout = 'logout';
+  static const String smartSuggestions = 'smart_suggestions';
+  static const String myBookingInfo = 'my_booking_info';
+  static const String profileNotifSubtitle = 'profile_notif_subtitle';
+  static const String profileRequestSubtitle = 'profile_request_subtitle';
+  static const String profileCurrencySubtitle = 'profile_currency_subtitle';
+  static const String profileAiSubtitle = 'profile_ai_subtitle';
+  static const String profileSuggestionsSubtitle =
+      'profile_suggestions_subtitle';
+  static const String profileBookingSubtitle = 'profile_booking_subtitle';
+  static const String profilePrayerSubtitle = 'profile_prayer_subtitle';
+  static const String profileGuideSubtitle = 'profile_guide_subtitle';
 
   // Explore
   static const String welcomeUser = 'welcome_user';
