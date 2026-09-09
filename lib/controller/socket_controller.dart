@@ -5,9 +5,10 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../data/constants.dart';
 import '../utils/values/env.dart';
+import 'chat_controller.dart';
 import 'notification_controller.dart';
 
-/// Realtime Socket.IO client for `notification.new` (and future events).
+/// Socket.IO `/ws` — notifications + chat realtime.
 class SocketController extends GetxController {
   SocketController({required this.sharedPreferences});
 
@@ -34,7 +35,6 @@ class SocketController extends GetxController {
       return;
     }
 
-    // Reconnect with fresh token after login/session renew.
     disconnect();
 
     debugPrint('====> SOCKET connecting to $url');
@@ -70,6 +70,30 @@ class SocketController extends GetxController {
           Get.find<NotificationController>().handleRealtimeNotification(data);
         }
       })
+      ..on('message.new', (data) {
+        debugPrint('====> SOCKET IN message.new: $data');
+        if (Get.isRegistered<ChatController>()) {
+          Get.find<ChatController>().handleMessageNew(data);
+        }
+      })
+      ..on('message.translated', (data) {
+        debugPrint('====> SOCKET IN message.translated: $data');
+        if (Get.isRegistered<ChatController>()) {
+          Get.find<ChatController>().handleMessageTranslated(data);
+        }
+      })
+      ..on('chat.typing', (data) {
+        debugPrint('====> SOCKET IN chat.typing: $data');
+        if (Get.isRegistered<ChatController>()) {
+          Get.find<ChatController>().handleTyping(data);
+        }
+      })
+      ..on('message.read', (data) {
+        debugPrint('====> SOCKET IN message.read: $data');
+        if (Get.isRegistered<ChatController>()) {
+          Get.find<ChatController>().handleMessageRead(data);
+        }
+      })
       ..connect();
   }
 
@@ -88,4 +112,26 @@ class SocketController extends GetxController {
   }
 
   void reconnectWithLatestToken() => connect();
+
+  void joinConversation(String conversationId) {
+    _emit('chat.join', {'conversationId': conversationId});
+  }
+
+  void leaveConversation(String conversationId) {
+    _emit('chat.leave', {'conversationId': conversationId});
+  }
+
+  void emitTyping(String conversationId) {
+    _emit('chat.typing', {'conversationId': conversationId});
+  }
+
+  void _emit(String event, Map<String, dynamic> payload) {
+    final socket = _socket;
+    if (socket == null || !isConnected.value) {
+      debugPrint('====> SOCKET skip emit $event (not connected)');
+      return;
+    }
+    debugPrint('====> SOCKET OUT $event: $payload');
+    socket.emit(event, payload);
+  }
 }
