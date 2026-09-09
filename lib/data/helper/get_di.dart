@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zeengo/controller/chat_controller.dart';
 
 import '../../controller/auth_controller.dart';
 import '../../controller/currency_converter_controller.dart';
@@ -9,11 +10,14 @@ import '../../controller/map_controller.dart';
 import '../../controller/notification_controller.dart';
 import '../../controller/socket_controller.dart';
 import '../../controller/suggestions_controller.dart';
+import '../../controller/task_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../api_provider/api_provider.dart';
 import '../repos/auth_repo/auth_repo.dart';
+import '../repos/chat_repo/chat_repo.dart';
 import '../repos/home_repo/home_repo.dart';
 import '../repos/notification_repo/notification_repo.dart';
+import '../repos/task_repo/task_repo.dart';
 
 class DependencyInjection {
   static Future<void> init() async {
@@ -30,6 +34,7 @@ class DependencyInjection {
     );
     Get.lazyPut(() => ApiProvider(), fenix: true);
     Get.lazyPut(() => AuthRepo(apiProvider: Get.find()), fenix: true);
+    Get.lazyPut(() => ChatRepo(apiProvider: Get.find()), fenix: true);
     Get.lazyPut(
       () => HomeRepo(
         apiProvider: Get.find(),
@@ -39,6 +44,13 @@ class DependencyInjection {
     );
     Get.lazyPut(
       () => NotificationRepo(
+        apiProvider: Get.find(),
+        sharedPreferences: Get.find(),
+      ),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => TaskRepo(
         apiProvider: Get.find(),
         sharedPreferences: Get.find(),
       ),
@@ -57,6 +69,14 @@ class DependencyInjection {
         homeRepo: Get.find(),
         sharedPreferences: Get.find(),
       ),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => TaskController(taskRepo: Get.find()),
+      fenix: true,
+    );
+    Get.lazyPut(
+      () => ChatController(chatRepo: Get.find(), sharedPreferences: Get.find()),
       fenix: true,
     );
 
