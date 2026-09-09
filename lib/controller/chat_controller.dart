@@ -27,7 +27,18 @@ class ChatController extends GetxController {
   final errorMessage = RxnString();
   final conversation = Rxn<ChatConversation>();
   final messages = <ChatApiMessage>[].obs;
-  final supportTyping = false.obs;
+
+  /// True while a staff peer is typing in the open conversation.
+  final isPeerTyping = false.obs;
+
+  /// Normalized channel of the typer: `admin` | `driver` | `splizer`.
+  final typingChannel = RxnString();
+
+  /// Raw staff role from `chat.typing` (admin | driver | splizer | …).
+  final typingRole = RxnString();
+
+  /// Display name for the typer (e.g. "Zeengo Admin"), when known.
+  final typingSenderName = RxnString();
 
   Timer? _typingThrottle;
   Timer? _typingHide;
@@ -144,7 +155,16 @@ class ChatController extends GetxController {
       Get.find<SocketController>().leaveConversation(id);
     }
     _joinedConversationId = null;
-    supportTyping.value = false;
+    _clearTyping();
+  }
+
+  /// Whether the open peer typing indicator belongs on [tab] (0/1/2).
+  bool isTypingOnTab(int tab) {
+    if (!isPeerTyping.value) return false;
+    final channel = typingChannel.value;
+    if (tab == 1) return channel == 'driver';
+    if (tab == 2) return channel == 'splizer';
+    return channel == 'admin';
   }
 
   Future<void> sendMessage(String text, {required String senderRole}) async {
@@ -228,6 +248,11 @@ class ChatController extends GetxController {
       );
       return;
     }
+    // Staff message ends the typing pulse for that channel.
+    if (msg.senderType == 'staff' &&
+        typingChannel.value == msg.inboxChannel) {
+      _clearTyping();
+    }
     _upsertMessage(msg);
     if (!msg.isMine(myClientId) && msg.id != null) {
       markRead(msg.id!);
@@ -247,17 +272,116 @@ class ChatController extends GetxController {
   }
 
   void handleTyping(dynamic raw) {
-    if (raw is! Map) return;
-    final map = Map<String, dynamic>.from(raw);
-    final convId = map['conversationId']?.toString();
-    final userType = map['userType']?.toString();
-    if (convId != conversation.value?.id) return;
-    if (userType != 'staff') return;
-    supportTyping.value = true;
+    final map = _asStringKeyedMap(raw);
+    // ignore: avoid_print
+    print('====> CHAT handleTyping raw=$raw parsed=$map');
+    if (map == null) {
+      // ignore: avoid_print
+      print('====> CHAT typing skipped: payload is not a Map');
+      return;
+    }
+
+    final convId = map['conversationId']?.toString().trim();
+    final userType = map['userType']?.toString().toLowerCase().trim();
+    final role = (map['role'] ?? map['senderRole'])?.toString().trim();
+    final userId = map['userId']?.toString().trim();
+    final openId = conversation.value?.id?.trim();
+
+    if (convId == null || convId.isEmpty) {
+      // ignore: avoid_print
+      print('====> CHAT typing skipped: missing conversationId');
+      return;
+    }
+    if (openId == null || openId.isEmpty || convId != openId) {
+      // ignore: avoid_print
+      print(
+        '====> CHAT typing skipped: conv mismatch openId=$openId eventId=$convId',
+      );
+      return;
+    }
+    // Only show peer typing — ignore own / non-staff pulses.
+    if (userType != null &&
+        userType.isNotEmpty &&
+        userType != 'staff') {
+      // ignore: avoid_print
+      print('====> CHAT typing skipped: userType=$userType');
+      return;
+    }
+    if (userId != null &&
+        userId.isNotEmpty &&
+        myClientId.isNotEmpty &&
+        userId == myClientId) {
+      // ignore: avoid_print
+      print('====> CHAT typing skipped: own pulse userId=$userId');
+      return;
+    }
+
+    final channel = ChatApiMessage.channelForRole(role);
+    final name = _resolveTypingSenderName(
+      userId: userId,
+      channel: channel,
+    );
+
+    // ignore: avoid_print
+    print(
+      '====> CHAT typing SHOW channel=$channel role=$role '
+      'userId=$userId name=$name',
+    );
+
+    typingChannel.value = channel;
+    typingRole.value = role;
+    typingSenderName.value = name;
+    isPeerTyping.value = true;
+    // Each socket pulse resets the hide window (staff may spam ~1s).
     _typingHide?.cancel();
-    _typingHide = Timer(const Duration(seconds: 3), () {
-      supportTyping.value = false;
-    });
+    _typingHide = Timer(const Duration(milliseconds: 3000), _clearTyping);
+  }
+
+  /// Prefer known staff [senderName] for this typer / channel (e.g. "Zeengo Admin").
+  String? _resolveTypingSenderName({
+    required String? userId,
+    required String channel,
+  }) {
+    if (userId != null && userId.isNotEmpty) {
+      for (var i = messages.length - 1; i >= 0; i--) {
+        final m = messages[i];
+        if (m.senderType != 'staff') continue;
+        if (m.senderStaffId == userId) {
+          final n = m.senderName?.trim();
+          if (n != null && n.isNotEmpty) return n;
+        }
+      }
+    }
+    for (var i = messages.length - 1; i >= 0; i--) {
+      final m = messages[i];
+      if (m.senderType != 'staff') continue;
+      if (m.inboxChannel != channel) continue;
+      final n = m.senderName?.trim();
+      if (n != null && n.isNotEmpty) return n;
+    }
+    return null;
+  }
+
+  Map<String, dynamic>? _asStringKeyedMap(dynamic raw) {
+    if (raw is Map) {
+      try {
+        return Map<String, dynamic>.from(raw);
+      } catch (_) {
+        return {
+          for (final e in raw.entries) e.key.toString(): e.value,
+        };
+      }
+    }
+    return null;
+  }
+
+  void _clearTyping() {
+    _typingHide?.cancel();
+    _typingHide = null;
+    isPeerTyping.value = false;
+    typingChannel.value = null;
+    typingRole.value = null;
+    typingSenderName.value = null;
   }
 
   void handleMessageRead(dynamic raw) {

@@ -83,9 +83,14 @@ class SocketController extends GetxController {
         }
       })
       ..on('chat.typing', (data) {
-        debugPrint('====> SOCKET IN chat.typing: $data');
+        // Use print (not debugPrint) — rapid identical pulses get throttled/dropped on Android.
+        // ignore: avoid_print
+        print('====> SOCKET IN chat.typing: $data');
         if (Get.isRegistered<ChatController>()) {
           Get.find<ChatController>().handleTyping(data);
+        } else {
+          // ignore: avoid_print
+          print('====> SOCKET IN chat.typing ignored: ChatController not registered');
         }
       })
       ..on('message.read', (data) {
