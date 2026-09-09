@@ -84,7 +84,11 @@ class ChatMessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!mine) ...[
-            _Avatar(label: message.senderName?.characters.first ?? '?'),
+            _Avatar(
+              label: (message.senderName?.trim().isNotEmpty ?? false)
+                  ? message.senderName!.trim()
+                  : '?',
+            ),
             SizedBox(width: 8.w),
           ],
           Flexible(
@@ -92,11 +96,12 @@ class ChatMessageBubble extends StatelessWidget {
               crossAxisAlignment:
                   mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
-                if (!mine && message.senderName != null) ...[
+                if (!mine &&
+                    (message.senderName?.trim().isNotEmpty ?? false)) ...[
                   Padding(
                     padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
                     child: CustomTextWidget(
-                      message.senderName!,
+                      message.senderName!.trim(),
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
                       color: MyColors.darkPurple,
@@ -131,7 +136,9 @@ class _Avatar extends StatelessWidget {
           ? MyColors.darkPurple.withValues(alpha: 0.15)
           : MyColors.purple.withValues(alpha: 0.15),
       child: CustomTextWidget(
-        label.characters.first.toUpperCase(),
+        label.trim().isEmpty
+            ? '?'
+            : label.trim().characters.first.toUpperCase(),
         fontSize: 11.sp,
         fontWeight: FontWeight.w700,
         color: isMine ? MyColors.darkPurple : MyColors.purple,

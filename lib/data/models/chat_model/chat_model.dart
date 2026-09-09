@@ -146,13 +146,17 @@ class ChatApiMessage extends Serializable {
   }
 
   /// Normalized channel: admin | driver | splizer.
-  String get inboxChannel {
-    switch ((senderRole ?? '').toLowerCase()) {
+  String get inboxChannel => channelForRole(senderRole);
+
+  /// Map staff [role] from messages / `chat.typing` to inbox channel.
+  static String channelForRole(String? role) {
+    switch ((role ?? '').toLowerCase()) {
       case 'driver':
         return 'driver';
       case 'splizer':
         return 'splizer';
       default:
+        // admin | support | ops_manager | null → Support tab
         return 'admin';
     }
   }
@@ -178,6 +182,7 @@ class ChatApiMessage extends Serializable {
     }
   }
 
+  /// Prefer API [senderName] (e.g. "Zeengo Admin"); else role label.
   String inboundLabel({
     required String support,
     required String driver,
