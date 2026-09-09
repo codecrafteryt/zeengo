@@ -25,4 +25,17 @@ class HomeRepo extends GetxService {
       },
     );
   }
+
+  /// `GET /client/suggestions` — booking notes for Suggestions sheet.
+  Future<Response> fetchSuggestions() async {
+    final token = sharedPreferences.getString(Constants.accessToken) ?? '';
+    return await apiProvider.getData(
+      Constants.clientSuggestions,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      },
+    );
+  }
 }

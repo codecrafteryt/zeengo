@@ -97,7 +97,10 @@ class DependencyInjection {
     );
 
     Get.lazyPut(() => CurrencyConverterController(), fenix: true);
-    Get.lazyPut(() => SuggestionsController(), fenix: true);
+    Get.lazyPut(
+      () => SuggestionsController(homeRepo: Get.find()),
+      fenix: true,
+    );
 
     Get.put(
       MapController(sharedPreferences: sharedPreferences),

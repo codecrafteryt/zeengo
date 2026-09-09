@@ -72,43 +72,45 @@ class SuggestionTipCard extends StatelessWidget {
                   height: 1.4,
                   color: palette.textSecondary,
                 ),
-                SizedBox(height: 12.h),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: onAction,
-                    borderRadius: BorderRadius.circular(22.r),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(22.r),
-                        border: Border.all(
-                          color: accent.withValues(alpha: 0.75),
+                if (tip.actionLabel.trim().isNotEmpty && onAction != null) ...[
+                  SizedBox(height: 12.h),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onAction,
+                      borderRadius: BorderRadius.circular(22.r),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(tip.actionIcon, size: 15.sp, color: accent),
-                          SizedBox(width: 6.w),
-                          Flexible(
-                            child: CustomTextWidget(
-                              tip.actionLabel,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: accent,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22.r),
+                          border: Border.all(
+                            color: accent.withValues(alpha: 0.75),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(tip.actionIcon, size: 15.sp, color: accent),
+                            SizedBox(width: 6.w),
+                            Flexible(
+                              child: CustomTextWidget(
+                                tip.actionLabel,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: accent,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

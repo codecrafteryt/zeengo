@@ -18,6 +18,9 @@ class Constants {
   static const String clientTasks = '/client/tasks';
   static String clientTask(String id) => '/client/tasks/$id';
 
+  // ── Client suggestions (booking notes) ────────────────────────────────────
+  static const String clientSuggestions = '/client/suggestions';
+
   // ── Notifications ─────────────────────────────────────────────────────────
   static const String notifications = '/notifications';
   static const String notificationsUnreadCount = '/notifications/unread-count';

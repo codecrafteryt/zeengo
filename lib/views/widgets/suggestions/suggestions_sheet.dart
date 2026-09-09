@@ -5,13 +5,14 @@ import 'package:get/get.dart';
 import '../../../controller/suggestions_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
+import '../../../utils/values/my_color.dart';
 import '../app_loading_dots.dart';
 import '../custom_bottom_sheet_widget.dart';
 import '../custom_header_bar_widget.dart';
 import '../custom_text_widget.dart';
 import 'suggestion_tip_card.dart';
 
-/// Explore → Suggestions bottom sheet (static now, API-ready via controller).
+/// Explore → Suggestions bottom sheet (`GET /client/suggestions`).
 class SuggestionsSheet extends StatelessWidget {
   const SuggestionsSheet({super.key});
 
@@ -46,6 +47,7 @@ class SuggestionsSheet extends StatelessWidget {
     return Obx(() {
       final tips = controller.tips;
       final loading = controller.isLoading.value;
+      final error = controller.errorMessage.value;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,13 +75,47 @@ class SuggestionsSheet extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 40.h),
               child: const Center(child: AppLoadingDots()),
             )
+          else if (error != null && error.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h),
+              child: Column(
+                children: [
+                  CustomTextWidget(
+                    error,
+                    textAlign: TextAlign.center,
+                    fontSize: 14.sp,
+                    color: palette.textSecondary,
+                  ),
+                  SizedBox(height: 12.h),
+                  TextButton(
+                    onPressed: controller.loadTips,
+                    child: CustomTextWidget(
+                      Enus.retry.tr,
+                      color: MyColors.darkPurple,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else if (tips.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 40.h),
+              child: CustomTextWidget(
+                Enus.whatToDoNow.tr,
+                textAlign: TextAlign.center,
+                fontSize: 14.sp,
+                color: palette.textSecondary,
+              ),
+            )
           else
             ...tips.map(
               (tip) => Padding(
                 padding: EdgeInsets.only(bottom: 12.h),
                 child: SuggestionTipCard(
                   tip: tip,
-                  onAction: () => controller.onTipAction(tip),
+                  onAction: tip.actionLabel.trim().isEmpty
+                      ? null
+                      : () => controller.onTipAction(tip),
                 ),
               ),
             ),

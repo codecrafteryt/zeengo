@@ -1,92 +1,53 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../data/api_provider/api_provider.dart';
 import '../data/enus.dart';
 import '../data/models/suggestion_tip.dart';
-import '../utils/values/my_color.dart';
+import '../data/repos/home_repo/home_repo.dart';
 
 class SuggestionsController extends GetxController {
+  SuggestionsController({required this.homeRepo});
+
+  final HomeRepo homeRepo;
+
   final tips = <SuggestionTip>[].obs;
   final isLoading = false.obs;
-
-  /// Header time label (static for now; API can override).
+  final errorMessage = RxnString();
   final basedOnLabel = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadTips();
-  }
-
   Future<void> loadTips() async {
+    if (isLoading.value) return;
     isLoading.value = true;
-    // Placeholder for future API call.
-    await Future<void>.delayed(const Duration(milliseconds: 120));
-    tips.assignAll(_staticTips());
-    basedOnLabel.value = Enus.basedOnTime.trParams({
-      'time': _nowLabel(),
-    });
-    isLoading.value = false;
+    errorMessage.value = null;
+    tips.clear();
+    basedOnLabel.value = Enus.whatToDoNow.tr;
+
+    try {
+      final res = await homeRepo.fetchSuggestions();
+      if (!ApiProvider.isSuccessfulHttpStatus(res.statusCode) ||
+          res.body is! Map) {
+        errorMessage.value = 'Unable to load suggestions.';
+        return;
+      }
+      final body = Map<String, dynamic>.from(res.body as Map);
+      if (body['success'] == false) {
+        final err = body['error'];
+        errorMessage.value = err is Map
+            ? (err['message']?.toString() ?? 'Unable to load suggestions.')
+            : 'Unable to load suggestions.';
+        return;
+      }
+      final payload = body['data'];
+      final list = payload is Map ? payload['data'] : null;
+      tips.assignAll(SuggestionTip.listFrom(list));
+    } catch (e, st) {
+      debugPrint('SuggestionsController.loadTips error: $e\n$st');
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  void onTipAction(SuggestionTip tip) {
-    // Get.snackbar(
-    //   tip.title,
-    //   tip.actionLabel,
-    //   snackPosition: SnackPosition.BOTTOM,
-    //   duration: const Duration(seconds: 2),
-    // );
-  }
-
-  String _nowLabel() {
-    final n = TimeOfDay.now();
-    final h = n.hourOfPeriod == 0 ? 12 : n.hourOfPeriod;
-    final m = n.minute.toString().padLeft(2, '0');
-    final p = n.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$h:$m $p';
-  }
-
-  List<SuggestionTip> _staticTips() {
-    return [
-      SuggestionTip(
-        id: 'afternoon_activity',
-        title: Enus.suggestionAfternoonTitle.tr,
-        description: Enus.suggestionAfternoonDesc.tr,
-        actionLabel: Enus.suggestionContactSplizer.tr,
-        icon: Icons.theater_comedy_rounded,
-        actionIcon: Icons.support_agent_rounded,
-        iconColor: const Color(0xFFEC4899),
-      ),
-      SuggestionTip(
-        id: 'currency_tip',
-        title: Enus.suggestionCurrencyTitle.tr,
-        description: Enus.suggestionCurrencyDesc.tr,
-        actionLabel: Enus.suggestionAlfaBank.tr,
-        icon: Icons.currency_exchange_rounded,
-        actionIcon: Icons.location_on_outlined,
-        iconColor: MyColors.green,
-        actionValue: 'alfa_bank',
-      ),
-      SuggestionTip(
-        id: 'transport_tip',
-        title: Enus.suggestionTransportTitle.tr,
-        description: Enus.suggestionTransportDesc.tr,
-        actionLabel: Enus.suggestionNearestMetro.tr,
-        icon: Icons.directions_subway_filled_rounded,
-        actionIcon: Icons.map_outlined,
-        iconColor: MyColors.darkPurple,
-        actionValue: 'nearest_metro',
-      ),
-      SuggestionTip(
-        id: 'photo_spot',
-        title: Enus.suggestionPhotoTitle.tr,
-        description: Enus.suggestionPhotoDesc.tr,
-        actionLabel: Enus.suggestionSparrowHills.tr,
-        icon: Icons.photo_camera_rounded,
-        actionIcon: Icons.place_outlined,
-        iconColor: const Color(0xFF38BDF8),
-        actionValue: 'sparrow_hills',
-      ),
-    ];
-  }
+  void onTipAction(SuggestionTip tip) {}
 }
