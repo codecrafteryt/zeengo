@@ -6,10 +6,10 @@ import '../app_card.dart';
 import 'chat_composer.dart';
 import 'chat_empty_state.dart';
 import 'chat_message_bubble.dart';
-import 'chat_quick_replies.dart';
 import 'chat_thread_header.dart';
+import 'chat_typing_indicator.dart';
 
-/// Airbnb-style chat thread panel (header + messages + quick replies + composer).
+/// Airbnb-style chat thread panel (header + messages + composer).
 ///
 /// Layout is overflow-safe: non-flex chrome is dropped when height is tight
 /// (keyboard / small devices), so Column never reports BOTTOM OVERFLOWED.
@@ -22,13 +22,13 @@ class ChatThreadPanel extends StatelessWidget {
     required this.statusLabel,
     required this.emptyMessage,
     required this.messages,
-    required this.quickReplies,
     required this.composerHint,
     required this.controller,
     required this.onSend,
-    required this.onQuickReply,
     this.compact = false,
     this.focusNode,
+    this.isTyping = false,
+    this.typingLabel,
   });
 
   final String title;
@@ -37,13 +37,13 @@ class ChatThreadPanel extends StatelessWidget {
   final String statusLabel;
   final String emptyMessage;
   final List<ChatMessage> messages;
-  final List<String> quickReplies;
   final String composerHint;
   final TextEditingController controller;
   final VoidCallback onSend;
-  final ValueChanged<String> onQuickReply;
   final bool compact;
   final FocusNode? focusNode;
+  final bool isTyping;
+  final String? typingLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +52,10 @@ class ChatThreadPanel extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(14.w, 12.h, 14.w, 10.h),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Android adjustResize shrinks height; drop chrome before overflow.
           final h = constraints.maxHeight;
           final showHeader = h >= 160;
-          final showReplies = !compact && h >= 300;
+          final showTyping =
+              isTyping && (typingLabel?.trim().isNotEmpty ?? false);
 
           return Column(
             children: [
@@ -65,31 +65,28 @@ class ChatThreadPanel extends StatelessWidget {
                   svgAsset: svgAsset,
                   statusLabel: statusLabel,
                   accent: accent,
+                  isOnline: true,
                 ),
                 Divider(height: 20.h, color: palette.border),
               ],
               Expanded(
-                child: messages.isEmpty
+                child: messages.isEmpty && !showTyping
                     ? ChatEmptyState(message: emptyMessage)
                     : ListView.builder(
                         reverse: true,
                         padding: EdgeInsets.only(bottom: 8.h),
-                        itemCount: messages.length,
+                        itemCount: messages.length + (showTyping ? 1 : 0),
                         itemBuilder: (_, i) {
-                          final msg = messages[messages.length - 1 - i];
-                          return ChatMessageBubble(message: msg);
+                          if (showTyping && i == 0) {
+                            return ChatTypingIndicator(label: typingLabel!);
+                          }
+                          final msgIndex =
+                              messages.length - 1 - (showTyping ? i - 1 : i);
+                          return ChatMessageBubble(message: messages[msgIndex]);
                         },
                       ),
               ),
-              if (showReplies) ...[
-                SizedBox(height: 8.h),
-                ChatQuickReplies(
-                  items: quickReplies,
-                  onSelected: onQuickReply,
-                ),
-                SizedBox(height: 10.h),
-              ] else
-                SizedBox(height: 8.h),
+              SizedBox(height: 8.h),
               ChatComposer(
                 controller: controller,
                 hint: composerHint,

@@ -78,20 +78,80 @@ class _ChatsScreenState extends State<ChatsScreen> {
     return api
         .where((m) => m.matchesInboxTab(_tab))
         .map(
-          (m) => ChatMessage(
-            text: chat.bubbleText(m),
-            isMine: m.isMine(myId),
-            time: m.timeLabel,
-            senderName: m.isMine(myId)
-                ? null
-                : m.inboundLabel(
-                    support: Enus.support.tr,
-                    driver: Enus.driver.tr,
-                    splizer: Enus.splizer.tr,
-                  ),
-          ),
+          (m) {
+            final mine = m.isMine(myId);
+            String? name;
+            if (!mine) {
+              final fromApi = m.senderName?.trim();
+              name = (fromApi != null && fromApi.isNotEmpty)
+                  ? fromApi
+                  : m.roleLabel(
+                      support: Enus.support.tr,
+                      driver: Enus.driver.tr,
+                      splizer: Enus.splizer.tr,
+                    );
+            }
+            return ChatMessage(
+              text: chat.bubbleText(m),
+              isMine: mine,
+              time: m.timeLabel,
+              senderName: name,
+            );
+          },
         )
         .toList();
+  }
+
+  String _typingStatusForChannel(String? channel) {
+    final name = chat.typingSenderName.value?.trim();
+    if (name != null && name.isNotEmpty) {
+      return Enus.userTyping.trParams({'name': name});
+    }
+    switch (channel) {
+      case 'driver':
+        return Enus.driverTyping.tr;
+      case 'splizer':
+        return Enus.splizerTyping.tr;
+      default:
+        return Enus.supportTyping.tr;
+    }
+  }
+
+  /// Prefer socket-resolved / latest staff [senderName]; else role label.
+  String _typingSenderLabel() {
+    final fromSocket = chat.typingSenderName.value?.trim();
+    if (fromSocket != null && fromSocket.isNotEmpty) return fromSocket;
+
+    final channel = chat.typingChannel.value ?? 'admin';
+    for (var i = chat.messages.length - 1; i >= 0; i--) {
+      final m = chat.messages[i];
+      if (m.senderType != 'staff') continue;
+      if (m.inboxChannel != channel) continue;
+      final name = m.senderName?.trim();
+      if (name != null && name.isNotEmpty) return name;
+    }
+    switch (channel) {
+      case 'driver':
+        return Enus.driver.tr;
+      case 'splizer':
+        return Enus.splizer.tr;
+      default:
+        return Enus.support.tr;
+    }
+  }
+
+  /// Header title above Online: latest staff [senderName] for this tab.
+  String _headerTitleForTab() {
+    for (var i = chat.messages.length - 1; i >= 0; i--) {
+      final m = chat.messages[i];
+      if (!m.matchesInboxTab(_tab)) continue;
+      if (m.senderType != 'staff') continue;
+      final name = m.senderName?.trim();
+      if (name != null && name.isNotEmpty) return name;
+    }
+    if (_tab == _driverTab) return Enus.driver.tr;
+    if (_tab == 2) return Enus.splizer.tr;
+    return Enus.zeengoSupport.tr;
   }
 
   @override
@@ -135,53 +195,40 @@ class _ChatsScreenState extends State<ChatsScreen> {
                   SizedBox(height: short ? 8.h : 12.h),
                   Expanded(
                     child: Obx(() {
+                      chat.isPeerTyping.value;
+                      chat.typingChannel.value;
+                      chat.typingSenderName.value;
+                      chat.messages.length;
+                      chat.isLoading.value;
+                      chat.errorMessage.value;
+
                       if (_tab == _supportTab) {
                         return _buildLivePanel(
                           palette: palette,
                           short: short,
-                          title: chat.conversation.value?.title
-                                      ?.trim()
-                                      .isNotEmpty ==
-                                  true
-                              ? chat.conversation.value!.title!.trim()
-                              : Enus.zeengoSupport.tr,
+                          title: _headerTitleForTab(),
                           svgAsset: MyImages.chatHeadset,
                           accent: MyColors.darkPurple,
                           emptyMessage: Enus.startChatSupport.tr,
-                          quickReplies: [
-                            Enus.qrNeedHelp.tr,
-                            Enus.qrDriverArrive.tr,
-                            Enus.qrBookRestaurant.tr,
-                          ],
                         );
                       }
                       if (_tab == _driverTab) {
                         return _buildLivePanel(
                           palette: palette,
                           short: short,
-                          title: Enus.driver.tr,
+                          title: _headerTitleForTab(),
                           svgAsset: MyImages.chatCar,
                           accent: const Color(0xFF2563EB),
                           emptyMessage: Enus.startChatDriver.tr,
-                          quickReplies: [
-                            Enus.qrWhereAreYou.tr,
-                            Enus.qrWhenArrive.tr,
-                            Enus.qrAtEntrance.tr,
-                          ],
                         );
                       }
                       return _buildLivePanel(
                         palette: palette,
                         short: short,
-                        title: Enus.splizer.tr,
+                        title: _headerTitleForTab(),
                         svgAsset: MyImages.chatBriefcase,
                         accent: MyColors.purple,
                         emptyMessage: Enus.startChatSplizer.tr,
-                        quickReplies: [
-                          Enus.qrCanYouHelp.tr,
-                          Enus.qrItinerary.tr,
-                          Enus.qrChangeBooking.tr,
-                        ],
                       );
                     }),
                   ),
@@ -209,12 +256,12 @@ class _ChatsScreenState extends State<ChatsScreen> {
     required String svgAsset,
     required Color accent,
     required String emptyMessage,
-    required List<String> quickReplies,
   }) {
     final loading = chat.isLoading.value && chat.messages.isEmpty;
     final error = chat.errorMessage.value;
-    final status = chat.supportTyping.value
-        ? Enus.supportTyping.tr
+    final typingHere = chat.isTypingOnTab(_tab);
+    final status = typingHere
+        ? _typingStatusForChannel(chat.typingChannel.value)
         : Enus.online.tr;
     final mapped = _mapMessages(chat.messages);
 
@@ -256,13 +303,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
       statusLabel: status,
       emptyMessage: emptyMessage,
       messages: mapped,
-      quickReplies: quickReplies,
       composerHint: Enus.typeMessage.tr,
       controller: _controller,
       focusNode: _composerFocus,
       onSend: _send,
-      onQuickReply: _send,
       compact: short,
+      isTyping: typingHere,
+      typingLabel: typingHere ? _typingSenderLabel() : null,
     );
   }
 }
