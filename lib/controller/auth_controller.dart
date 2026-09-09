@@ -11,6 +11,7 @@ import '../data/constants.dart';
 import '../data/enus.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/auth_model/login_model.dart';
+import '../data/models/auth_model/logout_model.dart';
 import '../data/repos/auth_repo/auth_repo.dart';
 import '../services/notification_service.dart';
 import '../views/auth/login_screen.dart';
@@ -334,6 +335,62 @@ class AuthController extends GetxController {
     _stopRealtime();
     await sharedPreferences.remove(Constants.accessToken);
     await sharedPreferences.remove(Constants.refreshToken);
+  }
+
+  Future<void> _clearSessionPrefs() async {
+    userName.value = '';
+    znCode.value = '';
+    await sharedPreferences.remove(Constants.accessToken);
+    await sharedPreferences.remove(Constants.refreshToken);
+    await sharedPreferences.remove(Constants.userId);
+    await sharedPreferences.remove(Constants.userFullName);
+    await sharedPreferences.remove(Constants.userPhone);
+    await sharedPreferences.remove(Constants.userEmail);
+    await sharedPreferences.remove(Constants.userPreferredLang);
+    await sharedPreferences.remove(Constants.bookingId);
+    await sharedPreferences.remove(Constants.znCode);
+    await sharedPreferences.remove(Constants.bookingStatus);
+  }
+
+  /// `POST /auth/logout` — shared client/staff endpoint; then clear local session.
+  Future<void> logout() async {
+    if (isLoading.value) return;
+
+    final refreshToken =
+        sharedPreferences.getString(Constants.refreshToken) ?? '';
+    final accessToken =
+        sharedPreferences.getString(Constants.accessToken) ?? '';
+
+    isLoading.value = true;
+    try {
+      if (refreshToken.isNotEmpty) {
+        final response = await authRepo.logoutRepo(
+          refreshToken: refreshToken,
+          accessToken: accessToken,
+        );
+
+        debugPrint('====> LOGOUT statusCode: ${response.statusCode}');
+        debugPrint('====> LOGOUT full response body: ${response.body}');
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final body = response.body;
+          if (body is Map<String, dynamic>) {
+            final ApiResponse<LogoutModel> model = ApiResponse.fromJson(body, LogoutModel.fromJson);
+            debugPrint('====> LOGOUT parsed message=${model.data?.message} ''error=${model.error}',);
+          }
+        } else {
+          debugPrint('====> LOGOUT non-success — clearing local session anyway');
+        }
+      }
+    } catch (e, st) {
+      debugPrint('====> LOGOUT exception: $e');
+      debugPrint('====> LOGOUT stack: $st');
+    } finally {
+      _stopRealtime();
+      await _clearSessionPrefs();
+      if (!isClosed) isLoading.value = false;
+      Get.offAll(() => const LoginScreen());
+    }
   }
 
   void _startRealtime() {
