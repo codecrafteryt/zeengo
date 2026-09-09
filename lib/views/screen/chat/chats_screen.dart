@@ -60,7 +60,10 @@ class _ChatsScreenState extends State<ChatsScreen> {
     final value = (text ?? _controller.text).trim();
     if (value.isEmpty) return;
     _controller.clear();
-    await chat.sendMessage(value);
+    await chat.sendMessage(
+      value,
+      senderRole: ChatApiMessage.roleForTab(_tab),
+    );
   }
 
   Future<void> _openWhatsapp() async {

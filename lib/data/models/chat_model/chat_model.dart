@@ -139,12 +139,28 @@ class ChatApiMessage extends Serializable {
 
   /// Support / Driver / Splizer inbox tabs (0 / 1 / 2).
   bool matchesInboxTab(int tab) {
-    if (senderType != 'staff') return true;
-    final role = (senderRole ?? '').toLowerCase();
-    if (tab == 1) return role == 'driver';
-    if (tab == 2) return role == 'splizer';
-    // Support: admin, ops, support, or unknown staff (not driver/splizer).
-    return role != 'driver' && role != 'splizer';
+    final channel = inboxChannel;
+    if (tab == 1) return channel == 'driver';
+    if (tab == 2) return channel == 'splizer';
+    return channel == 'admin';
+  }
+
+  /// Normalized channel: admin | driver | splizer.
+  String get inboxChannel {
+    switch ((senderRole ?? '').toLowerCase()) {
+      case 'driver':
+        return 'driver';
+      case 'splizer':
+        return 'splizer';
+      default:
+        return 'admin';
+    }
+  }
+
+  static String roleForTab(int tab) {
+    if (tab == 1) return 'driver';
+    if (tab == 2) return 'splizer';
+    return 'admin';
   }
 
   String roleLabel({
@@ -152,7 +168,7 @@ class ChatApiMessage extends Serializable {
     required String driver,
     required String splizer,
   }) {
-    switch ((senderRole ?? '').toLowerCase()) {
+    switch (inboxChannel) {
       case 'driver':
         return driver;
       case 'splizer':

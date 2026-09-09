@@ -59,12 +59,14 @@ class ChatRepo extends GetxService {
   Future<Response> sendMessage(
     String conversationId, {
     required String body,
+    required String senderRole,
     List<Map<String, dynamic>> attachments = const [],
   }) {
     return apiProvider.postData(
       Constants.chatMessages(conversationId),
       body: {
         'body': body,
+        'senderRole': senderRole,
         'attachments': attachments,
       },
       headers: _authHeaders,

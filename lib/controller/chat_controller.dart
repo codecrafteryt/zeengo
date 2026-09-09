@@ -147,7 +147,7 @@ class ChatController extends GetxController {
     supportTyping.value = false;
   }
 
-  Future<void> sendMessage(String text) async {
+  Future<void> sendMessage(String text, {required String senderRole}) async {
     final body = text.trim();
     final convId = conversation.value?.id;
     if (body.isEmpty || convId == null || convId.isEmpty) return;
@@ -155,10 +155,14 @@ class ChatController extends GetxController {
 
     isSending.value = true;
     debugPrint(
-      '====> CHAT OUT sendMessage conversationId=$convId body=$body',
+      '====> CHAT OUT sendMessage conversationId=$convId senderRole=$senderRole body=$body',
     );
     try {
-      final res = await chatRepo.sendMessage(convId, body: body);
+      final res = await chatRepo.sendMessage(
+        convId,
+        body: body,
+        senderRole: senderRole,
+      );
       debugPrint(
         '====> CHAT OUT sendMessage status=${res.statusCode} body=${res.body}',
       );
