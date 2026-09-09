@@ -34,7 +34,13 @@ class DependencyInjection {
     );
     Get.lazyPut(() => ApiProvider(), fenix: true);
     Get.lazyPut(() => AuthRepo(apiProvider: Get.find()), fenix: true);
-    Get.lazyPut(() => ChatRepo(apiProvider: Get.find()), fenix: true);
+    Get.lazyPut(
+      () => ChatRepo(
+        apiProvider: Get.find(),
+        sharedPreferences: Get.find(),
+      ),
+      fenix: true,
+    );
     Get.lazyPut(
       () => HomeRepo(
         apiProvider: Get.find(),
