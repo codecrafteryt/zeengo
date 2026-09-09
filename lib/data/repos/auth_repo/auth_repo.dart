@@ -43,4 +43,23 @@ class AuthRepo extends GetxService {
       },
     );
   }
+
+  /// `POST /auth/logout` — shared for client + staff.
+  /// Auth: Bearer accessToken. Body: `{ refreshToken }`.
+  Future<Response> logoutRepo({
+    required String refreshToken,
+    required String accessToken,
+  }) async {
+    return await apiProvider.postData(
+      Constants.logout,
+      body: {
+        'refreshToken': refreshToken,
+      },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        if (accessToken.isNotEmpty) 'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
 }
