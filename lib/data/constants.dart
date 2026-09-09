@@ -14,6 +14,10 @@ class Constants {
   // ── Client home ───────────────────────────────────────────────────────────
   static const String clientHome = '/client/home';
 
+  // ── Client ops tasks ──────────────────────────────────────────────────────
+  static const String clientTasks = '/client/tasks';
+  static String clientTask(String id) => '/client/tasks/$id';
+
   // ── Notifications ─────────────────────────────────────────────────────────
   static const String notifications = '/notifications';
   static const String notificationsUnreadCount = '/notifications/unread-count';
