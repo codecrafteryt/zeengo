@@ -165,6 +165,9 @@ class Enus {
   static const String typeMessage = 'type_message';
   static const String zeengoSupport = 'zeengo_support';
   static const String supportTyping = 'support_typing';
+  static const String driverTyping = 'driver_typing';
+  static const String splizerTyping = 'splizer_typing';
+  static const String userTyping = 'user_typing';
   static const String retry = 'retry';
   static const String startChatSupport = 'start_chat_support';
   static const String startChatDriver = 'start_chat_driver';
