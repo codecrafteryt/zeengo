@@ -10,6 +10,7 @@ import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
 import '../../widgets/ai/ai_assistant_sheet.dart';
+import '../../widgets/app_loading_dots.dart';
 import '../../widgets/currency/currency_calculator_sheet.dart';
 import '../../widgets/explore/explore_actions_grid.dart';
 import '../../widgets/explore/explore_header.dart';
@@ -56,13 +57,9 @@ class ExploreScreen extends GetView<HomeController> {
                 ),
               ),
               if (loading)
-                SliverFillRemaining(
+                const SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: MyColors.darkPurple,
-                    ),
-                  ),
+                  child: Center(child: AppLoadingDots()),
                 )
               else
                 Obx(() {

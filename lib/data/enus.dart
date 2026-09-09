@@ -106,7 +106,9 @@ class Enus {
   static const String todaysSchedule = 'todays_schedule';
   static const String noEventsToday = 'no_events_today';
   static const String opsTasks = 'ops_tasks';
+  static const String schedule = 'schedule';
   static const String noOpenTasks = 'no_open_tasks';
+  static const String noDoneTasks = 'no_done_tasks';
   static const String viewAllTasks = 'view_all_tasks';
   static const String taskDue = 'task_due';
   static const String taskPriorityUrgent = 'task_priority_urgent';

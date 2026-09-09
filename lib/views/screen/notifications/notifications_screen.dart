@@ -9,6 +9,7 @@ import '../../../data/models/notification_model/notification_model.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
 import '../../../utils/values/my_images.dart';
+import '../../widgets/app_loading_dots.dart';
 import '../../widgets/custom_text_widget.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -86,7 +87,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: AppLoadingDots());
         }
 
         if (controller.errorMessage.value != null &&
@@ -180,13 +181,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 if (index >= controller.items.length) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.h),
-                    child: const Center(
-                      child: SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
+                    child: const Center(child: AppLoadingDots(size: 36)),
                   );
                 }
                 final item = controller.items[index];

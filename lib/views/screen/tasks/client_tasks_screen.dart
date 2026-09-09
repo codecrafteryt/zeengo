@@ -1,63 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../controller/task_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
 import '../../../utils/values/my_color.dart';
+import '../../../utils/values/my_images.dart';
+import '../../widgets/app_loading_dots.dart';
 import '../../widgets/custom_text_widget.dart';
 import '../../widgets/explore/ops_task_tile.dart';
 
-class ClientTasksScreen extends GetView<TaskController> {
+class ClientTasksScreen extends StatefulWidget {
   const ClientTasksScreen({super.key});
+
+  @override
+  State<ClientTasksScreen> createState() => _ClientTasksScreenState();
+}
+
+class _ClientTasksScreenState extends State<ClientTasksScreen> {
+  late final TaskController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<TaskController>();
+    controller.filter.value = 'open';
+    controller.seedFromHome();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchTasks(showLoader: controller.items.isEmpty);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
-    final top = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
       backgroundColor: palette.scaffold,
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.fromLTRB(8.w, top + 8.h, 16.w, 12.h),
-            color: palette.card,
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: Get.back,
-                  icon: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size: 20.sp,
-                    color: palette.icon,
-                  ),
-                ),
-                Expanded(
-                  child: CustomTextWidget(
-                    Enus.opsTasks.tr,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w700,
-                    color: palette.textPrimary,
-                  ),
-                ),
-                Obx(() {
-                  final zn = controller.znCode.value;
-                  if (zn.isEmpty) return const SizedBox.shrink();
-                  return CustomTextWidget(
-                    zn,
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.darkPurple,
-                  );
-                }),
-              ],
+      appBar: AppBar(
+        backgroundColor: palette.scaffold,
+        elevation: 0,
+        surfaceTintColor: palette.card,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          behavior: HitTestBehavior.opaque,
+          child: Center(
+            child: SizedBox(
+              width: 20.w,
+              height: 20.h,
+              child: SvgPicture.asset(
+                MyImages.arrowBackFlatSvg,
+                width: 20.w,
+                height: 20.h,
+                fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(palette.icon, BlendMode.srcIn),
+              ),
             ),
           ),
+        ),
+        leadingWidth: 48,
+        title: CustomTextWidget(
+          Enus.schedule.tr,
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          color: palette.textPrimary,
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
+            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
             child: Obx(() {
               final f = controller.filter.value;
               return Row(
@@ -84,46 +99,68 @@ class ClientTasksScreen extends GetView<TaskController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value && controller.items.isEmpty) {
-                return Center(
-                  child:
-                      CircularProgressIndicator(color: MyColors.darkPurple),
-                );
+                return const Center(child: AppLoadingDots());
               }
 
               final error = controller.errorMessage.value;
               if (error != null &&
                   error.isNotEmpty &&
                   controller.items.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomTextWidget(
-                          error,
-                          textAlign: TextAlign.center,
-                          color: palette.textSecondary,
-                        ),
-                        SizedBox(height: 12.h),
-                        TextButton(
-                          onPressed: controller.fetchTasks,
-                          child: CustomTextWidget(
-                            Enus.viewAllTasks.tr,
-                            color: MyColors.darkPurple,
-                          ),
-                        ),
-                      ],
+                return RefreshIndicator(
+                  color: MyColors.darkPurple,
+                  onRefresh: () => controller.fetchTasks(showLoader: false),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
                     ),
+                    children: [
+                      SizedBox(height: 120.h),
+                      Padding(
+                        padding: EdgeInsets.all(24.w),
+                        child: Column(
+                          children: [
+                            CustomTextWidget(
+                              error,
+                              textAlign: TextAlign.center,
+                              fontSize: 14.sp,
+                              color: palette.textSecondary,
+                            ),
+                            SizedBox(height: 12.h),
+                            TextButton(
+                              onPressed: () => controller.fetchTasks(),
+                              child: CustomTextWidget(
+                                Enus.viewAllTasks.tr,
+                                color: MyColors.darkPurple,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
 
               if (controller.items.isEmpty) {
-                return Center(
-                  child: CustomTextWidget(
-                    Enus.noOpenTasks.tr,
-                    color: palette.textSecondary,
+                return RefreshIndicator(
+                  color: MyColors.darkPurple,
+                  onRefresh: () => controller.fetchTasks(showLoader: false),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    children: [
+                      SizedBox(height: 140.h),
+                      Center(
+                        child: CustomTextWidget(
+                          controller.filter.value == 'done'
+                              ? Enus.noDoneTasks.tr
+                              : Enus.noOpenTasks.tr,
+                          fontSize: 14.sp,
+                          color: palette.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
@@ -140,6 +177,9 @@ class ClientTasksScreen extends GetView<TaskController> {
                     return false;
                   },
                   child: ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
                     padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
                     itemCount: controller.items.length +
                         (controller.isLoadingMore.value ? 1 : 0),
@@ -148,11 +188,7 @@ class ClientTasksScreen extends GetView<TaskController> {
                       if (i >= controller.items.length) {
                         return Padding(
                           padding: EdgeInsets.all(16.w),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: MyColors.darkPurple,
-                            ),
-                          ),
+                          child: const Center(child: AppLoadingDots(size: 36)),
                         );
                       }
                       return OpsTaskTile(task: controller.items[i]);

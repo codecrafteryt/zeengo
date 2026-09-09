@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../controller/suggestions_controller.dart';
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
+import '../app_loading_dots.dart';
 import '../custom_bottom_sheet_widget.dart';
 import '../custom_header_bar_widget.dart';
 import '../custom_text_widget.dart';
@@ -70,7 +71,7 @@ class SuggestionsSheet extends StatelessWidget {
           if (loading)
             Padding(
               padding: EdgeInsets.symmetric(vertical: 40.h),
-              child: const Center(child: CircularProgressIndicator()),
+              child: const Center(child: AppLoadingDots()),
             )
           else
             ...tips.map(

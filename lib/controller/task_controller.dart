@@ -5,6 +5,7 @@ import '../data/api_provider/api_provider.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/task_model/ops_task_model.dart';
 import '../data/repos/task_repo/task_repo.dart';
+import 'home_controller.dart';
 
 class TaskController extends GetxController {
   TaskController({required this.taskRepo});
@@ -23,20 +24,26 @@ class TaskController extends GetxController {
   int _page = 1;
   bool _hasMore = true;
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchTasks();
+  /// Prefill Open tab from home `tasks` so UI matches Today's Schedule immediately.
+  void seedFromHome() {
+    if (!Get.isRegistered<HomeController>()) return;
+    final home = Get.find<HomeController>();
+    if (home.znCode.value.isNotEmpty) {
+      znCode.value = home.znCode.value;
+    }
+    if (filter.value == 'open' && home.openTasks.isNotEmpty) {
+      items.assignAll(home.openTasks.toList());
+    }
   }
 
   Future<void> setFilter(String value) async {
     if (filter.value == value) return;
     filter.value = value;
-    await fetchTasks();
+    if (value == 'open') seedFromHome();
+    await fetchTasks(showLoader: items.isEmpty);
   }
 
   Future<void> fetchTasks({bool showLoader = true}) async {
-    if (isLoading.value) return;
     if (showLoader) isLoading.value = true;
     errorMessage.value = null;
     _page = 1;
@@ -48,29 +55,34 @@ class TaskController extends GetxController {
         page: 1,
         limit: 20,
       );
+
+      debugPrint(
+        '====> TASKS status=${response.statusCode} body=${response.body}',
+      );
+
       if (!ApiProvider.isSuccessfulHttpStatus(response.statusCode)) {
         errorMessage.value = 'Unable to load tasks.';
-        items.clear();
+        if (items.isEmpty) items.clear();
         return;
       }
 
       final body = response.body;
-      if (body is! Map<String, dynamic>) {
+      if (body is! Map) {
         errorMessage.value = 'Invalid tasks response.';
-        items.clear();
         return;
       }
 
-      final result = OpsTaskListResult.fromEnvelope(body);
+      final result = OpsTaskListResult.fromEnvelope(
+        Map<String, dynamic>.from(body),
+      );
       if (!result.success) {
         errorMessage.value =
             result.error.isNotEmpty ? result.error : 'Unable to load tasks.';
-        items.clear();
         return;
       }
 
       items.assignAll(result.items);
-      znCode.value = result.znCode?.trim() ?? '';
+      znCode.value = result.znCode?.trim() ?? znCode.value;
       bookingId.value = result.bookingId?.trim() ?? '';
       final total = result.meta?.total;
       _hasMore = total == null
@@ -79,7 +91,6 @@ class TaskController extends GetxController {
     } catch (e, st) {
       debugPrint('TaskController.fetchTasks error: $e\n$st');
       errorMessage.value = e.toString();
-      items.clear();
     } finally {
       isLoading.value = false;
     }
@@ -97,9 +108,11 @@ class TaskController extends GetxController {
       );
       if (!ApiProvider.isSuccessfulHttpStatus(response.statusCode)) return;
       final body = response.body;
-      if (body is! Map<String, dynamic>) return;
+      if (body is! Map) return;
 
-      final result = OpsTaskListResult.fromEnvelope(body);
+      final result = OpsTaskListResult.fromEnvelope(
+        Map<String, dynamic>.from(body),
+      );
       if (!result.success) return;
 
       items.addAll(result.items);
@@ -120,8 +133,11 @@ class TaskController extends GetxController {
       final response = await taskRepo.fetchTask(id);
       if (!ApiProvider.isSuccessfulHttpStatus(response.statusCode)) return null;
       final body = response.body;
-      if (body is! Map<String, dynamic>) return null;
-      final model = ApiResponse.fromJson(body, OpsTask.fromJson);
+      if (body is! Map) return null;
+      final model = ApiResponse.fromJson(
+        Map<String, dynamic>.from(body),
+        OpsTask.fromJson,
+      );
       return model.data;
     } catch (e, st) {
       debugPrint('TaskController.fetchTaskDetail error: $e\n$st');

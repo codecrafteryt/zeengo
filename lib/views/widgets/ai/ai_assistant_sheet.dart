@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../data/enus.dart';
 import '../../../utils/values/app_palette.dart';
-import '../../../utils/values/my_color.dart';
+import '../app_loading_dots.dart';
 import '../chat/chat_composer.dart';
 import '../chat/chat_message_bubble.dart';
 import '../custom_bottom_sheet_widget.dart';
@@ -128,16 +128,9 @@ class _AiAssistantSheetState extends State<AiAssistantSheet> {
                     if (_replying && i == _messages.length) {
                       return Padding(
                         padding: EdgeInsets.only(bottom: 10.h, left: 4.w),
-                        child: Row(
+                        child: const Row(
                           children: [
-                            SizedBox(
-                              width: 18.w,
-                              height: 18.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: MyColors.darkPurple.withValues(alpha: 0.8),
-                              ),
-                            ),
+                            AppLoadingDots(size: 28),
                           ],
                         ),
                       );
