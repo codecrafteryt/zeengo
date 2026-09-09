@@ -45,37 +45,37 @@ class Account extends StatelessWidget {
               child: _AccountCard(
                 children: [
                   _AccountTile(
-                    icon: Icons.notifications_outlined,
+                    svgAsset: MyImages.notificationFlat,
                     label: Enus.notifications.tr,
                     onTap: () => Get.to(() => const NotificationsScreen()),
                   ),
                   _divider(context),
                   _AccountTile(
-                    icon: Icons.edit_outlined,
+                    svgAsset: MyImages.profileRequestChanges,
                     label: Enus.requestChanges.tr,
                     onTap: () => _toast(Enus.requestChanges),
                   ),
                   _divider(context),
                   _AccountTile(
-                    icon: Icons.currency_exchange_outlined,
+                    svgAsset: MyImages.profileCurrencyCalculator,
                     label: Enus.currencyCalculator.tr,
                     onTap: () => CurrencyCalculatorSheet.show(context),
                   ),
                   _divider(context),
                   _AccountTile(
-                    svgAsset: MyImages.exploreAi,
+                    svgAsset: MyImages.profileAiAssistant,
                     label: Enus.aiAssistant.tr,
                     onTap: () => AiAssistantSheet.show(context),
                   ),
                   _divider(context),
                   _AccountTile(
-                    svgAsset: MyImages.exploreSuggestion,
+                    svgAsset: MyImages.profileSuggestions,
                     label: Enus.smartSuggestions.tr,
                     onTap: () => SuggestionsSheet.show(context),
                   ),
                   _divider(context),
                   _AccountTile(
-                    icon: Icons.assignment_outlined,
+                    svgAsset: MyImages.profileMyBooking,
                     label: Enus.myBookingInfo.tr,
                     onTap: () => _toast(Enus.myBookingInfo),
                   ),
@@ -87,7 +87,7 @@ class Account extends StatelessWidget {
                   ),
                   _divider(context),
                   _AccountTile(
-                    icon: Icons.menu_book_outlined,
+                    svgAsset: MyImages.profileGuide,
                     label: Enus.russiaGuide.tr,
                     onTap: () => _toast(Enus.russiaGuide),
                   ),

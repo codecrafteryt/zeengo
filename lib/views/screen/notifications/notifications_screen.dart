@@ -319,6 +319,8 @@ class _NotificationTile extends StatelessWidget {
         return Icons.emergency_outlined;
       case 'program':
         return Icons.event_note_outlined;
+      case 'task':
+        return Icons.task_alt_rounded;
       default:
         return Icons.notifications_outlined;
     }

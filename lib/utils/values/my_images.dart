@@ -40,8 +40,17 @@ class MyImages {
   static const String exploreCurrency = "assets/svgs/explore/currency.svg";
   static const String exploreSuggestion = "assets/svgs/explore/suggestion.svg";
   static const String exploreBell = "assets/svgs/explore/bell.svg";
-  static const String logout = "assets/svgs/profile/logout.svg";
   static const String exploreRestaurant = "assets/svgs/explore/restaurant.svg";
+
+  static const String logout = "assets/svgs/profile/logout.svg";
+  static const String profileAiAssistant = "assets/svgs/profile/ai_assistant.svg";
+  static const String profileCurrencyCalculator =
+      "assets/svgs/profile/curreny_calculator.svg";
+  static const String profileSuggestions = "assets/svgs/profile/suggestions.svg";
+  static const String profileMyBooking = "assets/svgs/profile/my_booking.svg";
+  static const String profileGuide = "assets/svgs/profile/guide.svg";
+  static const String profileRequestChanges =
+      "assets/svgs/profile/request_changes.svg";
 
   static const String chatHeadset = "assets/svgs/chat/headset.svg";
   static const String chatCar = "assets/svgs/chat/car.svg";

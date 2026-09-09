@@ -144,10 +144,11 @@ class ExploreScreen extends GetView<HomeController> {
                         ),
                         SizedBox(height: 4.h),
                         ExploreScheduleCard(
-                          dateLabel: controller.scheduleDateLabel.value.isEmpty
-                              ? '—'
-                              : controller.scheduleDateLabel.value,
+                          // dateLabel: controller.scheduleDateLabel.value.isEmpty
+                          //     ? '—'
+                          //     : controller.scheduleDateLabel.value,
                           items: controller.todayProgram.toList(),
+                          tasks: controller.openTasks.toList(),
                         ),
                         SizedBox(height: 16.h),
                         ExploreActionsGrid(
