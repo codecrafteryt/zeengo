@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
+import '../../utils/values/my_fonts.dart';
 import 'custom_text_widget.dart';
 
 class CupertinoSheetOption {
@@ -51,22 +52,23 @@ class CupertinoOptionSheet {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          child: CustomTextWidget(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                          child: Text(
                             title,
                             textAlign: TextAlign.center,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: palette.textSecondary,
+                            style: TextStyle(
+                              fontFamily: MyFonts.roboto,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: palette.textSecondary,
+                              decoration: TextDecoration.none,
+                              decorationThickness: 0,
+                            ),
                           ),
                         ),
-                        Container(height: 0.5, color: palette.border),
                         for (var i = 0; i < options.length; i++) ...[
                           if (i > 0)
-                            Container(height: 0.5, color: palette.border),
+                            Container(height: 1, color: palette.border),
                           _OptionTile(option: options[i]),
                         ],
                       ],
@@ -80,12 +82,17 @@ class CupertinoOptionSheet {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     color: palette.card,
                     borderRadius: BorderRadius.circular(14),
-                    onPressed: () => Navigator.of(ctx, rootNavigator: true).pop(),
-                    child: CustomTextWidget(
+                    onPressed: () =>
+                        Navigator.of(ctx, rootNavigator: true).pop(),
+                    child: Text(
                       cancelLabel,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: CupertinoColors.activeBlue,
+                      style: const TextStyle(
+                        fontFamily: MyFonts.roboto,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        color: CupertinoColors.activeBlue,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ),
                 ),
@@ -109,6 +116,7 @@ class _OptionTile extends StatelessWidget {
     final color = option.isDestructive
         ? CupertinoColors.destructiveRed
         : palette.textPrimary;
+    final centerLabel = option.isDestructive && option.leading == null;
 
     return CupertinoButton(
       padding: EdgeInsets.zero,
@@ -118,28 +126,40 @@ class _OptionTile extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Row(
-          children: [
-            if (option.leading != null) ...[
-              option.leading!,
-              const SizedBox(width: 12),
-            ],
-            Expanded(
-              child: CustomTextWidget(
-                option.label,
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-                color: color,
+        child: centerLabel
+            ? Center(
+                child: CustomTextWidget(
+                  option.label,
+                  textAlign: TextAlign.center,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  color: color,
+                  decoration: TextDecoration.none,
+                ),
+              )
+            : Row(
+                children: [
+                  if (option.leading != null) ...[
+                    option.leading!,
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: CustomTextWidget(
+                      option.label,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: color,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  if (option.selected)
+                    const Icon(
+                      CupertinoIcons.check_mark,
+                      size: 22,
+                      color: MyColors.darkPurple,
+                    ),
+                ],
               ),
-            ),
-            if (option.selected)
-              const Icon(
-                CupertinoIcons.check_mark,
-                size: 22,
-                color: MyColors.darkPurple,
-              ),
-          ],
-        ),
       ),
     );
   }

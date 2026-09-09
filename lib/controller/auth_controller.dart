@@ -16,6 +16,7 @@ import '../data/repos/auth_repo/auth_repo.dart';
 import '../services/notification_service.dart';
 import '../views/auth/login_screen.dart';
 import '../views/screen/explore/home_pages.dart';
+import '../views/widgets/full_page_loading_indicator.dart';
 import 'notification_controller.dart';
 import 'socket_controller.dart';
 
@@ -362,6 +363,12 @@ class AuthController extends GetxController {
         sharedPreferences.getString(Constants.accessToken) ?? '';
 
     isLoading.value = true;
+    Get.dialog(
+      const FullPageLoadingIndicator(),
+      barrierDismissible: false,
+      useSafeArea: false,
+    );
+
     try {
       if (refreshToken.isNotEmpty) {
         final response = await authRepo.logoutRepo(
@@ -375,11 +382,17 @@ class AuthController extends GetxController {
         if (response.statusCode == 200 || response.statusCode == 201) {
           final body = response.body;
           if (body is Map<String, dynamic>) {
-            final ApiResponse<LogoutModel> model = ApiResponse.fromJson(body, LogoutModel.fromJson);
-            debugPrint('====> LOGOUT parsed message=${model.data?.message} ''error=${model.error}',);
+            final ApiResponse<LogoutModel> model =
+                ApiResponse.fromJson(body, LogoutModel.fromJson);
+            debugPrint(
+              '====> LOGOUT parsed message=${model.data?.message} '
+              'error=${model.error}',
+            );
           }
         } else {
-          debugPrint('====> LOGOUT non-success — clearing local session anyway');
+          debugPrint(
+            '====> LOGOUT non-success — clearing local session anyway',
+          );
         }
       }
     } catch (e, st) {
@@ -389,6 +402,9 @@ class AuthController extends GetxController {
       _stopRealtime();
       await _clearSessionPrefs();
       if (!isClosed) isLoading.value = false;
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
       Get.offAll(() => const LoginScreen());
     }
   }

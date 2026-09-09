@@ -52,7 +52,7 @@ class CustomTextWidget extends StatelessWidget {
         color: color ?? fallback,
         height: height,
         letterSpacing: letterSpacing,
-        decoration: decoration,
+        decoration: decoration ?? TextDecoration.none,
         decorationColor: decorationColor ?? color ?? fallback,
       ),
     );
