@@ -1,4 +1,5 @@
 import '../api_response_model.dart';
+import '../task_model/ops_task_model.dart';
 
 /// `GET /client/home` → `data` payload.
 class HomeModel extends Serializable {
@@ -15,6 +16,7 @@ class HomeModel extends Serializable {
   bool? isVip;
   HomeBalance? balance;
   List<TodayProgramItem> todayProgram;
+  List<OpsTask> tasks;
   HomeDriver? driver;
   HomeAssignment? assignment;
 
@@ -32,6 +34,7 @@ class HomeModel extends Serializable {
     this.isVip,
     this.balance,
     this.todayProgram = const [],
+    this.tasks = const [],
     this.driver,
     this.assignment,
   });
@@ -61,6 +64,7 @@ class HomeModel extends Serializable {
                 )
                 .toList()
             : const [],
+        tasks: OpsTask.listFrom(json['tasks']),
         driver: json['driver'] is Map<String, dynamic>
             ? HomeDriver.fromJson(json['driver'] as Map<String, dynamic>)
             : null,
@@ -86,6 +90,7 @@ class HomeModel extends Serializable {
         'isVip': isVip,
         'balance': balance?.toJson(),
         'todayProgram': todayProgram.map((e) => e.toJson()).toList(),
+        'tasks': tasks.map((e) => e.toJson()).toList(),
         'driver': driver?.toJson(),
         'assignment': assignment?.toJson(),
       };

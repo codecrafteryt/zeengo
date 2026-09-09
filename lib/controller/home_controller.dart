@@ -6,6 +6,7 @@ import '../data/api_provider/api_provider.dart';
 import '../data/constants.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/home_model/home_model.dart';
+import '../data/models/task_model/ops_task_model.dart';
 import '../data/repos/home_repo/home_repo.dart';
 import 'auth_controller.dart';
 
@@ -34,6 +35,7 @@ class HomeController extends GetxController {
   final paymentProgress = 0.0.obs;
   final scheduleDateLabel = ''.obs;
   final todayProgram = <TodayProgramItem>[].obs;
+  final openTasks = <OpsTask>[].obs;
 
   @override
   void onInit() {
@@ -109,6 +111,7 @@ class HomeController extends GetxController {
         total > 0 ? (paid.toDouble() / total.toDouble()).clamp(0.0, 1.0) : 0.0;
 
     todayProgram.assignAll(data.todayProgram);
+    openTasks.assignAll(data.tasks);
     scheduleDateLabel.value = _scheduleDateLabel(data);
 
     if (Get.isRegistered<AuthController>()) {
