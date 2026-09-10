@@ -32,10 +32,8 @@ class Constants {
   static const String chatConversations = '/chat/conversations';
   static String chatBookingThread(String bookingId) =>
       '/chat/bookings/$bookingId/thread';
-  static String chatMessages(String conversationId) =>
-      '/chat/conversations/$conversationId/messages';
-  static String chatRead(String conversationId) =>
-      '/chat/conversations/$conversationId/read';
+  static String chatMessages(String conversationId) => '/chat/conversations/$conversationId/messages';
+  static String chatRead(String conversationId) => '/chat/conversations/$conversationId/read';
 
   // ── SharedPreferences keys ────────────────────────────────────────────────
   static const String accessToken = 'accessToken';
