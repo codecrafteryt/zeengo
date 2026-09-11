@@ -147,13 +147,14 @@ class _ChatsScreenState extends State<ChatsScreen> {
   @override
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return ColoredBox(
       color: palette.scaffold,
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
+          padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h + bottomInset),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final short =
