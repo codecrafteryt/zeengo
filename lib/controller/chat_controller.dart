@@ -158,6 +158,20 @@ class ChatController extends GetxController {
     _clearTyping();
   }
 
+  /// App resumed / inbox tab focused — reload history + rejoin socket room.
+  Future<void> onAppResumed() async {
+    final convId = conversation.value?.id;
+    if (convId == null || convId.isEmpty) return;
+    try {
+      await _loadMessages(convId);
+      _joinSocket(convId);
+      await _markLatestRead();
+      messages.refresh();
+    } catch (e, st) {
+      debugPrint('ChatController.onAppResumed error: $e\n$st');
+    }
+  }
+
   /// Whether the open peer typing indicator belongs on [tab] (0/1/2).
   bool isTypingOnTab(int tab) {
     if (!isPeerTyping.value) return false;
@@ -200,11 +214,18 @@ class ChatController extends GetxController {
           '====> CHAT OUT parsed message: ${model.data!.toJson()}',
         );
         _upsertMessage(model.data!);
+        messages.refresh();
         await markRead(model.data!.id!);
       }
     } catch (e, st) {
       debugPrint('ChatController.sendMessage error: $e\n$st');
       errorMessage.value = e.toString();
+      // Network blip after resume — pull history so UI stays in sync.
+      final convIdRetry = conversation.value?.id;
+      if (convIdRetry != null && convIdRetry.isNotEmpty) {
+        await _loadMessages(convIdRetry);
+        messages.refresh();
+      }
     } finally {
       isSending.value = false;
     }
@@ -395,6 +416,7 @@ class ChatController extends GetxController {
       if (exists) return;
     }
     messages.add(msg);
+    messages.refresh();
   }
 
   ChatApiMessage? _parseMessage(dynamic raw) {

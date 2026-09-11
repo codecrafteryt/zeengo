@@ -251,6 +251,38 @@ class AuthController extends GetxController {
     }
   }
 
+  /// Silent token renew for app resume (no navigation).
+  Future<bool> refreshTokensQuietly() async {
+    final refreshToken = sharedPreferences.getString(Constants.refreshToken);
+    if (refreshToken == null || refreshToken.isEmpty) return false;
+    try {
+      final response =
+          await authRepo.checkSession(refreshToken: refreshToken);
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        return false;
+      }
+      final body = response.body;
+      if (body is! Map) return false;
+      final model = ApiResponse.fromJson(
+        Map<String, dynamic>.from(body),
+        LoginModel.fromJson,
+      );
+      if (model.data == null) return false;
+      final access = model.data!.accessToken?.trim() ?? '';
+      if (access.isEmpty) return false;
+      await sharedPreferences.setString(Constants.accessToken, access);
+      final nextRefresh = model.data!.refreshToken?.trim();
+      if (nextRefresh != null && nextRefresh.isNotEmpty) {
+        await sharedPreferences.setString(Constants.refreshToken, nextRefresh);
+      }
+      debugPrint('====> SESSION quiet refresh ok');
+      return true;
+    } catch (e) {
+      debugPrint('====> SESSION quiet refresh failed: $e');
+      return false;
+    }
+  }
+
   /// Refresh session via `POST /auth/refresh`. Keeps user logged in across app restarts.
   Future<void> checkSession1() async {
     try {

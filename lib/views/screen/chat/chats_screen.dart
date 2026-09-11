@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controller/chat_controller.dart';
 import '../../../data/enus.dart';
@@ -13,7 +12,6 @@ import '../../widgets/app_loading_dots.dart';
 import '../../widgets/app_segment_tabs.dart';
 import '../../widgets/chat/chat_message_bubble.dart';
 import '../../widgets/chat/chat_thread_panel.dart';
-import '../../widgets/chat/chat_whatsapp_banner.dart';
 import '../../widgets/custom_text_widget.dart';
 
 class ChatsScreen extends StatefulWidget {
@@ -24,7 +22,6 @@ class ChatsScreen extends StatefulWidget {
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
-  static const _whatsappNumber = '+79160000000';
   static const _supportTab = 0;
   static const _driverTab = 1;
 
@@ -64,13 +61,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
       value,
       senderRole: ChatApiMessage.roleForTab(_tab),
     );
-  }
-
-  Future<void> _openWhatsapp() async {
-    final uri = Uri.parse('https://wa.me/$_whatsappNumber');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
   }
 
   List<ChatMessage> _mapMessages(List<ChatApiMessage> api) {
@@ -232,14 +222,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       );
                     }),
                   ),
-                  if (!short) ...[
-                    SizedBox(height: 12.h),
-                    ChatWhatsappBanner(
-                      title: Enus.whatsappZeengo.tr,
-                      subtitle: Enus.whatsappSubtitle.tr,
-                      onTap: _openWhatsapp,
-                    ),
-                  ],
                 ],
               );
             },

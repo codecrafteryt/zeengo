@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../data/constants.dart';
 import '../utils/values/env.dart';
+import 'auth_controller.dart';
 import 'chat_controller.dart';
 import 'notification_controller.dart';
 
 /// Socket.IO `/ws` — notifications + chat realtime.
-class SocketController extends GetxController {
+class SocketController extends GetxController with WidgetsBindingObserver {
   SocketController({required this.sharedPreferences});
 
   final SharedPreferences sharedPreferences;
@@ -17,10 +19,53 @@ class SocketController extends GetxController {
   io.Socket? _socket;
   final isConnected = false.obs;
 
+  /// Last joined conversation — re-emitted after every (re)connect.
+  String? _activeConversationId;
+
+  DateTime? _lastResumeAt;
+
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     disconnect();
     super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      onAppResumed();
+    }
+  }
+
+  /// Cold start / login / resume: refresh token + socket + open chat.
+  Future<void> onAppResumed() async {
+    final now = DateTime.now();
+    if (_lastResumeAt != null &&
+        now.difference(_lastResumeAt!) < const Duration(seconds: 2)) {
+      return;
+    }
+    _lastResumeAt = now;
+
+    if (Get.isRegistered<AuthController>()) {
+      await Get.find<AuthController>().refreshTokensQuietly();
+    }
+
+    if (!isConnected.value || _socket == null) {
+      connect();
+    } else {
+      _rejoinActiveConversation();
+    }
+
+    if (Get.isRegistered<ChatController>()) {
+      await Get.find<ChatController>().onAppResumed();
+    }
   }
 
   void connect() {
@@ -35,7 +80,7 @@ class SocketController extends GetxController {
       return;
     }
 
-    disconnect();
+    disconnect(clearActiveConversation: false);
 
     debugPrint('====> SOCKET connecting to $url');
     _socket = io.io(
@@ -43,8 +88,11 @@ class SocketController extends GetxController {
       io.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
-          .setAuth({'token': token})
           .enableForceNew()
+          .enableReconnection()
+          .setReconnectionAttempts(20)
+          .setReconnectionDelay(1000)
+          .setAuth({'token': token})
           .build(),
     );
 
@@ -52,6 +100,7 @@ class SocketController extends GetxController {
       ..onConnect((_) {
         isConnected.value = true;
         debugPrint('====> SOCKET connected');
+        _rejoinActiveConversation();
       })
       ..onDisconnect((_) {
         isConnected.value = false;
@@ -63,6 +112,11 @@ class SocketController extends GetxController {
       })
       ..onError((err) {
         debugPrint('====> SOCKET error: $err');
+      })
+      ..on('reconnect', (_) {
+        isConnected.value = true;
+        debugPrint('====> SOCKET reconnected');
+        _rejoinActiveConversation();
       })
       ..on('notification.new', (data) {
         debugPrint('====> SOCKET event notification.new: $data');
@@ -83,14 +137,10 @@ class SocketController extends GetxController {
         }
       })
       ..on('chat.typing', (data) {
-        // Use print (not debugPrint) — rapid identical pulses get throttled/dropped on Android.
         // ignore: avoid_print
         print('====> SOCKET IN chat.typing: $data');
         if (Get.isRegistered<ChatController>()) {
           Get.find<ChatController>().handleTyping(data);
-        } else {
-          // ignore: avoid_print
-          print('====> SOCKET IN chat.typing ignored: ChatController not registered');
         }
       })
       ..on('message.read', (data) {
@@ -102,9 +152,13 @@ class SocketController extends GetxController {
       ..connect();
   }
 
-  void disconnect() {
+  void disconnect({bool clearActiveConversation = true}) {
     final socket = _socket;
-    if (socket == null) return;
+    if (socket == null) {
+      if (clearActiveConversation) _activeConversationId = null;
+      isConnected.value = false;
+      return;
+    }
     try {
       socket.clearListeners();
       socket.disconnect();
@@ -114,20 +168,31 @@ class SocketController extends GetxController {
     }
     _socket = null;
     isConnected.value = false;
+    if (clearActiveConversation) _activeConversationId = null;
   }
 
   void reconnectWithLatestToken() => connect();
 
   void joinConversation(String conversationId) {
-    _emit('chat.join', {'conversationId': conversationId});
+    _activeConversationId = conversationId;
+    _rejoinActiveConversation();
   }
 
   void leaveConversation(String conversationId) {
+    if (_activeConversationId == conversationId) {
+      _activeConversationId = null;
+    }
     _emit('chat.leave', {'conversationId': conversationId});
   }
 
   void emitTyping(String conversationId) {
     _emit('chat.typing', {'conversationId': conversationId});
+  }
+
+  void _rejoinActiveConversation() {
+    final id = _activeConversationId;
+    if (id == null || id.isEmpty) return;
+    _emit('chat.join', {'conversationId': id});
   }
 
   void _emit(String event, Map<String, dynamic> payload) {
