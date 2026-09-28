@@ -1,9 +1,10 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api_provider/api_provider.dart';
 import '../data/constants.dart';
+import '../data/models/alo_home/alo_home_static_data.dart';
 import '../data/models/api_response_model.dart';
 import '../data/models/home_model/home_model.dart';
 import '../data/models/task_model/ops_task_model.dart';
@@ -37,10 +38,111 @@ class HomeController extends GetxController {
   final todayProgram = <TodayProgramItem>[].obs;
   final openTasks = <OpsTask>[].obs;
 
+  // ── aLo Home static UI state ─────────────────────────────────────────────
+  final plannerTab = AloPlannerTab.move.obs;
+  final selectedFilter = 'In daylight'.obs;
+  final promoVisible = true.obs;
+  final selectedSuit = 'Rainy day'.obs;
+
+  // ── Airbnb-style search planner ──────────────────────────────────────────
+  final searchFrom = 'Your location · Moscow'.obs;
+  final searchTo = ''.obs;
+  final checkIn = Rxn<DateTime>(DateTime.now().add(const Duration(days: 1)));
+  final checkOut = Rxn<DateTime>(DateTime.now().add(const Duration(days: 3)));
+  final adults = 2.obs;
+  final children = 0.obs;
+  final infants = 0.obs;
+
+  static const fromSuggestions = [
+    'Your location · Moscow',
+    'Red Square',
+    'Moscow City',
+    'VDNKh',
+    'Sheremetyevo Airport',
+    'Domodedovo Airport',
+  ];
+
+  static const toSuggestions = [
+    'Red Square',
+    'St Basil’s Cathedral',
+    'Tretyakov Gallery',
+    'VDNKh',
+    'Moscow City',
+    'Gorky Park',
+    'St Petersburg',
+    'Kazan',
+  ];
+
+  int get totalGuests => adults.value + children.value;
+
+  String get searchSummary {
+    final to = searchTo.value.trim().isEmpty ? 'Anywhere' : searchTo.value;
+    final guests = totalGuests == 1 ? '1 guest' : '$totalGuests guests';
+    return '$to · ${_shortDate(checkIn.value)} · $guests';
+  }
+
+  String get dateRangeLabel {
+    final a = checkIn.value;
+    final b = checkOut.value;
+    if (a == null) return 'Add dates';
+    if (b == null) return _shortDate(a);
+    return '${_shortDate(a)} – ${_shortDate(b)}';
+  }
+
+  String get guestsLabelSearch {
+    final parts = <String>[
+      '${adults.value} adult${adults.value == 1 ? '' : 's'}',
+    ];
+    if (children.value > 0) {
+      parts.add(
+        '${children.value} child${children.value == 1 ? '' : 'ren'}',
+      );
+    }
+    if (infants.value > 0) {
+      parts.add(
+        '${infants.value} infant${infants.value == 1 ? '' : 's'}',
+      );
+    }
+    return parts.join(' · ');
+  }
+
+  void setPlannerTab(AloPlannerTab tab) => plannerTab.value = tab;
+  void setFilter(String filter) => selectedFilter.value = filter;
+  void dismissPromo() => promoVisible.value = false;
+  void setSuit(String title) => selectedSuit.value = title;
+
+  void setSearchFrom(String v) => searchFrom.value = v;
+  void setSearchTo(String v) => searchTo.value = v;
+  void setCheckIn(DateTime? d) => checkIn.value = d;
+  void setCheckOut(DateTime? d) => checkOut.value = d;
+
+  void setAdults(int v) => adults.value = v.clamp(1, 16);
+  void setChildren(int v) => children.value = v.clamp(0, 10);
+  void setInfants(int v) => infants.value = v.clamp(0, 5);
+
+  void applySearch() {
+    snack('Searching · $searchSummary');
+  }
+
+  String _shortDate(DateTime? d) {
+    if (d == null) return 'Add dates';
+    return '${d.day} ${_months[d.month - 1]}';
+  }
+
+  void snack(String message) {
+    Get.snackbar(
+      'aLo',
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   void onInit() {
     super.onInit();
-    fetchHome();
+    // Static aLo Home — skip VIP home API until auth is re-enabled.
   }
 
   Future<void> fetchHome({bool showLoader = true}) async {

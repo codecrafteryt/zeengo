@@ -7,10 +7,9 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../data/constants.dart';
 import '../utils/values/env.dart';
 import 'auth_controller.dart';
-import 'chat_controller.dart';
 import 'notification_controller.dart';
 
-/// Socket.IO `/ws` — notifications + chat realtime.
+/// Socket.IO `/ws` — notifications realtime.
 class SocketController extends GetxController with WidgetsBindingObserver {
   SocketController({required this.sharedPreferences});
 
@@ -18,9 +17,6 @@ class SocketController extends GetxController with WidgetsBindingObserver {
 
   io.Socket? _socket;
   final isConnected = false.obs;
-
-  /// Last joined conversation — re-emitted after every (re)connect.
-  String? _activeConversationId;
 
   DateTime? _lastResumeAt;
 
@@ -44,7 +40,7 @@ class SocketController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  /// Cold start / login / resume: refresh token + socket + open chat.
+  /// Cold start / login / resume: refresh token + socket.
   Future<void> onAppResumed() async {
     final now = DateTime.now();
     if (_lastResumeAt != null &&
@@ -59,12 +55,6 @@ class SocketController extends GetxController with WidgetsBindingObserver {
 
     if (!isConnected.value || _socket == null) {
       connect();
-    } else {
-      _rejoinActiveConversation();
-    }
-
-    if (Get.isRegistered<ChatController>()) {
-      await Get.find<ChatController>().onAppResumed();
     }
   }
 
@@ -80,7 +70,7 @@ class SocketController extends GetxController with WidgetsBindingObserver {
       return;
     }
 
-    disconnect(clearActiveConversation: false);
+    disconnect();
 
     debugPrint('====> SOCKET connecting to $url');
     _socket = io.io(
@@ -100,7 +90,6 @@ class SocketController extends GetxController with WidgetsBindingObserver {
       ..onConnect((_) {
         isConnected.value = true;
         debugPrint('====> SOCKET connected');
-        _rejoinActiveConversation();
       })
       ..onDisconnect((_) {
         isConnected.value = false;
@@ -116,7 +105,6 @@ class SocketController extends GetxController with WidgetsBindingObserver {
       ..on('reconnect', (_) {
         isConnected.value = true;
         debugPrint('====> SOCKET reconnected');
-        _rejoinActiveConversation();
       })
       ..on('notification.new', (data) {
         debugPrint('====> SOCKET event notification.new: $data');
@@ -124,38 +112,12 @@ class SocketController extends GetxController with WidgetsBindingObserver {
           Get.find<NotificationController>().handleRealtimeNotification(data);
         }
       })
-      ..on('message.new', (data) {
-        debugPrint('====> SOCKET IN message.new: $data');
-        if (Get.isRegistered<ChatController>()) {
-          Get.find<ChatController>().handleMessageNew(data);
-        }
-      })
-      ..on('message.translated', (data) {
-        debugPrint('====> SOCKET IN message.translated: $data');
-        if (Get.isRegistered<ChatController>()) {
-          Get.find<ChatController>().handleMessageTranslated(data);
-        }
-      })
-      ..on('chat.typing', (data) {
-        // ignore: avoid_print
-        print('====> SOCKET IN chat.typing: $data');
-        if (Get.isRegistered<ChatController>()) {
-          Get.find<ChatController>().handleTyping(data);
-        }
-      })
-      ..on('message.read', (data) {
-        debugPrint('====> SOCKET IN message.read: $data');
-        if (Get.isRegistered<ChatController>()) {
-          Get.find<ChatController>().handleMessageRead(data);
-        }
-      })
       ..connect();
   }
 
-  void disconnect({bool clearActiveConversation = true}) {
+  void disconnect() {
     final socket = _socket;
     if (socket == null) {
-      if (clearActiveConversation) _activeConversationId = null;
       isConnected.value = false;
       return;
     }
@@ -168,40 +130,7 @@ class SocketController extends GetxController with WidgetsBindingObserver {
     }
     _socket = null;
     isConnected.value = false;
-    if (clearActiveConversation) _activeConversationId = null;
   }
 
   void reconnectWithLatestToken() => connect();
-
-  void joinConversation(String conversationId) {
-    _activeConversationId = conversationId;
-    _rejoinActiveConversation();
-  }
-
-  void leaveConversation(String conversationId) {
-    if (_activeConversationId == conversationId) {
-      _activeConversationId = null;
-    }
-    _emit('chat.leave', {'conversationId': conversationId});
-  }
-
-  void emitTyping(String conversationId) {
-    _emit('chat.typing', {'conversationId': conversationId});
-  }
-
-  void _rejoinActiveConversation() {
-    final id = _activeConversationId;
-    if (id == null || id.isEmpty) return;
-    _emit('chat.join', {'conversationId': id});
-  }
-
-  void _emit(String event, Map<String, dynamic> payload) {
-    final socket = _socket;
-    if (socket == null || !isConnected.value) {
-      debugPrint('====> SOCKET skip emit $event (not connected)');
-      return;
-    }
-    debugPrint('====> SOCKET OUT $event: $payload');
-    socket.emit(event, payload);
-  }
 }
