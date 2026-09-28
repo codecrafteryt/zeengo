@@ -47,17 +47,31 @@ class NotificationService extends GetxService {
   Future<NotificationService> init() async {
     if (_initialized) return this;
 
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    try {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    await setupLocalNotificationsOnly();
-    await _requestPermissions();
-    await _configureFcmHandlers();
-    await _persistToken(await _messaging.getToken());
+      await setupLocalNotificationsOnly();
+      await _requestPermissions();
+      await _configureFcmHandlers();
 
-    _messaging.onTokenRefresh.listen(_persistToken);
+      try {
+        final token = await _messaging.getToken();
+        await _persistToken(token);
+      } catch (e) {
+        // Common on emulators / missing google-services / Play Services issues.
+        debugPrint('====> FCM getToken skipped: $e');
+      }
 
-    _initialized = true;
-    debugPrint('====> NotificationService ready. FCM: ${fcmToken.value}');
+      _messaging.onTokenRefresh.listen(
+        _persistToken,
+        onError: (Object e) => debugPrint('====> FCM token refresh error: $e'),
+      );
+
+      _initialized = true;
+      debugPrint('====> NotificationService ready. FCM: ${fcmToken.value}');
+    } catch (e, st) {
+      debugPrint('====> NotificationService.init failed (non-fatal): $e\n$st');
+    }
     return this;
   }
 
@@ -85,30 +99,34 @@ class NotificationService extends GetxService {
   }
 
   Future<void> _requestPermissions() async {
-    // iOS / macOS alert permissions via FCM
-    final settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
-    debugPrint(
-      '====> FCM permission: ${settings.authorizationStatus}',
-    );
+    try {
+      // iOS / macOS alert permissions via FCM
+      final settings = await _messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+      debugPrint(
+        '====> FCM permission: ${settings.authorizationStatus}',
+      );
 
-    // Android 13+ runtime notification permission
-    if (Platform.isAndroid) {
-      final status = await Permission.notification.status;
-      if (!status.isGranted) {
-        await Permission.notification.request();
+      // Android 13+ runtime notification permission
+      if (Platform.isAndroid) {
+        final status = await Permission.notification.status;
+        if (!status.isGranted) {
+          await Permission.notification.request();
+        }
       }
-    }
 
-    await _messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+      await _messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } catch (e) {
+      debugPrint('====> FCM permission request skipped: $e');
+    }
   }
 
   Future<void> _configureFcmHandlers() async {
