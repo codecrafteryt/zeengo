@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,7 +12,6 @@ import 'data/helper/get_di.dart';
 import 'data/languages.dart';
 import 'firebase_options.dart';
 import 'services/notification_service.dart';
-import 'services/stripe_payment_service.dart';
 import 'utils/values/app_theme.dart';
 import 'views/screen/splash_screen.dart';
 
@@ -22,8 +22,11 @@ Future<void> main() async {
   );
   await dotenv.load(fileName: '.env');
   await DependencyInjection.init();
-  await NotificationService.instance.init();
-  await StripePaymentService.instance.init();
+  try {
+    await NotificationService.instance.init();
+  } catch (e, st) {
+    debugPrint('====> Notification bootstrap skipped: $e\n$st');
+  }
   runApp(const MyApp());
 }
 

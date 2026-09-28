@@ -12,13 +12,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../controller/auth_controller.dart';
-import '../../data/constants.dart';
 import '../../utils/extensions/extentions.dart';
 import '../../utils/values/app_palette.dart';
 import '../../utils/values/my_color.dart';
 import '../../utils/values/my_images.dart';
-import '../auth/login_screen.dart';
+import 'explore/home_pages.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,22 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
     statusCheck();
   }
 
-  /// Routes to login or restores session after splash delay.
+  /// Skip auth — go straight to Home after splash.
   void statusCheck() {
-    Timer(const Duration(seconds: 2), () async {
+    Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
-
-      final auth = Get.find<AuthController>();
-      final refreshToken =
-          auth.sharedPreferences.getString(Constants.refreshToken);
-
-      debugPrint('====> SPLASH refreshToken=$refreshToken');
-
-      if (refreshToken == null || refreshToken.isEmpty) {
-        Get.offAll(() => const LoginScreen());
-      } else {
-        await auth.checkSession1();
-      }
+      Get.offAll(() => const HomePages());
     });
   }
 
