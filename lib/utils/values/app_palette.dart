@@ -30,16 +30,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color overlay;
 
   static const light = AppPalette(
-    scaffold: Color(0xFFF7F7F7),
+    scaffold: Color(0xFFF6F6F4),
     card: Color(0xFFFFFFFF),
-    cardMuted: Color(0xFFF9F9F9),
+    cardMuted: Color(0xFFE8F5EE),
     border: Color(0xFFDDDDDD),
-    textPrimary: Color(0xFF262626),
-    textSecondary: Color(0xFF717171),
-    icon: Color(0xFF262626),
+    textPrimary: Color(0xFF1A2F25),
+    textSecondary: Color(0xFF7A7A7A),
+    icon: Color(0xFF1A2F25),
     divider: Color(0xFFDDDDDD),
     inputFill: Color(0xFFFFFFFF),
-    navBar: Color(0xFFF7F7F7),
+    navBar: Color(0xFFF6F6F4),
     overlay: Color(0x73000000),
   );
 

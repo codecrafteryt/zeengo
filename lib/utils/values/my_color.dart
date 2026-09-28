@@ -1,13 +1,23 @@
 import 'dart:ui';
 
 class MyColors {
-  // Primary Colors
-  static const Color darkPurple = Color(0xFF6366F1);
-  static const Color purple = Color(0xFF8B2FE0);
-  static const Color brandPrimary = Color(0xFF007782);
+  // Primary Colors (aliased to aLo forest so all screens share one theme)
+  static const Color darkPurple = Color(0xFF1B3A2F);
+  static const Color purple = Color(0xFF2D5A4A);
+  static const Color brandPrimary = Color(0xFF1B3A2F);
   static const Color textSecondary = Color(0xFF717171);
   static const Color scaffoldMuted = Color(0xFFF7F7F7);
   static const Color borderSubtle = Color(0xFFDDDDDD);
+
+  // aLo Russia (static Home design system)
+  static const Color aloForest = Color(0xFF1B3A2F);
+  static const Color aloForestDeep = Color(0xFF152E26);
+  static const Color aloMint = Color(0xFFD8EDE3);
+  static const Color aloMintSoft = Color(0xFFE8F5EE);
+  static const Color aloScaffold = Color(0xFFF6F6F4);
+  static const Color aloText = Color(0xFF1A2F25);
+  static const Color aloMuted = Color(0xFF7A7A7A);
+  static const Color aloLime = Color(0xFFB8E0C8);
 
   static const Color darkWhite = Color.fromRGBO(239, 239, 239, 1);
 

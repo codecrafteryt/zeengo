@@ -52,6 +52,9 @@ class Enus {
   // Nav
   static const String explore = 'explore';
   static const String map = 'map';
+  static const String around = 'around';
+  static const String exploreRussia = 'explore_russia';
+  static const String myTrip = 'my_trip';
   static const String inbox = 'inbox';
   static const String pay = 'pay';
   static const String profile = 'profile';

@@ -8,7 +8,7 @@ import 'my_fonts.dart';
 class AppTheme {
   AppTheme._();
 
-  static const _accent = MyColors.darkPurple;
+  static const _accent = MyColors.aloForest;
 
   static ThemeData light() => _base(
         brightness: Brightness.light,
