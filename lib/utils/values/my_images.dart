@@ -27,8 +27,11 @@ class MyImages {
   static const String arrowDownFlatSvg = "assets/svgs/arrow_down_flat.svg";
   static const String arrowUpFlatSvg = "assets/svgs/arrow_up_flat.svg";
 
+  static const String navHomeSvg = "assets/svgs/nav_bar/home.svg";
+  static const String navMapSvg = "assets/svgs/nav_bar/map.svg";
+  static const String navSparkleSvg = "assets/svgs/nav_bar/sparkle.svg";
+  static const String navTripSvg = "assets/svgs/nav_bar/trip.svg";
   static const String navExploreSvg = "assets/svgs/nav_bar/buttom_search.svg";
-  static const String navMapSvg = "assets/svgs/nav_bar/map_icon.svg";
   static const String navInboxSvg = "assets/svgs/nav_bar/buttom_inbox.svg";
   static const String navPaySvg = "assets/svgs/nav_bar/credit_flat.svg";
   static const String navProfileSvg = "assets/svgs/nav_bar/buttom_profile.svg";
