@@ -38,9 +38,11 @@ class ExploreScreen extends GetView<HomeController> {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 14.h)),
           SliverToBoxAdapter(
-            child: _FeaturedCarousel(
-              items: AloHomeStaticData.moscowNow,
-              onTap: controller.snack,
+            child: Obx(
+              () => _FeaturedCarousel(
+                items: controller.moscowNow.toList(),
+                onTap: controller.snack,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 32.h)),
@@ -63,9 +65,11 @@ class ExploreScreen extends GetView<HomeController> {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 14.h)),
           SliverToBoxAdapter(
-            child: _PlaceRail(
-              items: AloHomeStaticData.closeToCentre,
-              onTap: controller.snack,
+            child: Obx(
+              () => _PlaceRail(
+                items: controller.closeToCentre.toList(),
+                onTap: controller.snack,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 32.h)),
@@ -77,10 +81,12 @@ class ExploreScreen extends GetView<HomeController> {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 14.h)),
           SliverToBoxAdapter(
-            child: _PlaceRail(
-              items: AloHomeStaticData.firstTime,
-              wide: true,
-              onTap: controller.snack,
+            child: Obx(
+              () => _PlaceRail(
+                items: controller.firstTime.toList(),
+                wide: true,
+                onTap: controller.snack,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 32.h)),
@@ -101,9 +107,11 @@ class ExploreScreen extends GetView<HomeController> {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 14.h)),
           SliverToBoxAdapter(
-            child: _PlaceRail(
-              items: AloHomeStaticData.withKids,
-              onTap: controller.snack,
+            child: Obx(
+              () => _PlaceRail(
+                items: controller.withKids.toList(),
+                onTap: controller.snack,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 32.h)),
@@ -297,38 +305,40 @@ class _HeroBlock extends StatelessWidget {
                 SizedBox(height: 16.h),
                 SizedBox(
                   height: 34.h,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: AloHomeStaticData.quickChips.length,
-                    separatorBuilder: (_, __) => SizedBox(width: 8.w),
-                    itemBuilder: (_, i) {
-                      final chip = AloHomeStaticData.quickChips[i];
-                      return GestureDetector(
-                        onTap: () {
-                          controller.setSearchTo(chip);
-                          AloSearchSheet.showTo();
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 14.w),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(20.r),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.18),
+                  child: Obx(
+                    () => ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.quickChips.length,
+                      separatorBuilder: (_, __) => SizedBox(width: 8.w),
+                      itemBuilder: (_, i) {
+                        final chip = controller.quickChips[i];
+                        return GestureDetector(
+                          onTap: () {
+                            controller.setSearchTo(chip);
+                            AloSearchSheet.showTo();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 14.w),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.18),
+                              ),
+                            ),
+                            child: Text(
+                              chip,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          child: Text(
-                            chip,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -394,36 +404,37 @@ class _CategoryStrip extends StatelessWidget {
       offset: Offset(0, -18.h),
       child: SizedBox(
         height: 96.h,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          itemCount: AloHomeStaticData.categories.length,
-          separatorBuilder: (_, __) => SizedBox(width: 12.w),
-          itemBuilder: (_, i) {
-            final c = AloHomeStaticData.categories[i];
-            return GestureDetector(
-              onTap: () {
-                controller.snack(c.label);
-                AloSearchSheet.show();
-              },
-              child: Container(
-                width: 84.w,
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(c.icon, color: MyColors.aloForest, size: 26.sp),
+        child: Obx(
+          () => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            itemCount: controller.categories.length,
+            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            itemBuilder: (_, i) {
+              final c = controller.categories[i];
+              return GestureDetector(
+                onTap: () {
+                  controller.snack(c.label);
+                  AloSearchSheet.show();
+                },
+                child: Container(
+                  width: 84.w,
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(c.icon, color: MyColors.aloForest, size: 26.sp),
                     SizedBox(height: 8.h),
                     Text(
                       c.label,
@@ -441,6 +452,7 @@ class _CategoryStrip extends StatelessWidget {
               ),
             );
           },
+        ),
         ),
       ),
     );
@@ -706,7 +718,7 @@ class _MoodGrid extends StatelessWidget {
         child: GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: AloHomeStaticData.suitYou.length,
+          itemCount: controller.suitYou.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 12.w,
@@ -714,7 +726,7 @@ class _MoodGrid extends StatelessWidget {
             childAspectRatio: 1.35,
           ),
           itemBuilder: (_, i) {
-            final m = AloHomeStaticData.suitYou[i];
+            final m = controller.suitYou[i];
             final on = selected == m.title;
             return GestureDetector(
               onTap: () => controller.setSuit(m.title),
@@ -779,36 +791,37 @@ class _FoodList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        children: AloHomeStaticData.food.map((f) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: GestureDetector(
-              onTap: () => controller.snack(f.title),
-              child: Container(
-                padding: EdgeInsets.all(14.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 52.w,
-                      height: 52.w,
-                      decoration: BoxDecoration(
-                        color: MyColors.aloMintSoft,
-                        borderRadius: BorderRadius.circular(14.r),
+    return Obx(
+      () => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          children: controller.food.map((f) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: GestureDetector(
+                onTap: () => controller.snack(f.title),
+                child: Container(
+                  padding: EdgeInsets.all(14.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 52.w,
+                        height: 52.w,
+                        decoration: BoxDecoration(
+                          color: MyColors.aloMintSoft,
+                          borderRadius: BorderRadius.circular(14.r),
+                        ),
                       child: Icon(
                         Icons.restaurant_outlined,
                         color: MyColors.aloForest,
@@ -881,6 +894,7 @@ class _FoodList extends StatelessWidget {
             ),
           );
         }).toList(),
+        ),
       ),
     );
   }
@@ -893,77 +907,83 @@ class _ServicesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Everything in one place',
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w800,
-              color: MyColors.aloText,
-              letterSpacing: -0.4,
+    return Obx(
+      () => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Everything in one place',
+              style: TextStyle(
+                fontSize: 24.sp,
+                fontWeight: FontWeight.w800,
+                color: MyColors.aloText,
+                letterSpacing: -0.4,
+              ),
             ),
-          ),
-          SizedBox(height: 14.h),
-          ...AloHomeStaticData.services.map((s) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
-              child: GestureDetector(
-                onTap: () => controller.snack(s.title),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 14.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18.r),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44.w,
-                        height: 44.w,
-                        decoration: BoxDecoration(
-                          color: MyColors.aloMintSoft,
-                          borderRadius: BorderRadius.circular(12.r),
+            SizedBox(height: 14.h),
+            ...controller.services.map((s) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: GestureDetector(
+                  onTap: () => controller.snack(s.title),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 14.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18.r),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44.w,
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            color: MyColors.aloMintSoft,
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(s.icon, color: MyColors.aloForest),
                         ),
-                        child: Icon(s.icon, color: MyColors.aloForest),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              s.title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 15.sp,
-                                color: MyColors.aloText,
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                s.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15.sp,
+                                  color: MyColors.aloText,
+                                ),
                               ),
-                            ),
-                            Text(
-                              s.subtitle,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: MyColors.aloMuted,
+                              Text(
+                                s.subtitle,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: MyColors.aloMuted,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Icon(Icons.arrow_forward_ios, size: 14.sp, color: MyColors.aloMuted),
-                    ],
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 14.sp,
+                          color: MyColors.aloMuted,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

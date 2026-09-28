@@ -13,6 +13,7 @@ import '../../controller/task_controller.dart';
 import '../../controller/theme_controller.dart';
 import '../api_provider/api_provider.dart';
 import '../repos/auth_repo/auth_repo.dart';
+import '../repos/client_v2_repo/client_v2_repo.dart';
 import '../repos/home_repo/home_repo.dart';
 import '../repos/notification_repo/notification_repo.dart';
 import '../repos/task_repo/task_repo.dart';
@@ -32,6 +33,10 @@ class DependencyInjection {
     );
     Get.lazyPut(() => ApiProvider(), fenix: true);
     Get.lazyPut(() => AuthRepo(apiProvider: Get.find()), fenix: true);
+    Get.lazyPut(
+      () => ClientV2Repo(apiProvider: Get.find()),
+      fenix: true,
+    );
     Get.lazyPut(
       () => HomeRepo(
         apiProvider: Get.find(),

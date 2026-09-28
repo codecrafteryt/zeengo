@@ -35,22 +35,26 @@ class MyTripScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Your ${controller.tripDayCount} days',
-                  style: TextStyle(
-                    fontSize: 36.sp,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: -0.8,
+                Obx(
+                  () => Text(
+                    'Your ${controller.tripDayCount} days',
+                    style: TextStyle(
+                      fontSize: 36.sp,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -0.8,
+                    ),
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Text(
-                  MyTripStaticData.subtitle,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Colors.white.withValues(alpha: 0.72),
-                    height: 1.4,
+                Obx(
+                  () => Text(
+                    controller.subtitle.value,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.white.withValues(alpha: 0.72),
+                      height: 1.4,
+                    ),
                   ),
                 ),
                 SizedBox(height: 18.h),
@@ -142,12 +146,17 @@ class MyTripScreen extends StatelessWidget {
             );
           }),
           SizedBox(height: 8.h),
-          ...controller.days.map(
-            (day) => Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 14.h),
-              child: _DayCard(day: day, controller: controller),
-            ),
-          ),
+          Obx(() {
+            return Column(
+              children: [
+                for (final day in controller.days)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 14.h),
+                    child: _DayCard(day: day, controller: controller),
+                  ),
+              ],
+            );
+          }),
         ],
       ),
     );

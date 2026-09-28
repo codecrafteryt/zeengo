@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../data/api_provider/api_provider.dart';
 import '../data/models/around/around_static_data.dart';
+import '../data/repos/client_v2_repo/client_v2_repo.dart';
+import '../utils/discovery_icons.dart';
 import '../views/screen/around/around_place_detail_sheet.dart';
 
 enum AroundLocationState {
@@ -17,16 +20,82 @@ enum AroundLocationState {
 }
 
 class AroundController extends GetxController {
+  AroundController({ClientV2Repo? clientV2Repo})
+      : clientV2Repo = clientV2Repo ?? Get.find<ClientV2Repo>();
+
+  final ClientV2Repo clientV2Repo;
+
   final locationState = AroundLocationState.notRequested.obs;
   final originLabel = 'Red Square'.obs;
   final usingDeviceLocation = false.obs;
   final selectedCategory = RxnString();
   final originLat = AroundStaticData.redSquareLat.obs;
   final originLng = AroundStaticData.redSquareLng.obs;
+  final isLoading = false.obs;
 
-  List<AroundPlace> get under6 => AroundStaticData.bySection('under6');
-  List<AroundPlace> get shortWalk => AroundStaticData.bySection('shortWalk');
-  List<AroundPlace> get shortRide => AroundStaticData.bySection('shortRide');
+  final categories = <AroundCategory>[...AroundStaticData.categories].obs;
+  final under6 = <AroundPlace>[].obs;
+  final shortWalk = <AroundPlace>[].obs;
+  final shortRide = <AroundPlace>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    under6.assignAll(AroundStaticData.bySection('under6'));
+    shortWalk.assignAll(AroundStaticData.bySection('shortWalk'));
+    shortRide.assignAll(AroundStaticData.bySection('shortRide'));
+    fetchPlaces();
+  }
+
+  Future<void> fetchPlaces() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    try {
+      final response = await clientV2Repo.fetchPlaces(
+        lat: originLat.value,
+        lng: originLng.value,
+        category: selectedCategory.value,
+      );
+      if (!ApiProvider.isSuccessfulHttpStatus(response.statusCode)) return;
+      final data = unwrapClientV2Data(response.body);
+      if (data == null) return;
+
+      final cats = data['categories'];
+      if (cats is List && cats.isNotEmpty) {
+        categories.assignAll(
+          cats
+              .whereType<Map>()
+              .map((e) => AroundCategory.fromJson(Map<String, dynamic>.from(e)))
+              .toList(),
+        );
+      }
+
+      final sections = data['sections'];
+      if (sections is Map) {
+        List<AroundPlace> parse(String key) {
+          final raw = sections[key];
+          if (raw is! List) return [];
+          return raw
+              .whereType<Map>()
+              .map((e) => AroundPlace.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+        }
+
+        under6.assignAll(parse('under6'));
+        shortWalk.assignAll(parse('shortWalk'));
+        shortRide.assignAll(parse('shortRide'));
+      }
+
+      final origin = data['origin'];
+      if (origin is Map && origin['label'] != null) {
+        originLabel.value = origin['label'].toString();
+      }
+    } catch (e, st) {
+      debugPrint('AroundController.fetchPlaces error: $e\n$st');
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   void snack(String message) {
     Get.snackbar(
@@ -40,7 +109,18 @@ class AroundController extends GetxController {
 
   void selectCategory(String id) {
     selectedCategory.value = selectedCategory.value == id ? null : id;
-    snack(AroundStaticData.categories.firstWhere((c) => c.id == id).label);
+    final label = categories
+        .firstWhere(
+          (c) => c.id == id,
+          orElse: () => AroundCategory(
+            id: id,
+            label: id,
+            icon: Icons.place_outlined,
+          ),
+        )
+        .label;
+    snack(label);
+    fetchPlaces();
   }
 
   Future<void> useMyLocation() async {
@@ -80,6 +160,7 @@ class AroundController extends GetxController {
       usingDeviceLocation.value = true;
       locationState.value = AroundLocationState.granted;
       snack('Location updated.');
+      await fetchPlaces();
     } catch (e) {
       locationState.value = AroundLocationState.error;
       snack('Could not get location. Using Red Square.');

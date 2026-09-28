@@ -10,6 +10,21 @@ class TripStop {
   final String? subtitle;
   final double? lat;
   final double? lng;
+
+  factory TripStop.fromJson(Map<String, dynamic> json) {
+    double? asDouble(dynamic v) {
+      if (v == null) return null;
+      if (v is num) return v.toDouble();
+      return double.tryParse(v.toString());
+    }
+
+    return TripStop(
+      title: json['title']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString(),
+      lat: asDouble(json['lat']),
+      lng: asDouble(json['lng']),
+    );
+  }
 }
 
 class TripDay {
@@ -31,6 +46,27 @@ class TripDay {
       'MOSQUE ${mosqueKm.toStringAsFixed(mosqueKm == mosqueKm.roundToDouble() ? 1 : 1)} KM';
 
   String get mosqueShortLabel => '${mosqueKm.toStringAsFixed(1)} km';
+
+  factory TripDay.fromJson(Map<String, dynamic> json) {
+    final rawStops = json['stops'];
+    final stops = rawStops is List
+        ? rawStops
+            .whereType<Map>()
+            .map((e) => TripStop.fromJson(Map<String, dynamic>.from(e)))
+            .toList()
+        : <TripStop>[];
+    final mosque = json['mosqueKm'];
+    return TripDay(
+      dayNumber: (json['dayNumber'] is num)
+          ? (json['dayNumber'] as num).toInt()
+          : int.tryParse(json['dayNumber']?.toString() ?? '') ?? 0,
+      title: json['title']?.toString() ?? '',
+      mosqueKm: mosque is num
+          ? mosque.toDouble()
+          : double.tryParse(mosque?.toString() ?? '') ?? 0,
+      stops: stops,
+    );
+  }
 }
 
 class MyTripStaticData {

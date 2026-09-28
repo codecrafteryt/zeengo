@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/discovery_icons.dart';
+
 class AroundPlace {
   const AroundPlace({
     required this.id,
@@ -36,6 +38,32 @@ class AroundPlace {
   final String priceLabel;
   final String? arabicDescription;
   final bool isFree;
+
+  factory AroundPlace.fromJson(Map<String, dynamic> json) {
+    double asDouble(dynamic v) {
+      if (v is num) return v.toDouble();
+      return double.tryParse(v?.toString() ?? '') ?? 0;
+    }
+
+    return AroundPlace(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      area: json['area']?.toString() ?? '',
+      distanceLabel: json['distanceLabel']?.toString() ?? '',
+      walkLabel: json['walkLabel']?.toString() ?? '',
+      badge: json['badge']?.toString() ?? '',
+      section: json['section']?.toString() ?? 'shortRide',
+      imageUrl: json['imageUrl']?.toString() ?? '',
+      lat: asDouble(json['lat']),
+      lng: asDouble(json['lng']),
+      category: json['category']?.toString() ?? 'Sight',
+      openLabel: json['openLabel']?.toString() ?? 'Open all day',
+      priceLabel: json['priceLabel']?.toString() ?? 'Free entry',
+      arabicDescription: json['arabicDescription']?.toString(),
+      isFree: json['isFree'] != false,
+    );
+  }
 }
 
 class AroundCategory {
@@ -48,6 +76,14 @@ class AroundCategory {
   final String id;
   final String label;
   final IconData icon;
+
+  factory AroundCategory.fromJson(Map<String, dynamic> json) {
+    return AroundCategory(
+      id: json['id']?.toString() ?? '',
+      label: json['label']?.toString() ?? '',
+      icon: discoveryIcon(json['iconKey']?.toString()),
+    );
+  }
 }
 
 class AroundStaticData {

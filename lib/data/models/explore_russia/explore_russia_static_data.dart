@@ -24,6 +24,23 @@ class ExploreRussiaPlace {
   bool get isFamily => tags.contains('Family');
   bool get isOutside => tags.contains('Outside');
 
+  factory ExploreRussiaPlace.fromJson(Map<String, dynamic> json) {
+    final rawTags = json['tags'];
+    final tags = rawTags is List
+        ? rawTags.map((e) => e.toString()).toList()
+        : <String>[];
+    return ExploreRussiaPlace(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      tags: tags,
+      imageUrl: json['imageUrl']?.toString(),
+      usePlaceholder: json['usePlaceholder'] == true,
+      nearMe: json['nearMe'] == true,
+      today: json['today'] == true,
+      daylight: json['daylight'] == true,
+    );
+  }
+
   bool matchesFilter(String? filterId) {
     if (filterId == null || filterId.isEmpty) return true;
     switch (filterId) {
@@ -51,6 +68,14 @@ class ExploreRussiaFilter {
   final String id;
   final String label;
   final String? statusTitle;
+
+  factory ExploreRussiaFilter.fromJson(Map<String, dynamic> json) {
+    return ExploreRussiaFilter(
+      id: json['id']?.toString() ?? '',
+      label: json['label']?.toString() ?? '',
+      statusTitle: json['statusTitle']?.toString(),
+    );
+  }
 }
 
 class ExploreRussiaStaticData {

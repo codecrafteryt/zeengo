@@ -9,16 +9,20 @@ import '../data/models/api_response_model.dart';
 import '../data/models/home_model/home_model.dart';
 import '../data/models/task_model/ops_task_model.dart';
 import '../data/repos/home_repo/home_repo.dart';
+import '../data/repos/client_v2_repo/client_v2_repo.dart';
+import '../utils/discovery_icons.dart';
 import 'auth_controller.dart';
 
 class HomeController extends GetxController {
   HomeController({
     required this.homeRepo,
     required this.sharedPreferences,
-  });
+    ClientV2Repo? clientV2Repo,
+  }) : clientV2Repo = clientV2Repo ?? Get.find<ClientV2Repo>();
 
   final HomeRepo homeRepo;
   final SharedPreferences sharedPreferences;
+  final ClientV2Repo clientV2Repo;
 
   final isLoading = false.obs;
   final errorMessage = RxnString();
@@ -38,11 +42,22 @@ class HomeController extends GetxController {
   final todayProgram = <TodayProgramItem>[].obs;
   final openTasks = <OpsTask>[].obs;
 
-  // ── aLo Home static UI state ─────────────────────────────────────────────
+  // ── aLo Home UI state (fed by /client/v2/home, static fallback) ───────────
   final plannerTab = AloPlannerTab.move.obs;
   final selectedFilter = 'In daylight'.obs;
   final promoVisible = true.obs;
   final selectedSuit = 'Rainy day'.obs;
+  final discoveryLoading = false.obs;
+
+  final quickChips = <String>[...AloHomeStaticData.quickChips].obs;
+  final categories = <AloCategoryItem>[...AloHomeStaticData.categories].obs;
+  final moscowNow = <AloPlaceCard>[...AloHomeStaticData.moscowNow].obs;
+  final closeToCentre = <AloPlaceCard>[...AloHomeStaticData.closeToCentre].obs;
+  final firstTime = <AloPlaceCard>[...AloHomeStaticData.firstTime].obs;
+  final withKids = <AloPlaceCard>[...AloHomeStaticData.withKids].obs;
+  final food = <AloFoodCard>[...AloHomeStaticData.food].obs;
+  final suitYou = <AloSuitCard>[...AloHomeStaticData.suitYou].obs;
+  final services = <AloServiceTile>[...AloHomeStaticData.services].obs;
 
   // ── Airbnb-style search planner ──────────────────────────────────────────
   final searchFrom = 'Your location · Moscow'.obs;
@@ -142,7 +157,64 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Static aLo Home — skip VIP home API until auth is re-enabled.
+    fetchDiscoveryHome();
+  }
+
+  /// Loads aLo Home discovery feed (`GET /client/v2/home`). Keeps static fallback.
+  Future<void> fetchDiscoveryHome() async {
+    if (discoveryLoading.value) return;
+    discoveryLoading.value = true;
+    try {
+      final response = await clientV2Repo.fetchHome();
+      if (!ApiProvider.isSuccessfulHttpStatus(response.statusCode)) return;
+      final data = unwrapClientV2Data(response.body);
+      if (data == null) return;
+
+      List<Map<String, dynamic>> maps(dynamic raw) => raw is List
+          ? raw
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
+          : <Map<String, dynamic>>[];
+
+      final chips = data['quickChips'];
+      if (chips is List && chips.isNotEmpty) {
+        quickChips.assignAll(chips.map((e) => e.toString()).toList());
+      }
+      final cats = maps(data['categories']);
+      if (cats.isNotEmpty) {
+        categories.assignAll(cats.map(AloCategoryItem.fromJson));
+      }
+      final suits = maps(data['suitYou']);
+      if (suits.isNotEmpty) {
+        suitYou.assignAll(suits.map(AloSuitCard.fromJson));
+      }
+      final svcs = maps(data['services']);
+      if (svcs.isNotEmpty) {
+        services.assignAll(svcs.map(AloServiceTile.fromJson));
+      }
+
+      List<AloPlaceCard> places(String key) =>
+          maps(data[key]).map(AloPlaceCard.fromJson).toList();
+
+      final mn = places('moscowNow');
+      if (mn.isNotEmpty) moscowNow.assignAll(mn);
+      final cc = places('closeToCentre');
+      if (cc.isNotEmpty) closeToCentre.assignAll(cc);
+      final ft = places('firstTime');
+      if (ft.isNotEmpty) firstTime.assignAll(ft);
+      final wk = places('withKids');
+      if (wk.isNotEmpty) withKids.assignAll(wk);
+
+      final foodMaps = maps(data['food']);
+      if (foodMaps.isNotEmpty) {
+        food.assignAll(foodMaps.map(AloFoodCard.fromJson));
+      }
+    } catch (e, st) {
+      debugPrint('HomeController.fetchDiscoveryHome error: $e\n$st');
+    } finally {
+      discoveryLoading.value = false;
+    }
   }
 
   Future<void> fetchHome({bool showLoader = true}) async {

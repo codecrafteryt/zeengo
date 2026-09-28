@@ -58,9 +58,11 @@ class AroundScreen extends StatelessWidget {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 12.h)),
           SliverToBoxAdapter(
-            child: _PlaceList(
-              places: controller.under6,
-              controller: controller,
+            child: Obx(
+              () => _PlaceList(
+                places: controller.under6.toList(),
+                controller: controller,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 28.h)),
@@ -72,9 +74,11 @@ class AroundScreen extends StatelessWidget {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 12.h)),
           SliverToBoxAdapter(
-            child: _PlaceList(
-              places: controller.shortWalk,
-              controller: controller,
+            child: Obx(
+              () => _PlaceList(
+                places: controller.shortWalk.toList(),
+                controller: controller,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 28.h)),
@@ -86,9 +90,11 @@ class AroundScreen extends StatelessWidget {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 12.h)),
           SliverToBoxAdapter(
-            child: _PlaceList(
-              places: controller.shortRide,
-              controller: controller,
+            child: Obx(
+              () => _PlaceList(
+                places: controller.shortRide.toList(),
+                controller: controller,
+              ),
             ),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 16.h)),
@@ -304,10 +310,10 @@ class _CategoryPills extends StatelessWidget {
         return ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          itemCount: AroundStaticData.categories.length,
+          itemCount: controller.categories.length,
           separatorBuilder: (_, __) => SizedBox(width: 8.w),
           itemBuilder: (_, i) {
-            final cat = AroundStaticData.categories[i];
+            final cat = controller.categories[i];
             final on = selected == cat.id;
             return GestureDetector(
               onTap: () => controller.selectCategory(cat.id),

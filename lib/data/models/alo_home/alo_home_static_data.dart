@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/discovery_icons.dart';
+
 enum AloPlannerTab { move, stay, doActivity }
 
 class AloCategoryItem {
@@ -10,6 +12,13 @@ class AloCategoryItem {
 
   final String label;
   final IconData icon;
+
+  factory AloCategoryItem.fromJson(Map<String, dynamic> json) {
+    return AloCategoryItem(
+      label: json['label']?.toString() ?? '',
+      icon: discoveryIcon(json['iconKey']?.toString()),
+    );
+  }
 }
 
 class AloPlaceCard {
@@ -24,6 +33,15 @@ class AloPlaceCard {
   final String subtitle;
   final String imageUrl;
   final String? badge;
+
+  factory AloPlaceCard.fromJson(Map<String, dynamic> json) {
+    return AloPlaceCard(
+      title: json['title']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString() ?? '',
+      imageUrl: json['imageUrl']?.toString() ?? '',
+      badge: json['badge']?.toString(),
+    );
+  }
 }
 
 class AloFoodCard {
@@ -38,6 +56,15 @@ class AloFoodCard {
   final String description;
   final String location;
   final bool halalFriendly;
+
+  factory AloFoodCard.fromJson(Map<String, dynamic> json) {
+    return AloFoodCard(
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      location: json['location']?.toString() ?? '',
+      halalFriendly: json['halalFriendly'] == true,
+    );
+  }
 }
 
 class AloSuitCard {
@@ -52,6 +79,17 @@ class AloSuitCard {
   final String subtitle;
   final IconData icon;
   final bool highlighted;
+
+  factory AloSuitCard.fromJson(Map<String, dynamic> json) {
+    final meta = json['meta'];
+    final highlighted = meta is Map && meta['highlighted'] == true;
+    return AloSuitCard(
+      title: json['label']?.toString() ?? json['title']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString() ?? '',
+      icon: discoveryIcon(json['iconKey']?.toString(), Icons.star_outline),
+      highlighted: highlighted,
+    );
+  }
 }
 
 class AloTimelineItem {
@@ -80,6 +118,17 @@ class AloServiceTile {
   final String title;
   final String subtitle;
   final IconData icon;
+
+  factory AloServiceTile.fromJson(Map<String, dynamic> json) {
+    return AloServiceTile(
+      title: json['label']?.toString() ?? json['title']?.toString() ?? '',
+      subtitle: json['subtitle']?.toString() ?? '',
+      icon: discoveryIcon(
+        json['iconKey']?.toString(),
+        Icons.auto_awesome_outlined,
+      ),
+    );
+  }
 }
 
 class AloFxRate {
@@ -98,7 +147,7 @@ class AloFxRate {
   final bool down;
 }
 
-/// Static prototype content for aLo Home (screenshots).
+/// Static fallback when `/client/v2/home` is offline.
 class AloHomeStaticData {
   AloHomeStaticData._();
 
@@ -115,7 +164,10 @@ class AloHomeStaticData {
     AloCategoryItem(label: 'Car & driver', icon: Icons.directions_car_outlined),
     AloCategoryItem(label: 'Places', icon: Icons.place_outlined),
     AloCategoryItem(label: 'Food', icon: Icons.restaurant_outlined),
-    AloCategoryItem(label: 'Experience', icon: Icons.confirmation_number_outlined),
+    AloCategoryItem(
+      label: 'Experience',
+      icon: Icons.confirmation_number_outlined,
+    ),
     AloCategoryItem(label: 'Tours', icon: Icons.tour_outlined),
     AloCategoryItem(label: 'Trains', icon: Icons.train_outlined),
   ];
